@@ -78,7 +78,7 @@ public class BigBrotherAdminGUI extends JFrame
       JTextField confirmPasswordTF = new JPasswordField(20);
       JTextField groupNumberTF = new JTextField(20);
 
-      JPanel firstNamePanel = new JPanel()
+      JPanel firstNamePanel = new JPanel();
       
       newUserPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
     }
