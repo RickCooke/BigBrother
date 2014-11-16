@@ -2,6 +2,8 @@ package bigBrother.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.*;
 
@@ -23,13 +25,14 @@ public class BigBrotherAdminGUI extends JFrame
     DefaultListModel<String> usersDLM = new DefaultListModel<String>();
     JList<String> usersList = new JList<String>(usersDLM);
     JScrollPane usersScrollPane = new JScrollPane(usersList);
-    usersScrollPane.setPreferredSize(new Dimension(100, 400));
+    usersScrollPane.setPreferredSize(new Dimension(150, 400));
     JButton createUserButton = new JButton("New User");
+    createUserButton.setAlignmentX(CENTER_ALIGNMENT);
     
     usersPanel.add(usersLabel);
     usersPanel.add(usersScrollPane);
     usersPanel.add(createUserButton);
-    usersPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 10));
+    usersPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 10));    
     
     mainPanel.add(usersPanel);
     
@@ -38,8 +41,9 @@ public class BigBrotherAdminGUI extends JFrame
     DefaultListModel<String> appsDLM = new DefaultListModel<String>();
     JList<String> appsList = new JList<String>(appsDLM);
     JScrollPane appsScrollPane = new JScrollPane(appsList);
-    appsScrollPane.setPreferredSize(new Dimension(100, 400));
+    appsScrollPane.setPreferredSize(new Dimension(200, 400));
     JButton monitorAppButton = new JButton("Monitor New Application");
+    monitorAppButton.setAlignmentX(CENTER_ALIGNMENT);
     
     appsPanel.add(appsLabel);
     appsPanel.add(appsScrollPane);
@@ -51,4 +55,32 @@ public class BigBrotherAdminGUI extends JFrame
     pack();
   }
   
+  
+  ActionListener newUserButtonAL = new ActionListener()
+  {
+    
+    @Override
+    public void actionPerformed(ActionEvent arg0)
+    {
+      // TODO Auto-generated method stub
+      JPanel newUserPanel = new JPanel();
+      JLabel firstNameLabel = new JLabel("First Name: ");
+      JLabel lastNameLabel = new JLabel("Last Name: ");
+      JLabel usernameLabel = new JLabel("Username: ");
+      JLabel passwordLabel = new JLabel("Password: ");
+      JLabel confirmPasswordLabel = new JLabel("Confirm Password: ");
+      JLabel groupNumberLabel = new JLabel("Group Number: ");
+      
+      JTextField firstNameTF = new JTextField(20);
+      JTextField lastNameTF = new JTextField(20);
+      JTextField usernameNameTF = new JTextField(20);
+      JTextField passwordTF = new JPasswordField(20);
+      JTextField confirmPasswordTF = new JPasswordField(20);
+      JTextField groupNumberTF = new JTextField(20);
+
+      JPanel firstNamePanel = new JPanel()
+      
+      newUserPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+    }
+  };
 };
