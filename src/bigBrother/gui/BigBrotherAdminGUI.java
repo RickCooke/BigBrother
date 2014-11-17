@@ -2,6 +2,8 @@ package bigBrother.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -46,6 +48,7 @@ public class BigBrotherAdminGUI extends JFrame
     appsScrollPane.setPreferredSize(new Dimension(200, 400));
     JButton monitorAppButton = new JButton("Monitor New Application");
     monitorAppButton.setAlignmentX(CENTER_ALIGNMENT);
+    monitorAppButton.addActionListener(newAppButtonAL);
     
     appsPanel.add(appsLabel);
     appsPanel.add(appsScrollPane);
@@ -84,5 +87,75 @@ public class BigBrotherAdminGUI extends JFrame
       
       newUserPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
     }
+  };
+
+  ActionListener newAppButtonAL = new ActionListener()
+  {
+
+    @Override
+    public void actionPerformed(ActionEvent arg0)
+    {
+      // TODO Auto-generated method stub
+      JFrame newAppFrame = new JFrame();
+      newAppFrame.setLayout(new BorderLayout());
+      
+      JPanel northPanel = new JPanel();
+      JPanel centerPanel = new JPanel();
+      JPanel centerTopPanel = new JPanel();
+      JPanel centerBottomPanel = new JPanel();
+      JPanel southPanel = new JPanel();
+      JPanel southTopPanel = new JPanel();
+      JPanel southBottomPanel = new JPanel();
+      
+      northPanel.setLayout(new BorderLayout());
+      centerPanel.setLayout(new GridLayout(1, 2));
+      centerTopPanel.setLayout(new BorderLayout());
+      centerBottomPanel.setLayout(new FlowLayout());
+      southPanel.setLayout(new GridLayout(1, 2));
+      southTopPanel.setLayout(new BorderLayout());
+      southBottomPanel.setLayout(new FlowLayout());
+      
+      JLabel aliasNameLabel = new JLabel("Alias Name:");
+      JLabel windowNameLabel = new JLabel("Window Name:");
+      JLabel processNameLabel = new JLabel("Process Name:");
+      JLabel windowRegexLabel = new JLabel("Window is Regex?");
+      JLabel processRegexLabel = new JLabel("Process is Regex?");
+      
+      JTextField aliasTF = new JTextField(20);
+      JTextField windowTF = new JTextField(20);
+      JTextField processTF = new JTextField(20);
+      
+      JCheckBox windowIsRegex = new JCheckBox();
+      JCheckBox processIsRegex = new JCheckBox();
+      
+      northPanel.add(aliasNameLabel, BorderLayout.WEST);
+      northPanel.add(aliasTF, BorderLayout.EAST);
+      
+      centerTopPanel.add(windowNameLabel, BorderLayout.WEST);
+      centerTopPanel.add(windowTF, BorderLayout.EAST);
+      centerBottomPanel.add(windowIsRegex);
+      centerBottomPanel.add(windowRegexLabel);
+      
+      
+      southTopPanel.add(processNameLabel, BorderLayout.WEST);
+      southTopPanel.add(processTF, BorderLayout.EAST);
+      southBottomPanel.add(processIsRegex);
+      southBottomPanel.add(processRegexLabel);
+      
+      
+      centerPanel.add(centerTopPanel);
+      centerPanel.add(centerBottomPanel);
+      southPanel.add(southTopPanel);
+      southPanel.add(southBottomPanel);
+      
+      newAppFrame.add(northPanel, BorderLayout.NORTH);
+      newAppFrame.add(centerPanel, BorderLayout.CENTER);
+      newAppFrame.add(southPanel, BorderLayout.SOUTH);
+      
+      newAppFrame.pack();
+      newAppFrame.setVisible(true);
+      
+    }
+      
   };
 };
