@@ -84,8 +84,8 @@ public class LoginGUI extends JFrame {
         });
 
         // TODO: remove this to prompt for username/pw
-        //attemptLogin("defaultUser", "password");
-        attemptLogin("bigbrother", "plzletmein"); // Can't get the LoginGUI to dispose
+        attemptLogin("defaultUser", "password");
+        //attemptLogin("bigbrother", "plzletmein"); // Can't get the LoginGUI to dispose
     }
 
     private void attemptLogin(String username, String password) {
