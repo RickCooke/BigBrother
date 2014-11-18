@@ -63,10 +63,7 @@ public class Main {
         adminMenuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                AdminGUI win = new AdminGUI();
-                win.pack();
                 win.setVisible(true);
-                win.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
             }
         });
         

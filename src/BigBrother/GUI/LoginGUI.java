@@ -85,16 +85,15 @@ public class LoginGUI extends JFrame {
 
         // TODO: remove this to prompt for username/pw
         //attemptLogin("defaultUser", "password");
-        attemptLogin("bigbrother", "plzletmein");
+        attemptLogin("bigbrother", "plzletmein"); // Can't get the LoginGUI to dispose
     }
 
     private void attemptLogin(String username, String password) {
         // If they enter an admin combination, show AdminGUI
         
         if(username.equals(Main.MySQL_username) && password.equals(Main.MySQL_password)){
-            //closeDialog();
-            //Main.win.dispatchEvent(new WindowEvent(Main.win, WindowEvent.WINDOW_CLOSING));
-            
+            dispose();
+
             AdminGUI AdminWin = new AdminGUI();
             AdminWin.pack();
             AdminWin.setVisible(true);
@@ -107,7 +106,7 @@ public class LoginGUI extends JFrame {
 
         try {
             Main.loggedInUserID = MySQL.checkPassword(username, passwordHash);
-            closeDialog();
+            dispose();
             new Client();
         } catch (UserDoesNotExist e) {
             JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -123,13 +122,5 @@ public class LoginGUI extends JFrame {
             e.printStackTrace();
         }
         return (new HexBinaryAdapter()).marshal(md.digest(input.getBytes()));
-    }
-
-    /**
-     * Easy and quick way to close the current window
-     */
-    private void closeDialog() {
-        WindowEvent winClosingEvent = new WindowEvent(this, WindowEvent.WINDOW_CLOSING);
-        Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(winClosingEvent);
     }
 }
