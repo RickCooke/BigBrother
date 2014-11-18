@@ -109,7 +109,7 @@ public class Client {
                 public void run() {
                     poll();
                 }
-            }, 1000, Main.polling_interval);
+            }, Main.polling_interval, Main.polling_interval);
 
             // Set up the idle timer
             resetIdleTimer();
