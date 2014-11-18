@@ -21,6 +21,7 @@ import javax.swing.WindowConstants;
 
 import BigBrother.Classes.App;
 import BigBrother.Exceptions.CountMismatchException;
+import BigBrother.Exceptions.KeyboardHookFailed;
 import BigBrother.Exceptions.NoSettingsException;
 import BigBrother.Exceptions.RequiredAppsNotFoundException;
 import BigBrother.GUI.AdminGUI;
@@ -45,7 +46,9 @@ public class Client {
     private Timer pollTimer;
     private static boolean idleFlag;
     private ArrayList<App> userApps;
-
+    
+    private static KeyboardCallback Keyboard  = new KeyboardCallback();
+    
     public Client() {
 
         // get our settings
@@ -124,18 +127,14 @@ public class Client {
         // TODO: delete this? idk?
         openAdminGUI();
 
-        
-        // Testing of keyboard
-        KeyboardCallback c = new KeyboardCallback();
-        User32.MSG msg = new User32.MSG();
-        while (true) {
-            User32.INSTANCE.PeekMessage(msg, null, 0, 0, 0);
-            try {
-                Thread.sleep(10);
-            } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
+
+
+        // TODO: is there a better way to keep the process active than just an infinite loop?
+        try {
+            while (true)
+                Thread.sleep(999999999);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 
@@ -264,13 +263,41 @@ public class Client {
             idleTimerTask.cancel();
         }
 
+        try {
+            if(Keyboard.isHooked()) {
+                Keyboard.unhook();
+            }
+        } catch (KeyboardHookFailed e) {
+            JOptionPane.showMessageDialog(Main.win, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+
         // Set up the idle timer
         idleTimer = new Timer();
         idleTimerTask = new TimerTask() {
             public void run() {
                 setIdle(true);
+                
+                try {
+                    if(!Keyboard.isHooked()) {
+                        Keyboard.hook();
+                    }
+                } catch (KeyboardHookFailed e) {
+                    JOptionPane.showMessageDialog(Main.win, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                }
+                
+                User32.MSG msg = new User32.MSG();
+                while (true) {
+                    User32.INSTANCE.PeekMessage(msg, null, 0, 0, 0);
+                    try {
+                        Thread.sleep(Main.keyboard_peek_interval);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                
             }
         };
+        
         idleTimer.schedule(idleTimerTask, Main.max_idle_time);
 
         // Debug text
@@ -278,7 +305,7 @@ public class Client {
             System.out.println("Activity detected. Idle timer has been reset.");
     }
 
-    private static void setIdle(boolean _idle) {
+    public static void setIdle(boolean _idle) {
         // Debug text if idle changed
         if (Main.debug && idleFlag != _idle)
             System.out.println("The idle flag is being changed to: " + _idle);
@@ -373,8 +400,8 @@ public class Client {
     // TODO: delete this
     // test function to directly set program values, delete before release
     private void test() {
-        Main.memory_flush_interval = 3 * 1000;
-        Main.local_flush_interval = 10 * 1000;
+        Main.memory_flush_interval = 20000 * 1000;
+        Main.local_flush_interval = 600000 * 1000;
         Main.max_idle_time = 5000;
     }
 }

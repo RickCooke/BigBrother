@@ -4,6 +4,7 @@ import java.awt.Dimension;
 
 import javax.swing.WindowConstants;
 
+import WindowsAPI.KeyboardCallback;
 import BigBrother.GUI.LoginGUI;
 
 
@@ -16,10 +17,12 @@ public class Main {
     public static int max_idle_time;
     public static int block_time;
     public static int start_time;
-
-
+    public static int keyboard_peek_interval = 10;
+    
+    public static LoginGUI win;
+    
     public static void main(String[] args) {
-        LoginGUI win = new LoginGUI();
+        win = new LoginGUI();
         win.setMinimumSize(new Dimension(200, 100));
         win.pack();
         win.setVisible(true);
