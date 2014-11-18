@@ -37,34 +37,37 @@ public class App {
         boolean windowMatch = false;
         boolean processMatch = false;
 
-        if (!alias.equals("Other") && !alias.equals("Idle")) {
-            // TODO: catch cases where both window name and process name are empty,
-            // right now one instance of that would match everything
+        if (appID == 0 || appID == 1) {
+            return false;
+        }
+        
+        // TODO: catch cases where both window name and process name are empty,
+        // right now one instance of that would match everything
 
-            // If window was not specified, then it automatically matches
-            if (window == null || window.isEmpty()) {
+        // If window was not specified, then it automatically matches
+        if (window == null || window.isEmpty()) {
+            windowMatch = true;
+        } else {
+            // A window was specified, if its marked as regex do a regex match,
+            // otherwise normal
+            if (window_regex && windowTitle.matches(window)) {
                 windowMatch = true;
-            } else {
-                // A window was specified, if its marked as regex do a regex match,
-                // otherwise normal
-                if (window_regex && windowTitle.equals(window)) {
-                    windowMatch = true;
-                } else if (windowTitle.toLowerCase().equals(window.toLowerCase())) {
-                    windowMatch = true;
-                }
-            }
-
-            // If process was not specified, then it automatically matches
-            if (process == null || process.isEmpty()) {
-                processMatch = true;
-            } else {
-                if (process_regex && processName.equals(process)) {
-                    processMatch = true;
-                } else if (processName.toLowerCase().equals(process.toLowerCase())) {
-                    processMatch = true;
-                }
+            } else if (windowTitle.toLowerCase().equals(window.toLowerCase())) {
+                windowMatch = true;
             }
         }
+
+        // If process was not specified, then it automatically matches
+        if (process == null || process.isEmpty()) {
+            processMatch = true;
+        } else {
+            if (process_regex && processName.matches(process)) {
+                processMatch = true;
+            } else if (processName.toLowerCase().equals(process.toLowerCase())) {
+                processMatch = true;
+            }
+        }
+    
 
         if (windowMatch && processMatch)
             return true;

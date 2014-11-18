@@ -57,6 +57,11 @@ public class Client {
         // get our list of apps
         syncApps();
 
+        for (App a : userApps) {
+            a.print();
+        }
+        
+        
         // TODO: actually find the indecies in an efficient way, we shouldn't just gurantee that
         // they're first
         // Figure out and set the indexes of idle and other apps
@@ -156,15 +161,17 @@ public class Client {
 
     // Query server and set our apps list
     private void syncApps() {
-
         userApps = new ArrayList<App>();
-
+        userApps = MySQL.getTrackedAppsArrayList(Main.loggedInUserID);
+        
         // add default "Other" and "Idle" apps
         // TODO: delete this, these should exist and get pulled from the DB
+        
+        // Brian(11/18): If we rely on DB then every user must have a user_app pair
+        // that adds the apps always, and does not allow them to delete.
+        // seems the best way, but a lot more work
         userApps.add(new App(0, "Other", null, false, null, false));
         userApps.add(new App(1, "Idle", null, false, null, false));
-
-        userApps = MySQL.getTrackedAppsArrayList(Main.loggedInUserID);
     }
 
     // Function to poll the system for its running apps and add them to memory
@@ -400,8 +407,8 @@ public class Client {
     // TODO: delete this
     // test function to directly set program values, delete before release
     private void test() {
-        Main.memory_flush_interval = 20000 * 1000;
-        Main.local_flush_interval = 600000 * 1000;
-        Main.max_idle_time = 5000;
+        Main.memory_flush_interval = 10 * 1000;
+        Main.local_flush_interval = 60 * 1000;
+        Main.max_idle_time = 20 * 1000;
     }
 }

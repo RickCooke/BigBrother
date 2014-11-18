@@ -24,7 +24,7 @@ public class MySQL {
     public static void establishConnection() {
         try {
             Class.forName("com.mysql.jdbc.Driver").newInstance();
-            conn = DriverManager.getConnection("jdbc:mysql://23.94.98.164/bigbrother?user=bigbrother2&password=plzletmein");
+            conn = DriverManager.getConnection("jdbc:mysql://23.94.98.164/bigbrother?user=bigbrother&password=plzletmein");
         } catch (SQLException ex) {
             // handle any errors
             System.out.println("SQLException: " + ex.getMessage());
