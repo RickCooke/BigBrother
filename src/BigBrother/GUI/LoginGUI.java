@@ -82,8 +82,8 @@ public class LoginGUI extends JFrame {
             }
         });
 
-        //TODO: remove this to prompt for username/pw
-        //attemptLogin("defaultUser", "password");
+        // TODO: remove this to prompt for username/pw
+        attemptLogin("defaultUser", "password");
     }
 
     private void attemptLogin(String username, String password) {
@@ -109,15 +109,12 @@ public class LoginGUI extends JFrame {
         }
         return (new HexBinaryAdapter()).marshal(md.digest(input.getBytes()));
     }
-    
+
     /**
-     * Easy and quick way to close the current window 
+     * Easy and quick way to close the current window
      */
-    private void closeDialog()
-    {
-      WindowEvent winClosingEvent = new WindowEvent(this,
-          WindowEvent.WINDOW_CLOSING);
-      Toolkit.getDefaultToolkit().getSystemEventQueue()
-          .postEvent(winClosingEvent);
+    private void closeDialog() {
+        WindowEvent winClosingEvent = new WindowEvent(this, WindowEvent.WINDOW_CLOSING);
+        Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(winClosingEvent);
     }
 }

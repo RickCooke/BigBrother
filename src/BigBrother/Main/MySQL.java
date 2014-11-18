@@ -46,7 +46,7 @@ public class MySQL {
 
         PreparedStatement ps = null;
         ResultSet rs = null;
-        
+
         try {
             ps = conn.prepareStatement(SQL);
             ps.setString(1, username);
@@ -88,11 +88,11 @@ public class MySQL {
 
         PreparedStatement ps = null;
         ResultSet rs = null;
-        
+
         try {
             ps = conn.prepareStatement(SQL);
             rs = ps.executeQuery();
-            if(rs.next()) {
+            if (rs.next()) {
                 Main.polling_interval = rs.getInt("polling_interval");
                 Main.memory_flush_interval = rs.getInt("memory_flush_interval");
                 Main.local_flush_interval = rs.getInt("local_flush_interval");
@@ -101,7 +101,7 @@ public class MySQL {
                 Main.block_time = rs.getInt("block_time");
             } else {
                 throw new NoSettingsException("There are no settings");
-            }   
+            }
         } catch (SQLException ex) {
             System.out.println("SQLException: " + ex.getMessage());
             System.out.println("SQLState: " + ex.getSQLState());
@@ -121,13 +121,13 @@ public class MySQL {
                 System.out.println("SQLException: " + ex.getMessage());
             }
         }
-    
+
     }
-    
+
     public static ArrayList<App> getTrackedAppsArrayList(int userID) {
-    	
-    	ArrayList<App> userApps = new ArrayList<App>();
-    	
+
+        ArrayList<App> userApps = new ArrayList<App>();
+
         if (conn == null) {
             establishConnection();
         }
@@ -136,26 +136,21 @@ public class MySQL {
 
         PreparedStatement ps = null;
         ResultSet rs = null;
-        
+
         try {
             ps = conn.prepareStatement(SQL);
             ps.setInt(1, userID);
             rs = ps.executeQuery();
             while (rs.next()) {
-                App temp = new App(rs.getInt("appid"),
-                		rs.getString("alias"),
-                		rs.getString("window"),
-                		rs.getBoolean("window_regex"),
-                		rs.getString("process"),
-                		rs.getBoolean("process_regex"));
+                App temp = new App(rs.getInt("appid"), rs.getString("alias"), rs.getString("window"), rs.getBoolean("window_regex"), rs.getString("process"), rs.getBoolean("process_regex"));
                 userApps.add(temp);
             }
-            
-//            If no user apps, then assume they just want to monitor idleness?
-//            if(userApps.isEmpty()) {
-//                throw new HasNoUserApps("You currently have no applications set to you")
-//            }
-            
+
+            // If no user apps, then assume they just want to monitor idleness?
+            // if(userApps.isEmpty()) {
+            // throw new HasNoUserApps("You currently have no applications set to you")
+            // }
+
         } catch (SQLException ex) {
             System.out.println("SQLException: " + ex.getMessage());
             System.out.println("SQLState: " + ex.getSQLState());
@@ -177,67 +172,61 @@ public class MySQL {
         }
         return userApps;
     }
-    
-    public DefaultListModel <UserLite> getUserList (DefaultListModel <UserLite> dlm) {
-    	//clear the existing list
-    	dlm.clear();
-    	
-    	//make sure connection is sound
-    	 if (conn == null)
-             establishConnection();
 
-        //prepare the query
+    public DefaultListModel<UserLite> getUserList(DefaultListModel<UserLite> dlm) {
+        // clear the existing list
+        dlm.clear();
+
+        // make sure connection is sound
+        if (conn == null)
+            establishConnection();
+
+        // prepare the query
         PreparedStatement ps = null;
         ResultSet rs = null;
         String SQL = "SELECT u.userid, u.username, u.firstname, u.lastname FROM users u";
-        
+
         try {
-	        ps = conn.prepareStatement(SQL);
-	
-	        //execute query
-	        rs = ps.executeQuery();
-	        
-	        while (rs.next())
-	            dlm.addElement(new UserLite(rs.getInt("userid"),
-	            		rs.getString("username"),
-	            		rs.getString("firstname"),
-	            		rs.getString("lastname")
-	            		));
-        }
-        catch(SQLException e) {
+            ps = conn.prepareStatement(SQL);
+
+            // execute query
+            rs = ps.executeQuery();
+
+            while (rs.next())
+                dlm.addElement(new UserLite(rs.getInt("userid"), rs.getString("username"), rs.getString("firstname"), rs.getString("lastname")));
+        } catch (SQLException e) {
             System.out.println("SQLException: " + e.getMessage());
         }
-        
-		return dlm;
+
+        return dlm;
     }
 
-    public DefaultListModel<AppLite> getTrackedAppsDLM(int userID, DefaultListModel <AppLite> dlm) {
-    	//clear the existing list
-    	dlm.clear();
-    	
-    	//make sure connection is sound
-	    if (conn == null)
-	        establishConnection();
+    public DefaultListModel<AppLite> getTrackedAppsDLM(int userID, DefaultListModel<AppLite> dlm) {
+        // clear the existing list
+        dlm.clear();
 
-	    //prepare the query
+        // make sure connection is sound
+        if (conn == null)
+            establishConnection();
+
+        // prepare the query
         PreparedStatement ps = null;
         ResultSet rs = null;
         String SQL = "SELECT a.appid, a.alias FROM users_apps u, apps a WHERE u.userid = ? AND u.appid = a.appid";
-        
+
         try {
-	        ps = conn.prepareStatement(SQL);
-	        ps.setInt(1, userID);
-	
-	        //execute query
-	        rs = ps.executeQuery();
-	        
-	        while (rs.next())
-	            dlm.addElement(new AppLite(rs.getInt("appid"), rs.getString("alias")));
-        }
-        catch(SQLException e) {
+            ps = conn.prepareStatement(SQL);
+            ps.setInt(1, userID);
+
+            // execute query
+            rs = ps.executeQuery();
+
+            while (rs.next())
+                dlm.addElement(new AppLite(rs.getInt("appid"), rs.getString("alias")));
+        } catch (SQLException e) {
             System.out.println("SQLException: " + e.getMessage());
         }
-    	
-		return dlm;
+
+        return dlm;
     }
 }

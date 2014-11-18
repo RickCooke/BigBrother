@@ -128,15 +128,15 @@ public class SQLite {
 
         long unixTime = System.currentTimeMillis() / 1000L;
         int blockid = ((int) unixTime - Main.start_time) / Main.block_time;
-        
+
         String UPDATE_SQL = "UPDATE stats SET count = count + ? WHERE blockid = ? AND userid = ? AND appid = ?";
         String INSERT_SQL = "INSERT INTO stats (blockid, userid, appid, count) VALUES (?, ?, ?, ?)";
-        
+
         PreparedStatement ps2 = null;
         try {
             ps = conn.prepareStatement(UPDATE_SQL);
             ps2 = conn.prepareStatement(INSERT_SQL);
-            
+
             for (App a : userApps) {
                 ps.setInt(1, a.getCount());
                 ps.setInt(2, blockid);
