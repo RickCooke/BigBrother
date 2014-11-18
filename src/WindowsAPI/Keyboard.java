@@ -13,12 +13,12 @@ import com.sun.jna.platform.win32.WinDef.WPARAM;
 import com.sun.jna.platform.win32.WinUser;
 import com.sun.jna.platform.win32.WinUser.KBDLLHOOKSTRUCT;
 
-public class KeyboardCallback {
+public class Keyboard {
     private static User32.HHOOK hHook;
     private static User32.LowLevelKeyboardProc lpfn;
     private static boolean hooked = false;
     
-    public KeyboardCallback() {
+    public static void Initialize() {
         lpfn = new User32.LowLevelKeyboardProc() {
             public LRESULT callback(int nCode, WPARAM wParam, KBDLLHOOKSTRUCT lParam) {
                 final int rawCode = lParam.vkCode;
@@ -36,7 +36,7 @@ public class KeyboardCallback {
         };
     }
     
-    public void hook() throws KeyboardHookFailed {
+    public static void hook() throws KeyboardHookFailed {
         HMODULE hMod = Kernel32.INSTANCE.GetModuleHandle(null);
         hHook = User32.INSTANCE.SetWindowsHookEx(User32.WH_KEYBOARD_LL, lpfn, hMod, 0);
         if (hHook == null) {
@@ -48,11 +48,11 @@ public class KeyboardCallback {
             System.out.println("Keyboard Hooked");
     }
     
-    public boolean isHooked() {
+    public static boolean isHooked() {
         return hooked;
     }
     
-    public void unhook() throws KeyboardHookFailed {
+    public static void unhook() throws KeyboardHookFailed {
         if(User32.INSTANCE.UnhookWindowsHookEx(hHook) == false){
             throw new KeyboardHookFailed();
         }

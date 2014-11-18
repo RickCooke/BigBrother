@@ -24,7 +24,7 @@ public class MySQL {
     public static void establishConnection() {
         try {
             Class.forName("com.mysql.jdbc.Driver").newInstance();
-            conn = DriverManager.getConnection("jdbc:mysql://23.94.98.164/bigbrother?user=bigbrother&password=plzletmein");
+            conn = DriverManager.getConnection("jdbc:mysql://" + Main.MySQL_host + "/" + Main.MySQL_database + "?user=" + Main.MySQL_username + "&password=" + Main.MySQL_password);
         } catch (SQLException ex) {
             // handle any errors
             System.out.println("SQLException: " + ex.getMessage());
@@ -173,7 +173,7 @@ public class MySQL {
         return userApps;
     }
 
-    public DefaultListModel<UserLite> getUserList(DefaultListModel<UserLite> dlm) {
+    public static DefaultListModel<UserLite> getUserList(DefaultListModel<UserLite> dlm) {
         // clear the existing list
         dlm.clear();
 
@@ -201,7 +201,7 @@ public class MySQL {
         return dlm;
     }
 
-    public DefaultListModel<AppLite> getTrackedAppsDLM(int userID, DefaultListModel<AppLite> dlm) {
+    public static DefaultListModel<AppLite> getTrackedAppsDLM(int userID, DefaultListModel<AppLite> dlm) {
         // clear the existing list
         dlm.clear();
 

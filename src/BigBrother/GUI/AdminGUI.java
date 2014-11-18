@@ -114,12 +114,9 @@ public class AdminGUI extends JFrame {
         if (Main.debug)
             System.out.println("Updating user list...");
 
-        // connect to SQL Server
-        MySQL myConn = new MySQL();
-        myConn.establishConnection();
 
         // update the user list
-        myConn.getUserList(usersDLM);
+        MySQL.getUserList(usersDLM);
     }
 
     private void updateApps(int userID) {
@@ -127,11 +124,8 @@ public class AdminGUI extends JFrame {
         if (Main.debug)
             System.out.println("Updating tracked app list for user #" + userID + "...");
 
-        // connect to SQL Server
-        MySQL myConn = new MySQL();
-        myConn.establishConnection();
 
         // update the tracked app list
-        myConn.getTrackedAppsDLM(userID, appsDLM);
+        MySQL.getTrackedAppsDLM(userID, appsDLM);
     }
 };

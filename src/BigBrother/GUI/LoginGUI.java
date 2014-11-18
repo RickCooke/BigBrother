@@ -14,6 +14,7 @@ import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.BoxLayout;
+import javax.swing.WindowConstants;
 import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
 
 import BigBrother.Exceptions.UserDoesNotExist;
@@ -83,13 +84,26 @@ public class LoginGUI extends JFrame {
         });
 
         // TODO: remove this to prompt for username/pw
-        attemptLogin("defaultUser", "password");
+        //attemptLogin("defaultUser", "password");
+        attemptLogin("bigbrother", "plzletmein");
     }
 
     private void attemptLogin(String username, String password) {
-        MySQL.establishConnection();
+        // If they enter an admin combination, show AdminGUI
+        
+        if(username.equals(Main.MySQL_username) && password.equals(Main.MySQL_password)){
+            //closeDialog();
+            //Main.win.dispatchEvent(new WindowEvent(Main.win, WindowEvent.WINDOW_CLOSING));
+            
+            AdminGUI AdminWin = new AdminGUI();
+            AdminWin.pack();
+            AdminWin.setVisible(true);
+            AdminWin.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+            
+            return;
+        }
+        
         String passwordHash = MD5(password);
-
 
         try {
             Main.loggedInUserID = MySQL.checkPassword(username, passwordHash);
@@ -98,6 +112,7 @@ public class LoginGUI extends JFrame {
         } catch (UserDoesNotExist e) {
             JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
+       
     }
 
     private String MD5(String input) {

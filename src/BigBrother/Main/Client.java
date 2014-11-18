@@ -26,7 +26,7 @@ import BigBrother.Exceptions.NoSettingsException;
 import BigBrother.Exceptions.RequiredAppsNotFoundException;
 import BigBrother.GUI.AdminGUI;
 import BigBrother.GUI.LoginGUI;
-import WindowsAPI.KeyboardCallback;
+import WindowsAPI.Keyboard;
 
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
@@ -47,10 +47,9 @@ public class Client {
     private static boolean idleFlag;
     private ArrayList<App> userApps;
     
-    private static KeyboardCallback Keyboard  = new KeyboardCallback();
-    
     public Client() {
-
+        Keyboard.Initialize();
+        
         // get our settings
         syncSettings();
 
@@ -123,10 +122,6 @@ public class Client {
             // Exit if timers are not working
             System.exit(1);
         }
-
-        // TODO: delete this? idk?
-        openAdminGUI();
-
 
 
         // TODO: is there a better way to keep the process active than just an infinite loop?
@@ -375,28 +370,6 @@ public class Client {
         // Print debug text
         if (Main.debug)
             System.out.println("Cleared SQLite Database.");
-    }
-
-    // opens the login GUI
-    public void openLoginGUI() {
-        // open the login GUI
-        LoginGUI win = new LoginGUI();
-        win.setMinimumSize(new Dimension(200, 100));
-        win.pack();
-        win.setVisible(true);
-        win.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-
-        // kill the current session
-        destroy();
-    }
-
-    // opens the admin GUI
-    public void openAdminGUI() {
-        // open the admin GUI
-        AdminGUI win = new AdminGUI();
-        win.pack();
-        win.setVisible(true);
-        win.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     }
 
     // TODO: delete this
