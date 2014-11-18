@@ -56,11 +56,6 @@ public class Client {
 
         // get our list of apps
         syncApps();
-
-        for (App a : userApps) {
-            a.print();
-        }
-        
         
         // TODO: actually find the indecies in an efficient way, we shouldn't just gurantee that
         // they're first
@@ -114,7 +109,7 @@ public class Client {
                 public void run() {
                     poll();
                 }
-            }, 1, Main.polling_interval);
+            }, 1000, Main.polling_interval);
 
             // Set up the idle timer
             resetIdleTimer();
