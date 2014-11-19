@@ -359,6 +359,7 @@ public class Client {
     private void localFlush() {
 
         // TODO Push from Local to Server DB
+        SQLite.pushToRemote();
 
         // Print debug text
         if (Main.debug)
@@ -375,8 +376,8 @@ public class Client {
     // TODO: delete this
     // test function to directly set program values, delete before release
     private void test() {
-        Main.memory_flush_interval = 10 * 1000;
-        Main.local_flush_interval = 60 * 1000;
+        Main.memory_flush_interval = 5 * 1000;
+        Main.local_flush_interval = 5 * 1000;
         Main.max_idle_time = 20 * 1000;
     }
 }

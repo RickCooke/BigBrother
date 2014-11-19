@@ -2,6 +2,7 @@ package BigBrother.Main;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.List;
 
 import BigBrother.Classes.App;
 import BigBrother.Exceptions.UserDoesNotExist;
@@ -114,6 +115,64 @@ public class SQLite {
             }
         }
     }
+
+    public static void pushToRemote() {
+        if (conn == null) {
+            establishConnection();
+        }
+
+        if (tableCreated == false) {
+            return;
+        }
+
+        String SQL = "SELECT * FROM stats;";
+        try {
+                     
+                     
+            ps = conn.prepareStatement(SQL);
+            rs = ps.executeQuery();
+
+            ArrayList<int[]> buffer = new ArrayList<int[]>();
+
+            int i = 0;
+            while (rs.next()) {
+                int temp[] = new int[4];
+                temp[0] = rs.getInt("blockid");
+                temp[1] = rs.getInt("userid");
+                temp[2] = rs.getInt("appid");
+                temp[3] = rs.getInt("count");
+                buffer.add(temp);
+                i++;
+                if(i % Main.remote_insert_buffer_size == 0) {
+                    MySQL.flushLocalBuffer(buffer);
+                    buffer.clear();
+                }
+            }
+
+            MySQL.flushLocalBuffer(buffer);
+        } catch (SQLException ex) {
+            System.out.println("SQLException: " + ex.getMessage());
+            System.out.println("SQLState: " + ex.getSQLState());
+            System.out.println("VendorError: " + ex.getErrorCode());
+        } catch (Exception ex) {
+            System.out.println("Exception: " + ex.getMessage());
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                    rs = null;
+                }
+
+                if (ps != null) {
+                    ps.close();
+                    ps = null;
+                }
+            } catch (SQLException ex) {
+                System.out.println("SQLException: " + ex.getMessage());
+            }
+        }
+    }
+
 
     public static void flushMemory(ArrayList<App> userApps) {
         int rows = 0;

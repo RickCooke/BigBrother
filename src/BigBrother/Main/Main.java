@@ -34,6 +34,7 @@ public class Main {
     public static int block_time;
     public static int start_time;
     public static int keyboard_peek_interval = 10;
+    public static int remote_insert_buffer_size = 100;
     
     public static LoginGUI win;
     

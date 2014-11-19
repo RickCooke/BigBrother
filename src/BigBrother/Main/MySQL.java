@@ -229,4 +229,71 @@ public class MySQL {
 
         return dlm;
     }
+    
+    public static void flushLocalBuffer(ArrayList<int[]> buffer) {
+        int rows = 0;
+
+        if (conn == null) {
+            establishConnection();
+        }
+
+        String UPDATE_SQL = "UPDATE stats SET count = count + ? WHERE blockid = ? AND userid = ? AND appid = ?";
+        String INSERT_SQL = "INSERT INTO stats (blockid, userid, appid, count) VALUES (?, ?, ?, ?)";
+
+        PreparedStatement ps = null;
+        PreparedStatement ps2 = null;
+        
+        try {
+            ps = conn.prepareStatement(UPDATE_SQL);
+            ps2 = conn.prepareStatement(INSERT_SQL);
+
+            for (int[] b : buffer) {
+                int blockid = b[0];
+                int userid = b[1];
+                int appid = b[2];
+                int count = b[3];
+
+                //TODO: check if userid Main.loggedInUserID
+                
+                ps.setInt(1, count);
+                ps.setInt(2, blockid);
+                ps.setInt(3, userid);
+                ps.setInt(4, appid);
+
+                rows = ps.executeUpdate();
+                // If there has been a block change, or first time seeing
+                // INSERT into stats instead of UPDATING
+                if (rows == 0) {
+                    ps2.setInt(1, blockid);
+                    ps2.setInt(2, userid);
+                    ps2.setInt(3, appid);
+                    ps2.setInt(4, count);
+
+                    rows = ps2.executeUpdate();
+                    if (rows == 0) {
+                        // Says ps2 is leaked, but the finally below will catch this
+                        throw new SQLException("Unable to INSERT");
+                    }
+                }
+            }
+
+        } catch (SQLException ex) {
+            System.out.println("SQLException: " + ex.getMessage());
+            System.out.println("SQLState: " + ex.getSQLState());
+            System.out.println("VendorError: " + ex.getErrorCode());
+        } finally {
+            try {
+                if (ps != null) {
+                    ps.close();
+                    ps = null;
+                }
+                if (ps2 != null) {
+                    ps2.close();
+                    ps2 = null;
+                }
+            } catch (SQLException ex) {
+                System.out.println("SQLException: " + ex.getMessage());
+            }
+        }
+    }
 }
