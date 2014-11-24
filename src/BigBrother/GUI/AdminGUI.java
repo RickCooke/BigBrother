@@ -19,8 +19,10 @@ import BigBrother.Main.MySQL;
 @SuppressWarnings("serial")
 public class AdminGUI extends JFrame {
 
-    private final DefaultListModel<UserLite> usersDLM = new DefaultListModel<UserLite>();
-    private final DefaultListModel<AppLite> appsDLM = new DefaultListModel<AppLite>();
+    private final DefaultListModel<UserLite> usersDLM 
+    = new DefaultListModel<UserLite>();
+    private final DefaultListModel<AppLite> appsDLM 
+    = new DefaultListModel<AppLite>();
     private final JList<UserLite> usersList = new JList<UserLite>(usersDLM);
     private final JList<AppLite> appsList = new JList<AppLite>(appsDLM);
 
@@ -122,7 +124,8 @@ public class AdminGUI extends JFrame {
     private void updateApps(int userID) {
         // debug output
         if (Main.debug)
-            System.out.println("Updating tracked app list for user #" + userID + "...");
+            System.out.println("Updating tracked app list for user #" 
+        + userID + "...");
 
 
         // update the tracked app list

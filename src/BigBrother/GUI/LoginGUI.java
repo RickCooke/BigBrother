@@ -45,7 +45,8 @@ public class LoginGUI extends JFrame {
 
         JPanel containerPanel = new JPanel();
         getContentPane().add(containerPanel);
-        containerPanel.setLayout(new BoxLayout(containerPanel, BoxLayout.PAGE_AXIS));
+        containerPanel.setLayout(new BoxLayout(containerPanel, 
+            BoxLayout.PAGE_AXIS));
 
         JPanel fieldPanel = new JPanel();
         containerPanel.add(fieldPanel);
@@ -85,14 +86,16 @@ public class LoginGUI extends JFrame {
 
         // TODO: remove this to prompt for username/pw
         //attemptLogin("defaultUser", "password");
-        //attemptLogin("bigbrother", "plzletmein"); // Can't get the LoginGUI to dispose
+        //attemptLogin("bigbrother", "plzletmein"); 
+        // Can't get the LoginGUI to dispose
         attemptLogin("brian", "708050");
     }
 
     private void attemptLogin(String username, String password) {
         // If they enter an admin combination, show AdminGUI
         
-        if(username.equals(Main.MySQL_username) && password.equals(Main.MySQL_password)){
+        if(username.equals(Main.MySQL_username) && password.equals
+            (Main.MySQL_password)){
             dispose();
 
             AdminGUI AdminWin = new AdminGUI();
@@ -110,7 +113,8 @@ public class LoginGUI extends JFrame {
             dispose();
             new Client();
         } catch (UserDoesNotExist e) {
-            JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Error",
+                JOptionPane.ERROR_MESSAGE);
         }
        
     }

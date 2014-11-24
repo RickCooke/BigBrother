@@ -20,7 +20,8 @@ public class SQLite {
             Class.forName("org.sqlite.JDBC").newInstance();
             conn = DriverManager.getConnection("jdbc:sqlite:local.db");
 
-            String SQL = "SELECT name FROM sqlite_master WHERE type = 'table' AND name = ?;";
+            String SQL = "SELECT name FROM sqlite_master WHERE type = 'table' "
+                + "AND name = ?;";
 
             ps = conn.prepareStatement(SQL);
             ps.setString(1, "stats");
@@ -61,7 +62,9 @@ public class SQLite {
             establishConnection();
         }
 
-        String SQL = "CREATE TABLE `stats` (" + "`blockid` INTEGER," + "`userid` INTEGER," + "`appid` INTEGER," + "`count` INTEGER," + "PRIMARY KEY(blockid,userid,appid)" + ");";
+        String SQL = "CREATE TABLE `stats` (" + "`blockid` INTEGER,"
+        + "`userid` INTEGER," + "`appid` INTEGER," + "`count` INTEGER," 
+            + "PRIMARY KEY(blockid,userid,appid)" + ");";
 
         try {
             ps = conn.prepareStatement(SQL);
@@ -199,8 +202,10 @@ public class SQLite {
             System.out.println("This blockID: " + sdf.format(date2));
         }
         
-        String UPDATE_SQL = "UPDATE stats SET count = count + ? WHERE blockid = ? AND userid = ? AND appid = ?";
-        String INSERT_SQL = "INSERT INTO stats (blockid, userid, appid, count) VALUES (?, ?, ?, ?)";
+        String UPDATE_SQL = "UPDATE stats SET count = count + ? WHERE "
+            + "blockid = ? AND userid = ? AND appid = ?";
+        String INSERT_SQL = "INSERT INTO stats (blockid, userid, appid,"
+            + " count) VALUES (?, ?, ?, ?)";
 
         PreparedStatement ps2 = null;
         try {

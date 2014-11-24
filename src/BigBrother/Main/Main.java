@@ -76,7 +76,8 @@ public class Main {
         });
 
 
-        Image img = Toolkit.getDefaultToolkit().getImage(Main.class.getResource("/images/spy16.png"));
+        Image img = Toolkit.getDefaultToolkit().getImage(Main.class.
+            getResource("/images/spy16.png"));
         TrayIcon trayIcon = new TrayIcon(img, "Big Brother", popMenu);
 
         try {

@@ -13,7 +13,8 @@ public class App {
 
     public App() {}
 
-    public App(int _appID, String _alias, String _window, boolean _windowIsRegex, String _process, boolean _processIsRegex) {
+    public App(int _appID, String _alias, String _window, 
+        boolean _windowIsRegex, String _process, boolean _processIsRegex) {
         appID = _appID;
         alias = _alias;
         window = _window;
@@ -23,7 +24,8 @@ public class App {
     }
 
     public void print() {
-        System.out.println(appID + " " + alias + " " + window + " " + window_regex + " " + process + " " + process_regex);
+        System.out.println(appID + " " + alias + " " + window + " " 
+    + window_regex + " " + process + " " + process_regex);
     }
 
     public void print2() {
@@ -54,7 +56,8 @@ public class App {
             // otherwise normal
             if (window_regex && windowTitle.matches(window)) {
                 windowMatch = true;
-            } else if (windowTitle.toLowerCase().equals(window.toLowerCase())) {
+            } else if (windowTitle.toLowerCase().equals
+                (window.toLowerCase())) {
                 windowMatch = true;
             }
         }
@@ -65,7 +68,8 @@ public class App {
         } else {
             if (process_regex && processName.matches(process)) {
                 processMatch = true;
-            } else if (processName.toLowerCase().equals(process.toLowerCase())) {
+            } else if (processName.toLowerCase().equals
+                (process.toLowerCase())) {
                 processMatch = true;
             }
         }

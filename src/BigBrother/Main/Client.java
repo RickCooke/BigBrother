@@ -70,9 +70,11 @@ public class Client {
             }
 
             if (OTHER_APP_INDEX == -1)
-                throw new RequiredAppsNotFoundException("'Other' App index not found.");
+                throw new RequiredAppsNotFoundException(""
+                    + "'Other' App index not found.");
             else if (IDLE_APP_INDEX == -1)
-                throw new RequiredAppsNotFoundException("'Idle' App index not found.");
+                throw new RequiredAppsNotFoundException(""
+                    + "'Idle' App index not found.");
         } catch (RequiredAppsNotFoundException e) {
             System.out.println(e.getMessage());
             System.exit(1);
@@ -144,7 +146,8 @@ public class Client {
         try {
             MySQL.getSettings();
         } catch (NoSettingsException e) {
-            JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, e.getMessage(),
+                "Error", JOptionPane.ERROR_MESSAGE);
             System.exit(1);
         }
     }
@@ -198,10 +201,12 @@ public class Client {
         if (!idleFlag) {
 
             // get the Window & Process Names
-            GetWindowTextW(WindowsAPI.EnumerateWindows.User32DLL.GetForegroundWindow(), buffer, 1024);
+            GetWindowTextW(WindowsAPI.EnumerateWindows.User32DLL.
+                GetForegroundWindow(), buffer, 1024);
             windowTitle = Native.toString(buffer);
             GetWindowThreadProcessId(GetForegroundWindow(), pointer);
-            process = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, false, pointer.getValue());
+            process = OpenProcess(PROCESS_QUERY_INFORMATION |
+                PROCESS_VM_READ, false, pointer.getValue());
             GetModuleBaseNameW(process, null, buffer, 1024);
             processName = Native.toString(buffer);
 
@@ -238,7 +243,8 @@ public class Client {
 
         // If we need to, flush from memory to local SQLite DB
         try {
-            if (pollNum % (Main.memory_flush_interval / Main.polling_interval) == 0)
+            if (pollNum % (Main.memory_flush_interval / 
+                Main.polling_interval) == 0)
                 memFlush();
         } catch (CountMismatchException e) {
             // TODO: handle this better
@@ -246,7 +252,8 @@ public class Client {
         }
 
         // if we need to, flush from SQLite DB to server
-        if (pollNum % (Main.local_flush_interval / Main.polling_interval) == 0)
+        if (pollNum % (Main.local_flush_interval / 
+            Main.polling_interval) == 0)
             localFlush();
     }
 
@@ -265,7 +272,8 @@ public class Client {
                 Keyboard.unhook();
             }
         } catch (KeyboardHookFailed e) {
-            JOptionPane.showMessageDialog(Main.win, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(Main.win, e.getMessage(),
+                "Error", JOptionPane.ERROR_MESSAGE);
         }
 
         // Set up the idle timer
@@ -279,7 +287,8 @@ public class Client {
                         Keyboard.hook();
                     }
                 } catch (KeyboardHookFailed e) {
-                    JOptionPane.showMessageDialog(Main.win, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(Main.win, e.getMessage(), 
+                        "Error", JOptionPane.ERROR_MESSAGE);
                 }
                 
                 User32.MSG msg = new User32.MSG();
@@ -299,7 +308,8 @@ public class Client {
 
         // Debug text
         if (Main.debug)
-            System.out.println("Activity detected. Idle timer has been reset.");
+            System.out.println("Activity detected."
+                + " Idle timer has been reset.");
     }
 
     public static void setIdle(boolean _idle) {
@@ -337,11 +347,13 @@ public class Client {
         int otherCount = userApps.get(OTHER_APP_INDEX).getCount();
         if (otherCount != (Main.memory_flush_interval - totalCount)) {
             if (Main.debug)
-                System.out.println("Something weird happened where other count isn't what it should be");
+                System.out.println("Something weird happened "
+                    + "where other count isn't what it should be");
 
             // TODO: reenable this, it was freaking out
             // throw new
-            // CountMismatchException("'Other App' poll count does not match the remainder of time not spent on other apps.");
+            // CountMismatchException("'Other App' poll count does not
+            //match the remainder of time not spent on other apps.");
         }
 
         // =======================================================

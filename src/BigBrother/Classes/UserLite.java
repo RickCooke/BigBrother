@@ -6,7 +6,8 @@ public class UserLite {
     protected String firstName;
     protected String lastName;
 
-    public UserLite(int _userID, String _username, String _firstName, String _lastName) {
+    public UserLite(int _userID, String _username, 
+        String _firstName, String _lastName) {
         userID = _userID;
         username = _username;
         firstName = _firstName;
