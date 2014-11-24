@@ -1,6 +1,7 @@
 package BigBrother.Main;
 
 import java.sql.*;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -185,9 +186,20 @@ public class SQLite {
             createTables();
         }
 
-        long unixTime = System.currentTimeMillis() / 1000L;
-        int blockid = ((int) unixTime - Main.start_time) / Main.block_time;
+        int unixTime = (int) (System.currentTimeMillis() / 1000L);
+        
+        
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z"); // the format of your date
 
+        int block_time_in_seconds = Main.block_time / 1000;
+        
+        int numBlocks = (unixTime - Main.start_time) / block_time_in_seconds;
+        int blockid = (Main.start_time + (numBlocks * block_time_in_seconds));
+        
+        Date date2 = new Date(blockid * 1000L); // *1000 is to convert seconds to milliseconds
+        System.out.println(sdf.format(date2));
+        
+        
         String UPDATE_SQL = "UPDATE stats SET count = count + ? WHERE blockid = ? AND userid = ? AND appid = ?";
         String INSERT_SQL = "INSERT INTO stats (blockid, userid, appid, count) VALUES (?, ?, ?, ?)";
 

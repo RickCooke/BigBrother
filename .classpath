@@ -2,9 +2,9 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
-	<classpathentry kind="lib" path="C:/Users/Brian/workspace/BigBrother/jna-4.1.0.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Brian/workspace/BigBrother/jna-platform-4.1.0.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Brian/workspace/BigBrother/mysql-connector-java-5.1.34-bin.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Brian/workspace/BigBrother/sqlite-jdbc-3.8.7.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Administrator/workspace/BigBrother/jna-4.1.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Administrator/workspace/BigBrother/jna-platform-4.1.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Administrator/workspace/BigBrother/mysql-connector-java-5.1.34-bin.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Administrator/workspace/BigBrother/sqlite-jdbc-3.8.7.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

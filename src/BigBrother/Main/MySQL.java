@@ -84,7 +84,7 @@ public class MySQL {
             establishConnection();
         }
 
-        String SQL = "SELECT * FROM settings";
+        String SQL = "SELECT polling_interval, memory_flush_interval, local_flush_interval, max_idle_time, UNIX_TIMESTAMP(start_time) as start_time, block_time FROM settings";
 
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -237,8 +237,8 @@ public class MySQL {
             establishConnection();
         }
 
-        String UPDATE_SQL = "UPDATE stats SET count = count + ? WHERE blockid = ? AND userid = ? AND appid = ?";
-        String INSERT_SQL = "INSERT INTO stats (blockid, userid, appid, count) VALUES (?, ?, ?, ?)";
+        String UPDATE_SQL = "UPDATE stats SET count = count + ? WHERE blockid = FROM_UNIXTIME(?) AND userid = ? AND appid = ?";
+        String INSERT_SQL = "INSERT INTO stats (blockid, userid, appid, count) VALUES (FROM_UNIXTIME(?), ?, ?, ?)";
 
         PreparedStatement ps = null;
         PreparedStatement ps2 = null;
