@@ -1,6 +1,5 @@
 package BigBrother.GUI;
 
-import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
@@ -18,7 +17,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import BigBrother.Classes.App;
-import BigBrother.Classes.User;
 import BigBrother.Client.MySQL;
 import BigBrother.Exceptions.EmptyTFException;
 import BigBrother.Exceptions.MultipleResultsFoundException;
@@ -27,7 +25,6 @@ import BigBrother.Exceptions.NoResultsFoundException;
 public class AppGUI extends JFrame {
 
     private boolean isExistingApp = false;
-    private int appID = -1; // only should be set if app is being edited
 
     private final JTextField aliasTF = new JTextField(20);
     private final JTextField windowTF = new JTextField(20);

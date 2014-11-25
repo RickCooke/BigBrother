@@ -29,7 +29,6 @@ import BigBrother.Exceptions.NoResultsFoundException;
 public class UserGUI extends JFrame {
 
     private boolean isExistingUser = false;
-    private int userID = -1; // only should be set if user is being edited
 
     private final JTextField usernameTF = new JTextField(20);
     private final JTextField passwordTF = new JPasswordField(20);

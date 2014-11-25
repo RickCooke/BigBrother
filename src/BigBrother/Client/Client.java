@@ -17,7 +17,6 @@ import java.util.TimerTask;
 
 import javax.swing.JOptionPane;
 import BigBrother.Classes.App;
-import BigBrother.Classes.Settings;
 import BigBrother.Exceptions.CountMismatchException;
 import BigBrother.Exceptions.KeyboardHookFailed;
 import BigBrother.Exceptions.RequiredAppsNotFoundException;
@@ -68,7 +67,7 @@ public class Client {
                     + "'Idle' App index not found.");
         } catch (RequiredAppsNotFoundException e) {
             System.out.println(e.getMessage());
-            System.exit(1);
+            destroy();
         }
 
         // TODO: make it so userApps is sorted based on specificity
@@ -113,7 +112,7 @@ public class Client {
             // for valid times/notify user Main.settings are malformed?
 
             // Exit if timers are not working
-            System.exit(1);
+            destroy();
         }
 
 
@@ -127,8 +126,9 @@ public class Client {
     }
 
     // ends the current session
-    private void destroy() {
+    public static void destroy() {
         // TODO: implement this
+        System.exit(1);
     }
 
     // Query server and set our apps list

@@ -12,8 +12,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JFrame;
-import javax.swing.WindowConstants;
-
 import BigBrother.Classes.Settings;
 import BigBrother.GUI.AdminGUI;
 import BigBrother.GUI.LoginGUI;

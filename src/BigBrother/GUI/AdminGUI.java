@@ -59,6 +59,7 @@ public class AdminGUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent arg0) {
             	//TODO: implement this
+            	//(Is this exiting the admin GUI only or the client too?)
             }
         });
         
@@ -91,7 +92,7 @@ public class AdminGUI extends JFrame {
 		            win.pack();
 		            win.setVisible(true);
 				} catch (UnknownSelectTypeException e) {
-					// TODO Auto-generated catch block
+					// This should never occur
 					e.printStackTrace();
 				}
             }
@@ -114,7 +115,7 @@ public class AdminGUI extends JFrame {
 		            win.pack();
 		            win.setVisible(true);
 				} catch (UnknownSelectTypeException e) {
-					// TODO Auto-generated catch block
+					// This should never occur
 					e.printStackTrace();
 				}
             }

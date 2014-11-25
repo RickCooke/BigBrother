@@ -27,16 +27,15 @@ public class SettingsGUI extends JFrame {
     private final NumberFormat numFormat = NumberFormat.getNumberInstance(Locale.getDefault());
     
     private final JFormattedTextField polling_interval_TF = new JFormattedTextField(numFormat);
-    private final JComboBox polling_interval_unit = new JComboBox(timeUnits);
+    private final JComboBox<String> polling_interval_unit = new JComboBox<String>(timeUnits);
     private final JFormattedTextField memory_flush_interval_TF = new JFormattedTextField(numFormat);
-    private final JComboBox memory_flush_interval_unit = new JComboBox(timeUnits);
+    private final JComboBox<String> memory_flush_interval_unit = new JComboBox<String>(timeUnits);
     private final JFormattedTextField local_flush_interval_TF = new JFormattedTextField(numFormat);
-    private final JComboBox local_flush_interval_unit = new JComboBox(timeUnits);
+    private final JComboBox<String> local_flush_interval_unit = new JComboBox<String>(timeUnits);
     private final JFormattedTextField max_idle_time_TF = new JFormattedTextField(numFormat);
-    private final JComboBox max_idle_time_unit = new JComboBox(timeUnits);
-    private final JFormattedTextField start_time_TF = new JFormattedTextField(numFormat); //TODO: make this a date selector
+    private final JComboBox<String> max_idle_time_unit = new JComboBox<String>(timeUnits);
     private final JFormattedTextField block_time_TF = new JFormattedTextField(numFormat);
-    private final JComboBox block_time_unit = new JComboBox(timeUnits);
+    private final JComboBox<String> block_time_unit = new JComboBox<String>(timeUnits);
 
     private final JButton OKButton = new JButton("Update");
     private final JButton cancelButton = new JButton("Cancel");
@@ -74,9 +73,6 @@ public class SettingsGUI extends JFrame {
         max_idle_time_group.add(max_idle_time_TF);
         max_idle_time_group.add(max_idle_time_unit);
 
-        JPanel start_time_group = new JPanel(new FlowLayout());
-        start_time_TF.setColumns(10);
-        start_time_group.add(start_time_TF);
 
         JPanel block_time_group = new JPanel(new FlowLayout());
         block_time_TF.setColumns(10);
@@ -95,8 +91,10 @@ public class SettingsGUI extends JFrame {
         add(new JLabel("Time to Idle: "));
         add(max_idle_time_group);
         
+        //TODO: find a Date Picker Library
+        //maybe this one? https://github.com/JDatePicker/JDatePicker
         add(new JLabel("Start Date: "));
-        add(start_time_group);
+        add(new JLabel("***PLACEHOLDER FOR DATE PICKER***"));
         
         add(new JLabel("Time Block Duration: "));
         add(block_time_group);
@@ -139,8 +137,9 @@ public class SettingsGUI extends JFrame {
         // TODO: build the Settings (remember to take units into account),
     	// throw a MalformedSettingsException if something is wrong
     	throw new MalformedSettingsException("Not yet implemented!");
-    	
+
     	//upload the new settings to the SQL DB
+    	//TODO: uncomment this code, it's just commented cause it's unreachable code from the placeholder throw above
 		//MySQL.sendSettings(newSettings);
     }
 }

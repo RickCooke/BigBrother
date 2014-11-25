@@ -83,6 +83,7 @@ public class LoginGUI extends JFrame {
         //attemptLogin("defaultUser", "password");
         //attemptLogin("bigbrother", "plzletmein"); 
         // Can't get the LoginGUI to dispose
+        // Note from Mike: commenting this out and logigng in normally hangs the program for me :(
         attemptLogin("brian", "708050");
     }
 

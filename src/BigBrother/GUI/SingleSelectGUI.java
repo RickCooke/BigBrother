@@ -6,8 +6,6 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
-import java.sql.SQLException;
-
 import javax.swing.Box;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -21,8 +19,6 @@ import javax.swing.JScrollPane;
 import BigBrother.Classes.AppLite;
 import BigBrother.Classes.UserLite;
 import BigBrother.Client.MySQL;
-import BigBrother.Exceptions.MultipleResultsFoundException;
-import BigBrother.Exceptions.NoResultsFoundException;
 import BigBrother.Exceptions.UnknownSelectTypeException;
 
 public class SingleSelectGUI extends JFrame {
@@ -140,6 +136,7 @@ public class SingleSelectGUI extends JFrame {
 		if(selectType == 0){
 			//TODO: delete a user from the database
 			//(I guess this means from user table, user_apps, all stats?)
+			//or do we want to have a user "Active" state too?
 		}
 		if(selectType == 1){
 			//TODO: delete an app from the database
