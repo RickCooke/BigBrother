@@ -41,6 +41,46 @@ public class AdminGUI extends JFrame {
         usersPanel.setLayout(new BoxLayout(usersPanel, BoxLayout.Y_AXIS));
         appsPanel.setLayout(new BoxLayout(appsPanel, BoxLayout.Y_AXIS));
 
+        //Setup the menu bar
+        JMenu fileMenu = new JMenu("File");
+        JMenu editMenu = new JMenu("Edit");
+        
+        //Add File Item Menus
+        JMenuItem logoutMenu = new JMenuItem("Logout");
+        logoutMenu.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                Main.logout();
+            }
+        });
+        JMenuItem exitMenu = new JMenuItem("Exit");
+        exitMenu.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+            	//TODO: implement this
+            }
+        });
+        
+        fileMenu.add(logoutMenu);
+        fileMenu.add(exitMenu);
+
+        //Add Edit Item Menus
+        JMenuItem settingsMenu = new JMenuItem("Settings");
+        settingsMenu.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                openSettingsGUI();
+            }
+        });
+        
+        editMenu.add(settingsMenu);
+
+        //add menubar
+        JMenuBar menuBar = new JMenuBar();
+        menuBar.add(fileMenu);
+        menuBar.add(editMenu);
+        setJMenuBar(menuBar);
+        
         // Users section
         JLabel usersLabel = new JLabel("Users");
         usersLabel.setAlignmentX(CENTER_ALIGNMENT);
@@ -130,5 +170,11 @@ public class AdminGUI extends JFrame {
 
         // update the tracked app list
         MySQL.getTrackedAppsDLM(userID, appsDLM);
+    }
+    
+    private void openSettingsGUI() {
+    	SettingsGUI win = new SettingsGUI();
+        win.pack();
+        win.setVisible(true);
     }
 };

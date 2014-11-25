@@ -93,7 +93,7 @@ public class Main {
         
     }
     
-    private static void logout() {
+    public static void logout() {
     	//reset everything
     	settings = new Settings();
     	
