@@ -349,7 +349,6 @@ public class Client {
     // flush the local SQLite database to the server
     private void localFlush() {
 
-        // TODO Push from Local to Server DB
         SQLite.pushToRemote();
 
         // Print debug text

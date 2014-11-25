@@ -15,8 +15,6 @@ import BigBrother.Client.Main;
 import BigBrother.Client.MySQL;
 import BigBrother.Exceptions.UnknownSelectTypeException;
 
-/* Comment here to see if I have write access to the repo */
-
 @SuppressWarnings("serial")
 public class AdminGUI extends JFrame {
 

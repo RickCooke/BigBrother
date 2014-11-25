@@ -18,7 +18,6 @@ import javax.swing.JPanel;
 import javax.swing.JFormattedTextField;
 
 import BigBrother.Classes.Settings;
-import BigBrother.Client.MySQL;
 import BigBrother.Exceptions.MalformedSettingsException;
 
 public class SettingsGUI extends JFrame {

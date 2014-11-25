@@ -43,7 +43,7 @@ public class SingleSelectGUI extends JFrame {
 	    listModel = getList(selectType);
 	    
 	    //JList
-	    JList listBox = new JList <UserLite> (listModel);
+	    JList listBox = new JList (listModel);
 	    JScrollPane listBoxScroll = new JScrollPane(listBox, 
 	        JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, 
 	        JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -136,7 +136,7 @@ public class SingleSelectGUI extends JFrame {
 		if(selectType == 0){
 			//TODO: delete a user from the database
 			//(I guess this means from user table, user_apps, all stats?)
-			//or do we want to have a user "Active" state too?
+			//or do we want to have a user "Active" state too like we do with apps?
 		}
 		if(selectType == 1){
 			//TODO: delete an app from the database
