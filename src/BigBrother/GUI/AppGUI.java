@@ -42,8 +42,8 @@ public class AppGUI extends JFrame {
     public AppGUI() {
         super("New Appliction");
 
-        
-        
+
+
         GridLayout gridLayout = new GridLayout(4, 3);
         getContentPane().setLayout(gridLayout);
 

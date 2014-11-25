@@ -28,9 +28,9 @@ public class MySQL {
     public static void establishConnection() {
         try {
             Class.forName("com.mysql.jdbc.Driver").newInstance();
-            conn = DriverManager.getConnection("jdbc:mysql://" +
-            	Main.settings.MySQL_host + "/" + Main.settings.MySQL_database + "?user=" 
-                + Main.settings.MySQL_username + "&password=" + Main.settings.MySQL_password);
+            conn =
+                        DriverManager.getConnection("jdbc:mysql://" + Main.settings.MySQL_host + "/" + Main.settings.MySQL_database + "?user=" + Main.settings.MySQL_username + "&password="
+                                    + Main.settings.MySQL_password);
         } catch (SQLException ex) {
             // handle any errors
             System.out.println("SQLException: " + ex.getMessage());
@@ -42,15 +42,13 @@ public class MySQL {
     }
 
 
-    public static int checkPassword(String username, String passwordHash) 
-        throws UserDoesNotExist {
+    public static int checkPassword(String username, String passwordHash) throws UserDoesNotExist {
         if (conn == null) {
             establishConnection();
         }
 
         int userid = -1;
-        String SQL = "SELECT userid FROM users u WHERE u.username = ? "
-            + "AND u.password = ?";
+        String SQL = "SELECT userid FROM users u WHERE u.username = ? " + "AND u.password = ?";
 
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -63,8 +61,7 @@ public class MySQL {
             if (rs.next()) {
                 userid = rs.getInt("userid");
             } else {
-                throw new UserDoesNotExist("Username and password "
-                    + "combination was invalid");
+                throw new UserDoesNotExist("Username and password " + "combination was invalid");
             }
         } catch (SQLException ex) {
             System.out.println("SQLException: " + ex.getMessage());
@@ -93,9 +90,7 @@ public class MySQL {
             establishConnection();
         }
 
-        String SQL = "SELECT polling_interval, memory_flush_interval, "
-            + "local_flush_interval, max_idle_time, UNIX_TIMESTAMP(start_time)"
-            + " as start_time, block_time FROM settings";
+        String SQL = "SELECT polling_interval, memory_flush_interval, " + "local_flush_interval, max_idle_time, UNIX_TIMESTAMP(start_time)" + " as start_time, block_time FROM settings";
 
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -104,12 +99,12 @@ public class MySQL {
             ps = conn.prepareStatement(SQL);
             rs = ps.executeQuery();
             if (rs.next()) {
-            	_settings.polling_interval = rs.getInt("polling_interval");
-            	_settings.memory_flush_interval = rs.getInt("memory_flush_interval");
-            	_settings.local_flush_interval = rs.getInt("local_flush_interval");
-            	_settings.max_idle_time = rs.getInt("max_idle_time");
-            	_settings.start_time = rs.getInt("start_time");
-            	_settings.block_time = rs.getInt("block_time");
+                _settings.polling_interval = rs.getInt("polling_interval");
+                _settings.memory_flush_interval = rs.getInt("memory_flush_interval");
+                _settings.local_flush_interval = rs.getInt("local_flush_interval");
+                _settings.max_idle_time = rs.getInt("max_idle_time");
+                _settings.start_time = rs.getInt("start_time");
+                _settings.block_time = rs.getInt("block_time");
             } else {
                 throw new NoSettingsException("There are no settings");
             }
@@ -134,17 +129,15 @@ public class MySQL {
         }
 
     }
+
     public static void sendSettings(Settings _settings) {
         if (conn == null) {
             establishConnection();
         }
 
-        String SQL = "UPDATE settings SET polling_interval=" + _settings.polling_interval +
-        		", memory_flush_interval=" + _settings.memory_flush_interval +
-        		", local_flush_interval=" +_settings.local_flush_interval + 
-        		", max_idle_time=" + _settings.max_idle_time +
-        		", start_time=" + _settings.start_time +
-        		", block_time=" + _settings.block_time;
+        String SQL =
+                    "UPDATE settings SET polling_interval=" + _settings.polling_interval + ", memory_flush_interval=" + _settings.memory_flush_interval + ", local_flush_interval="
+                                + _settings.local_flush_interval + ", max_idle_time=" + _settings.max_idle_time + ", start_time=" + _settings.start_time + ", block_time=" + _settings.block_time;
 
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -173,7 +166,7 @@ public class MySQL {
         }
 
     }
-    
+
     public static ArrayList<App> getTrackedAppsArrayList(int userID) {
 
         ArrayList<App> userApps = new ArrayList<App>();
@@ -182,8 +175,7 @@ public class MySQL {
             establishConnection();
         }
 
-        String SQL = "SELECT a . * FROM users_apps u, apps a WHERE u.userid = "
-            + "? AND u.appid = a.appid AND a.active = 1";
+        String SQL = "SELECT a . * FROM users_apps u, apps a WHERE u.userid = " + "? AND u.appid = a.appid AND a.active = 1";
 
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -193,9 +185,7 @@ public class MySQL {
             ps.setInt(1, userID);
             rs = ps.executeQuery();
             while (rs.next()) {
-                App temp = new App(rs.getInt("appid"), rs.getString("alias"),
-                    rs.getString("window"), rs.getBoolean("window_regex"), 
-                    rs.getString("process"), rs.getBoolean("process_regex"), true);
+                App temp = new App(rs.getInt("appid"), rs.getString("alias"), rs.getString("window"), rs.getBoolean("window_regex"), rs.getString("process"), rs.getBoolean("process_regex"), true);
                 userApps.add(temp);
             }
 
@@ -226,8 +216,7 @@ public class MySQL {
         return userApps;
     }
 
-    public static DefaultListModel<AppLite> getTrackedAppsDLM
-      (int userID, DefaultListModel<AppLite> dlm) {
+    public static DefaultListModel<AppLite> getTrackedAppsDLM(int userID, DefaultListModel<AppLite> dlm) {
         // clear the existing list
         dlm.clear();
 
@@ -238,8 +227,7 @@ public class MySQL {
         // prepare the query
         PreparedStatement ps = null;
         ResultSet rs = null;
-        String SQL = "SELECT a.appid, a.alias FROM users_apps u, "
-            + "apps a WHERE u.userid = ? AND u.appid = a.appid AND a.active = 1";
+        String SQL = "SELECT a.appid, a.alias FROM users_apps u, " + "apps a WHERE u.userid = ? AND u.appid = a.appid AND a.active = 1";
 
         try {
             ps = conn.prepareStatement(SQL);
@@ -256,9 +244,8 @@ public class MySQL {
 
         return dlm;
     }
-    
-    public static DefaultListModel<UserLite> 
-      getUserList(DefaultListModel<UserLite> dlm) {
+
+    public static DefaultListModel<UserLite> getUserList(DefaultListModel<UserLite> dlm) {
         // clear the existing list
         dlm.clear();
 
@@ -269,8 +256,7 @@ public class MySQL {
         // prepare the query
         PreparedStatement ps = null;
         ResultSet rs = null;
-        String SQL = "SELECT u.userid, u.username, u.firstname, "
-            + "u.lastname FROM users u";
+        String SQL = "SELECT u.userid, u.username, u.firstname, " + "u.lastname FROM users u";
 
         try {
             ps = conn.prepareStatement(SQL);
@@ -279,18 +265,15 @@ public class MySQL {
             rs = ps.executeQuery();
 
             while (rs.next())
-                dlm.addElement(new UserLite(rs.getInt("userid"), 
-                    rs.getString("username"), 
-                    rs.getString("firstname"), rs.getString("lastname")));
+                dlm.addElement(new UserLite(rs.getInt("userid"), rs.getString("username"), rs.getString("firstname"), rs.getString("lastname")));
         } catch (SQLException e) {
             System.out.println("SQLException: " + e.getMessage());
         }
 
         return dlm;
     }
-    
-    public static DefaultListModel<AppLite> 
-    getActiveAppList(DefaultListModel<AppLite> dlm) {
+
+    public static DefaultListModel<AppLite> getActiveAppList(DefaultListModel<AppLite> dlm) {
         // clear the existing list
         dlm.clear();
 
@@ -310,15 +293,14 @@ public class MySQL {
             rs = ps.executeQuery();
 
             while (rs.next())
-                dlm.addElement(new AppLite(rs.getInt("appid"), 
-                    rs.getString("alias")));
+                dlm.addElement(new AppLite(rs.getInt("appid"), rs.getString("alias")));
         } catch (SQLException e) {
             System.out.println("SQLException: " + e.getMessage());
         }
 
         return dlm;
-      }
-    
+    }
+
     public static void flushLocalBuffer(ArrayList<int[]> buffer) {
         int rows = 0;
 
@@ -326,14 +308,12 @@ public class MySQL {
             establishConnection();
         }
 
-        String UPDATE_SQL = "UPDATE stats SET count = count + ? "
-            + "WHERE blockid = FROM_UNIXTIME(?) AND userid = ? AND appid = ?";
-        String INSERT_SQL = "INSERT INTO stats (blockid, userid, appid,"
-            + " count) VALUES (FROM_UNIXTIME(?), ?, ?, ?)";
+        String UPDATE_SQL = "UPDATE stats SET count = count + ? " + "WHERE blockid = FROM_UNIXTIME(?) AND userid = ? AND appid = ?";
+        String INSERT_SQL = "INSERT INTO stats (blockid, userid, appid," + " count) VALUES (FROM_UNIXTIME(?), ?, ?, ?)";
 
         PreparedStatement ps = null;
         PreparedStatement ps2 = null;
-        
+
         try {
             ps = conn.prepareStatement(UPDATE_SQL);
             ps2 = conn.prepareStatement(INSERT_SQL);
@@ -344,8 +324,8 @@ public class MySQL {
                 int appid = b[2];
                 int count = b[3];
 
-                //TODO: check if userid Main.loggedInUserID
-                
+                // TODO: check if userid Main.loggedInUserID
+
                 ps.setInt(1, count);
                 ps.setInt(2, blockid);
                 ps.setInt(3, userid);
@@ -387,13 +367,12 @@ public class MySQL {
             }
         }
     }
-    
+
     public static User getUser(int userID) throws MultipleResultsFoundException, NoResultsFoundException, SQLException {
         // prepare the query
         PreparedStatement ps = null;
         ResultSet rs = null;
-    	String SQL = "SELECT u.userid, u.username, u.firstname, u.lastname, u.group FROM users u "
-                + " WHERE u.userid = ?";
+        String SQL = "SELECT u.userid, u.username, u.firstname, u.lastname, u.group FROM users u " + " WHERE u.userid = ?";
 
         ps = conn.prepareStatement(SQL);
         ps.setInt(1, userID);
@@ -401,9 +380,9 @@ public class MySQL {
         // execute query
         rs = ps.executeQuery();
         rs.next();
-        
-        //should only get one result
-        if(rs.isFirst() && rs.isLast()) {
+
+        // should only get one result
+        if (rs.isFirst() && rs.isLast()) {
             User ret = new User();
             ret.userID = userID;
             ret.username = rs.getString("username");
@@ -411,19 +390,17 @@ public class MySQL {
             ret.lastName = rs.getString("lastname");
             ret.groupNum = rs.getInt("group");
             return ret;
-        }
-        else if(!rs.first())
-        	throw new NoResultsFoundException("No users found with userID #" + userID + ".");
+        } else if (!rs.first())
+            throw new NoResultsFoundException("No users found with userID #" + userID + ".");
         else
-        	throw new MultipleResultsFoundException("Multiple users found with userID #" + userID + ".");
+            throw new MultipleResultsFoundException("Multiple users found with userID #" + userID + ".");
     }
-    
+
     public static App getApp(int appID) throws MultipleResultsFoundException, NoResultsFoundException, SQLException {
         // prepare the query
         PreparedStatement ps = null;
         ResultSet rs = null;
-    	String SQL = "SELECT a.appid, a.alias, a.window, a.window_regex, a.process, a.process_regex FROM apps a "
-                + " WHERE a.appid = ? AND a.active = 1";
+        String SQL = "SELECT a.appid, a.alias, a.window, a.window_regex, a.process, a.process_regex FROM apps a " + " WHERE a.appid = ? AND a.active = 1";
 
         ps = conn.prepareStatement(SQL);
         ps.setInt(1, appID);
@@ -432,20 +409,13 @@ public class MySQL {
         rs = ps.executeQuery();
         rs.next();
 
-        //should only get one result
-        if(rs.isFirst() && rs.isLast()) {
-            App ret = new App(appID,
-            		rs.getString("alias"),
-            		rs.getString("window"),
-            		rs.getBoolean("window_regex"),
-            		rs.getString("process"),
-            		rs.getBoolean("process_regex"),
-            		true);
+        // should only get one result
+        if (rs.isFirst() && rs.isLast()) {
+            App ret = new App(appID, rs.getString("alias"), rs.getString("window"), rs.getBoolean("window_regex"), rs.getString("process"), rs.getBoolean("process_regex"), true);
             return ret;
-        }
-        else if(!rs.first())
-        	throw new NoResultsFoundException("No apps found with appID #" + appID + ".");
+        } else if (!rs.first())
+            throw new NoResultsFoundException("No apps found with appID #" + appID + ".");
         else
-        	throw new MultipleResultsFoundException("Multiple apps found with appID #" + appID + ".");
+            throw new MultipleResultsFoundException("Multiple apps found with appID #" + appID + ".");
     }
 }

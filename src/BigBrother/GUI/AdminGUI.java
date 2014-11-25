@@ -20,10 +20,8 @@ import BigBrother.Exceptions.UnknownSelectTypeException;
 @SuppressWarnings("serial")
 public class AdminGUI extends JFrame {
 
-    private final DefaultListModel<UserLite> usersDLM 
-    = new DefaultListModel<UserLite>();
-    private final DefaultListModel<AppLite> appsDLM 
-    = new DefaultListModel<AppLite>();
+    private final DefaultListModel<UserLite> usersDLM = new DefaultListModel<UserLite>();
+    private final DefaultListModel<AppLite> appsDLM = new DefaultListModel<AppLite>();
     private final JList<UserLite> usersList = new JList<UserLite>(usersDLM);
     private final JList<AppLite> appsList = new JList<AppLite>(appsDLM);
 
@@ -33,8 +31,8 @@ public class AdminGUI extends JFrame {
         if (Main.settings.debug)
             System.out.println("Admin GUI Initialized.");
 
-        
-        
+
+
         // Set the layout
         setLayout(new BorderLayout());
         JPanel mainPanel = new JPanel();
@@ -44,11 +42,11 @@ public class AdminGUI extends JFrame {
         usersPanel.setLayout(new BoxLayout(usersPanel, BoxLayout.Y_AXIS));
         appsPanel.setLayout(new BoxLayout(appsPanel, BoxLayout.Y_AXIS));
 
-        //Setup the menu bar
+        // Setup the menu bar
         JMenu fileMenu = new JMenu("File");
         JMenu editMenu = new JMenu("Edit");
-        
-        //Add File Item Menus
+
+        // Add File Item Menus
         JMenuItem logoutMenu = new JMenuItem("Logout");
         logoutMenu.addActionListener(new ActionListener() {
             @Override
@@ -60,20 +58,20 @@ public class AdminGUI extends JFrame {
         exitMenu.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
-            	//TODO: Should we exit the admin GUI only or the client too?
-            	
-            	//close the window
+                // TODO: Should we exit the admin GUI only or the client too?
+
+                // close the window
                 closeWindow();
-                
-                //enable if we're killing the whole program
-                //Client.destroy();
+
+                // enable if we're killing the whole program
+                // Client.destroy();
             }
         });
-        
+
         fileMenu.add(logoutMenu);
         fileMenu.add(exitMenu);
 
-        //Add Edit Item Menus
+        // Add Edit Item Menus
         JMenuItem settingsMenu = new JMenuItem("Settings");
         settingsMenu.addActionListener(new ActionListener() {
             @Override
@@ -85,61 +83,61 @@ public class AdminGUI extends JFrame {
         addUserMenu.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
-            	UserGUI win = new UserGUI();
-	            win.pack();
-	            win.setVisible(true);
+                UserGUI win = new UserGUI();
+                win.pack();
+                win.setVisible(true);
             }
         });
         JMenuItem editUserMenu = new JMenuItem("Edit User");
         editUserMenu.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
-				try {
-					SingleSelectGUI win = new SingleSelectGUI(0);
-		            win.pack();
-		            win.setVisible(true);
-				} catch (UnknownSelectTypeException e) {
-					// This should never occur
-					e.printStackTrace();
-				}
+                try {
+                    SingleSelectGUI win = new SingleSelectGUI(0);
+                    win.pack();
+                    win.setVisible(true);
+                } catch (UnknownSelectTypeException e) {
+                    // This should never occur
+                    e.printStackTrace();
+                }
             }
         });
         JMenuItem addAppMenu = new JMenuItem("Add Application");
         addAppMenu.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
-            	AppGUI win = new AppGUI();
-	            win.pack();
-	            win.setVisible(true);
+                AppGUI win = new AppGUI();
+                win.pack();
+                win.setVisible(true);
             }
         });
         JMenuItem editAppMenu = new JMenuItem("Edit Application");
         editAppMenu.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
-				try {
-					SingleSelectGUI win = new SingleSelectGUI(1);
-		            win.pack();
-		            win.setVisible(true);
-				} catch (UnknownSelectTypeException e) {
-					// This should never occur
-					e.printStackTrace();
-				}
+                try {
+                    SingleSelectGUI win = new SingleSelectGUI(1);
+                    win.pack();
+                    win.setVisible(true);
+                } catch (UnknownSelectTypeException e) {
+                    // This should never occur
+                    e.printStackTrace();
+                }
             }
         });
-        
+
         editMenu.add(settingsMenu);
         editMenu.add(addUserMenu);
         editMenu.add(editUserMenu);
         editMenu.add(addAppMenu);
         editMenu.add(editAppMenu);
 
-        //add menubar
+        // add menubar
         JMenuBar menuBar = new JMenuBar();
         menuBar.add(fileMenu);
         menuBar.add(editMenu);
         setJMenuBar(menuBar);
-        
+
         // Users section
         JLabel usersLabel = new JLabel("Users");
         usersLabel.setAlignmentX(CENTER_ALIGNMENT);
@@ -201,7 +199,7 @@ public class AdminGUI extends JFrame {
             win.setSize(new Dimension(421, 166));
             win.setMinimumSize(new Dimension(421, 166));
             win.setVisible(true);
-            
+
         }
     };
 
@@ -218,24 +216,21 @@ public class AdminGUI extends JFrame {
     private void updateApps(int userID) {
         // debug output
         if (Main.settings.debug)
-            System.out.println("Updating tracked app list for user #" 
-        + userID + "...");
+            System.out.println("Updating tracked app list for user #" + userID + "...");
 
 
         // update the tracked app list
         MySQL.getTrackedAppsDLM(userID, appsDLM);
     }
-    
+
     private void openSettingsGUI() {
-    	SettingsGUI win = new SettingsGUI();
+        SettingsGUI win = new SettingsGUI();
         win.pack();
         win.setVisible(true);
     }
-    
+
     private void closeWindow() {
-    	WindowEvent winClosingEvent = new WindowEvent(this,
-                WindowEvent.WINDOW_CLOSING);
-            Toolkit.getDefaultToolkit().getSystemEventQueue().
-            postEvent(winClosingEvent);
+        WindowEvent winClosingEvent = new WindowEvent(this, WindowEvent.WINDOW_CLOSING);
+        Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(winClosingEvent);
     }
 };

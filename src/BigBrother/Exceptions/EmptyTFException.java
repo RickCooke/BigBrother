@@ -6,7 +6,7 @@ public class EmptyTFException extends Exception {
     public EmptyTFException() {
         super();
     }
-    
+
     public EmptyTFException(String string) {
         super(string);
     }

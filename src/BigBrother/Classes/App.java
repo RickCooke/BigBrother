@@ -2,7 +2,7 @@ package BigBrother.Classes;
 
 import java.util.Comparator;
 
-/*comment to later be removed*/
+/* comment to later be removed */
 
 public class App {
     public int appID = -1;
@@ -16,9 +16,7 @@ public class App {
 
     public App() {}
 
-    public App(int _appID, String _alias, String _window, 
-        boolean _windowIsRegex, String _process, 
-        boolean _processIsRegex, boolean _isActive) {
+    public App(int _appID, String _alias, String _window, boolean _windowIsRegex, String _process, boolean _processIsRegex, boolean _isActive) {
         appID = _appID;
         alias = _alias;
         window = _window;
@@ -29,9 +27,8 @@ public class App {
     }
 
     public void print() {
-        System.out.println(appID + " " + alias + " " + window + " " 
-    + window_regex + " " + process + " " + process_regex + " " + getPriorityScore());
-  
+        System.out.println(appID + " " + alias + " " + window + " " + window_regex + " " + process + " " + process_regex + " " + getPriorityScore());
+
     }
 
     public void print2() {
@@ -43,35 +40,41 @@ public class App {
         count = 0;
     }
 
-    public int getPriorityScore(){
+    public int getPriorityScore() {
         // Based on http://i.imgur.com/SREBZj2.png
         int score = 0;
-        
-        if(alias == "Other") return 20;
-        if(alias == "Idle") return 10;
-        
-        if(window != null) score += 3;
-        if(process != null) score += 1;
-        if(!window_regex) score += 1;
-        if(!process_regex) score += 1;
-        
-        return score; 
+
+        if (alias == "Other")
+            return 20;
+        if (alias == "Idle")
+            return 10;
+
+        if (window != null)
+            score += 3;
+        if (process != null)
+            score += 1;
+        if (!window_regex)
+            score += 1;
+        if (!process_regex)
+            score += 1;
+
+        return score;
     }
-    
+
 
     public class AppComparator implements Comparator<App> {
         @Override
         public int compare(App a1, App a2) {
 
-            if (a1.getPriorityScore() == a2.getPriorityScore()){
+            if (a1.getPriorityScore() == a2.getPriorityScore()) {
                 return Integer.compare(a1.getAppID(), a2.getAppID());
             }
-            
+
             // Sort by highest priority score
             return Integer.compare(a2.getPriorityScore(), a1.getPriorityScore());
         }
     }
-    
+
     public boolean isMatch(String windowTitle, String processName) {
         boolean windowMatch = false;
         boolean processMatch = false;
@@ -79,7 +82,7 @@ public class App {
         if (appID == 0 || appID == 1) {
             return false;
         }
-        
+
         // TODO: catch cases where both window name and process name are empty,
         // right now one instance of that would match everything
 
@@ -91,8 +94,7 @@ public class App {
             // otherwise normal
             if (window_regex && windowTitle.matches(window)) {
                 windowMatch = true;
-            } else if (windowTitle.toLowerCase().equals
-                (window.toLowerCase())) {
+            } else if (windowTitle.toLowerCase().equals(window.toLowerCase())) {
                 windowMatch = true;
             }
         }
@@ -103,12 +105,11 @@ public class App {
         } else {
             if (process_regex && processName.matches(process)) {
                 processMatch = true;
-            } else if (processName.toLowerCase().equals
-                (process.toLowerCase())) {
+            } else if (processName.toLowerCase().equals(process.toLowerCase())) {
                 processMatch = true;
             }
         }
-    
+
 
         if (windowMatch && processMatch)
             return true;

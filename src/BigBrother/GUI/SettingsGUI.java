@@ -24,7 +24,7 @@ public class SettingsGUI extends JFrame {
 
     private final String[] timeUnits = {"ms", "sec", "min", "hours", "days"};
     private final NumberFormat numFormat = NumberFormat.getNumberInstance(Locale.getDefault());
-    
+
     private final JFormattedTextField polling_interval_TF = new JFormattedTextField(numFormat);
     private final JComboBox<String> polling_interval_unit = new JComboBox<String>(timeUnits);
     private final JFormattedTextField memory_flush_interval_TF = new JFormattedTextField(numFormat);
@@ -44,14 +44,14 @@ public class SettingsGUI extends JFrame {
         super("Edit Settings");
 
         setLayout(new GridLayout(7, 2));
-        
-        //Set default units
+
+        // Set default units
         polling_interval_unit.setSelectedIndex(0);
         memory_flush_interval_unit.setSelectedIndex(1);
         local_flush_interval_unit.setSelectedIndex(2);
         max_idle_time_unit.setSelectedIndex(2);
         block_time_unit.setSelectedIndex(3);
-        
+
         JPanel polling_interval_group = new JPanel(new FlowLayout());
         polling_interval_TF.setColumns(10);
         polling_interval_group.add(polling_interval_TF);
@@ -77,30 +77,30 @@ public class SettingsGUI extends JFrame {
         block_time_TF.setColumns(10);
         block_time_group.add(block_time_TF);
         block_time_group.add(block_time_unit);
-        
+
         add(new JLabel("Polling Interval: "));
         add(polling_interval_group);
-        
+
         add(new JLabel("Memory -> Local Flush Interval: "));
         add(memory_flush_interval_group);
-        
+
         add(new JLabel("Local -> Server Flush Interval: "));
         add(local_flush_interval_group);
-        
+
         add(new JLabel("Time to Idle: "));
         add(max_idle_time_group);
-        
-        //TODO: find a Date Picker Library
-        //maybe this one? https://github.com/JDatePicker/JDatePicker
+
+        // TODO: find a Date Picker Library
+        // maybe this one? https://github.com/JDatePicker/JDatePicker
         add(new JLabel("Start Date: "));
         add(new JLabel("***PLACEHOLDER FOR DATE PICKER***"));
-        
+
         add(new JLabel("Time Block Duration: "));
         add(block_time_group);
-        
+
         add(OKButton);
         add(cancelButton);
-        
+
         cancelButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
@@ -113,32 +113,29 @@ public class SettingsGUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent arg0) {
                 try {
-                	submitSettings();
+                    submitSettings();
                 } catch (MalformedSettingsException e) {
-                    JOptionPane.showMessageDialog(null, 
-                        e.getMessage(), "Error", 
-                        JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
     }
-    
+
     private void closeWindow() {
-        WindowEvent winClosingEvent = new WindowEvent(this,
-            WindowEvent.WINDOW_CLOSING);
-        Toolkit.getDefaultToolkit().getSystemEventQueue().
-        postEvent(winClosingEvent);
+        WindowEvent winClosingEvent = new WindowEvent(this, WindowEvent.WINDOW_CLOSING);
+        Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(winClosingEvent);
     }
 
     private void submitSettings() throws MalformedSettingsException {
-    	//Settings newSettings = new Settings();
-    	
-        // TODO: build the Settings (remember to take units into account),
-    	// throw a MalformedSettingsException if something is wrong
-    	throw new MalformedSettingsException("Not yet implemented!");
+        // Settings newSettings = new Settings();
 
-    	//upload the new settings to the SQL DB
-    	//TODO: uncomment this code, it's just commented cause it's unreachable code from the placeholder throw above
-		//MySQL.sendSettings(newSettings);
+        // TODO: build the Settings (remember to take units into account),
+        // throw a MalformedSettingsException if something is wrong
+        throw new MalformedSettingsException("Not yet implemented!");
+
+        // upload the new settings to the SQL DB
+        // TODO: uncomment this code, it's just commented cause it's unreachable code from the
+        // placeholder throw above
+        // MySQL.sendSettings(newSettings);
     }
 }

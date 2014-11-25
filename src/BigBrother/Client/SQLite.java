@@ -17,8 +17,7 @@ public class SQLite {
             Class.forName("org.sqlite.JDBC").newInstance();
             conn = DriverManager.getConnection("jdbc:sqlite:local.db");
 
-            String SQL = "SELECT name FROM sqlite_master WHERE type = 'table' "
-                + "AND name = ?;";
+            String SQL = "SELECT name FROM sqlite_master WHERE type = 'table' " + "AND name = ?;";
 
             ps = conn.prepareStatement(SQL);
             ps.setString(1, "stats");
@@ -59,9 +58,7 @@ public class SQLite {
             establishConnection();
         }
 
-        String SQL = "CREATE TABLE `stats` (" + "`blockid` INTEGER,"
-        + "`userid` INTEGER," + "`appid` INTEGER," + "`count` INTEGER," 
-            + "PRIMARY KEY(blockid,userid,appid)" + ");";
+        String SQL = "CREATE TABLE `stats` (" + "`blockid` INTEGER," + "`userid` INTEGER," + "`appid` INTEGER," + "`count` INTEGER," + "PRIMARY KEY(blockid,userid,appid)" + ");";
 
         try {
             ps = conn.prepareStatement(SQL);
@@ -128,8 +125,8 @@ public class SQLite {
 
         String SQL = "SELECT * FROM stats;";
         try {
-                     
-                     
+
+
             ps = conn.prepareStatement(SQL);
             rs = ps.executeQuery();
 
@@ -144,7 +141,7 @@ public class SQLite {
                 temp[3] = rs.getInt("count");
                 buffer.add(temp);
                 i++;
-                if(i % Main.settings.remote_insert_buffer_size == 0) {
+                if (i % Main.settings.remote_insert_buffer_size == 0) {
                     MySQL.flushLocalBuffer(buffer);
                     buffer.clear();
                 }
@@ -187,22 +184,20 @@ public class SQLite {
         }
 
         int unixTime = (int) (System.currentTimeMillis() / 1000L);
-        
+
         int block_time_in_seconds = Main.settings.block_time / 1000;
-        
+
         int numBlocks = (unixTime - Main.settings.start_time) / block_time_in_seconds;
         int blockid = (Main.settings.start_time + (numBlocks * block_time_in_seconds));
-        
-        if(Main.settings.debug) {
+
+        if (Main.settings.debug) {
             Date date2 = new Date(blockid * 1000L);
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
             System.out.println("This blockID: " + sdf.format(date2));
         }
-        
-        String UPDATE_SQL = "UPDATE stats SET count = count + ? WHERE "
-            + "blockid = ? AND userid = ? AND appid = ?";
-        String INSERT_SQL = "INSERT INTO stats (blockid, userid, appid,"
-            + " count) VALUES (?, ?, ?, ?)";
+
+        String UPDATE_SQL = "UPDATE stats SET count = count + ? WHERE " + "blockid = ? AND userid = ? AND appid = ?";
+        String INSERT_SQL = "INSERT INTO stats (blockid, userid, appid," + " count) VALUES (?, ?, ?, ?)";
 
         PreparedStatement ps2 = null;
         try {

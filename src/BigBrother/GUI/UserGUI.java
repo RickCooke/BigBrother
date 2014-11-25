@@ -106,11 +106,7 @@ public class UserGUI extends JFrame {
             public void actionPerformed(ActionEvent arg0) {
                 try {
                     // check for formatting issues
-                    if (firstNameTF.getText().equals("") | 
-                        lastNameTF.getText().equals("") |
-                        usernameTF.getText().equals("") |
-                        passwordTF.getText().equals("") |
-                        confirmPasswordTF.getText().equals("")) {
+                    if (firstNameTF.getText().equals("") | lastNameTF.getText().equals("") | usernameTF.getText().equals("") | passwordTF.getText().equals("") | confirmPasswordTF.getText().equals("")) {
                         throw new EmptyTFException();
                     } else if (!passwordTF.getText().equals(confirmPasswordTF.getText())) {
                         throw new MismatchedPasswordException();
@@ -121,14 +117,9 @@ public class UserGUI extends JFrame {
                             submitNewUser();
                     }
                 } catch (EmptyTFException e) {
-                    JOptionPane.showMessageDialog(null, 
-                        "All Text Fields Except Group Number "
-                        + "Must Be Filled!", "Error", 
-                        JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "All Text Fields Except Group Number " + "Must Be Filled!", "Error", JOptionPane.ERROR_MESSAGE);
                 } catch (MismatchedPasswordException e) {
-                    JOptionPane.showMessageDialog(null, "Passwords Do "
-                        + "Not Match!", "Error", 
-                        JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Passwords Do " + "Not Match!", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -141,11 +132,11 @@ public class UserGUI extends JFrame {
         isExistingUser = true;
 
         User user = MySQL.getUser(userID);
-        
+
         // set the title
         this.setTitle("Edit Existing User: " + user.toString());
 
-        //set fields
+        // set fields
         firstNameTF.setText(user.firstName);
         lastNameTF.setText(user.lastName);
         usernameTF.setText(user.username);
@@ -155,10 +146,8 @@ public class UserGUI extends JFrame {
     }
 
     private void closeWindow() {
-        WindowEvent winClosingEvent = new WindowEvent(this,
-            WindowEvent.WINDOW_CLOSING);
-        Toolkit.getDefaultToolkit().getSystemEventQueue().
-        postEvent(winClosingEvent);
+        WindowEvent winClosingEvent = new WindowEvent(this, WindowEvent.WINDOW_CLOSING);
+        Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(winClosingEvent);
     }
 
     private void submitNewUser() {

@@ -17,7 +17,7 @@ public class Keyboard {
     private static User32.HHOOK hHook;
     private static User32.LowLevelKeyboardProc lpfn;
     private static boolean hooked = false;
-    
+
     public static void Initialize() {
         lpfn = new User32.LowLevelKeyboardProc() {
             public LRESULT callback(int nCode, WPARAM wParam, KBDLLHOOKSTRUCT lParam) {
@@ -35,28 +35,28 @@ public class Keyboard {
             }
         };
     }
-    
+
     public static void hook() throws KeyboardHookFailed {
         HMODULE hMod = Kernel32.INSTANCE.GetModuleHandle(null);
         hHook = User32.INSTANCE.SetWindowsHookEx(User32.WH_KEYBOARD_LL, lpfn, hMod, 0);
         if (hHook == null) {
             throw new KeyboardHookFailed();
         }
-        
+
         hooked = true;
         if (Main.settings.debug)
             System.out.println("Keyboard Hooked");
     }
-    
+
     public static boolean isHooked() {
         return hooked;
     }
-    
+
     public static void unhook() throws KeyboardHookFailed {
-        if(User32.INSTANCE.UnhookWindowsHookEx(hHook) == false){
+        if (User32.INSTANCE.UnhookWindowsHookEx(hHook) == false) {
             throw new KeyboardHookFailed();
         }
-        
+
         hooked = false;
         if (Main.settings.debug)
             System.out.println("Keyboard Unhooked");
