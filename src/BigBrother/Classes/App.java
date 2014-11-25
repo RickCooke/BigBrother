@@ -1,5 +1,7 @@
 package BigBrother.Classes;
 
+import java.util.Comparator;
+
 /*comment to later be removed*/
 
 public class App {
@@ -56,6 +58,19 @@ public class App {
         return score; 
     }
     
+
+    public class AppComparator implements Comparator<App> {
+        @Override
+        public int compare(App a1, App a2) {
+
+            if (a1.getPriorityScore() == a2.getPriorityScore()){
+                return Integer.compare(a1.getAppID(), a2.getAppID());
+            }
+            
+            // Sort by highest priority score
+            return Integer.compare(a2.getPriorityScore(), a1.getPriorityScore());
+        }
+    }
     
     public boolean isMatch(String windowTitle, String processName) {
         boolean windowMatch = false;

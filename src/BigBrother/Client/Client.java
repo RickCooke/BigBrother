@@ -163,9 +163,6 @@ public class Client {
         for (App a : userApps)
             if (Main.settings.debug)
                 a.print();
-        
-        System.exit(1);
-        
 
     }
 
