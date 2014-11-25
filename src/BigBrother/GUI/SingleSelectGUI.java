@@ -29,7 +29,7 @@ public class SingleSelectGUI extends JFrame {
 	//selectType determines what the user is selecting from, tied to the index in the selectTypeNames array
 	// 0 - User
 	// 1 - App
-	public SingleSelectGUI(int selectType) throws UnknownSelectTypeException {
+	public SingleSelectGUI(final int selectType) throws UnknownSelectTypeException {
 		super();
 		
 		//set the title of the frame
@@ -43,7 +43,7 @@ public class SingleSelectGUI extends JFrame {
 	    listModel = getList(selectType);
 	    
 	    //JList
-	    JList listBox = new JList (listModel);
+	    final JList listBox = new JList (listModel);
 	    JScrollPane listBoxScroll = new JScrollPane(listBox, 
 	        JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, 
 	        JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
