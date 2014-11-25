@@ -1,11 +1,8 @@
 package BigBrother.GUI;
 
 import java.awt.FlowLayout;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
-
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -17,15 +14,13 @@ import javax.swing.BoxLayout;
 import javax.swing.WindowConstants;
 import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
 
+import BigBrother.Client.Client;
+import BigBrother.Client.Main;
+import BigBrother.Client.MySQL;
 import BigBrother.Exceptions.UserDoesNotExist;
-import BigBrother.Main.Client;
-import BigBrother.Main.Main;
-import BigBrother.Main.MySQL;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-
-
 
 /**
  * This class creates the LoginGUI JFrame and is the main GUI class.
@@ -94,8 +89,8 @@ public class LoginGUI extends JFrame {
     private void attemptLogin(String username, String password) {
         // If they enter an admin combination, show AdminGUI
         
-        if(username.equals(Main.MySQL_username) && password.equals
-            (Main.MySQL_password)){
+        if(username.equals(Main.settings.MySQL_username) && password.equals
+            (Main.settings.MySQL_password)){
             dispose();
 
             AdminGUI AdminWin = new AdminGUI();

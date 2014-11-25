@@ -1,4 +1,4 @@
-package BigBrother.Main;
+package BigBrother.Client;
 
 import java.awt.AWTException;
 import java.awt.Dimension;
@@ -13,43 +13,41 @@ import java.awt.event.ActionListener;
 
 import javax.swing.WindowConstants;
 
-import WindowsAPI.Keyboard;
-import BigBrother.GUI.AdminGUI;
+import BigBrother.Classes.Settings;
 import BigBrother.GUI.LoginGUI;
 
 
 public class Main {
-    public final static boolean debug = true; // Set this to enable debug output
 
-    public static String MySQL_host = "23.94.98.164";
-    public static String MySQL_database = "bigbrother";
-    public static String MySQL_username = "bigbrother";
-    public static String MySQL_password = "plzletmein";
-    
+	public static Settings settings;
+	
     public static int loggedInUserID;
-    public static long polling_interval;
-    public static int memory_flush_interval;
-    public static int local_flush_interval;
-    public static int max_idle_time;
-    public static int block_time;
-    public static int start_time;
-    public static int keyboard_peek_interval = 10;
-    public static int remote_insert_buffer_size = 100;
     
     public static LoginGUI win;
     
     public static void main(String[] args) {
+
+        settings = new Settings();
+        
+        if(settings.debug)
+        	System.out.println(settings.toString());
+        
+        //connect to the SQL server
+        MySQL.establishConnection();
+        SQLite.establishConnection();
+        
+        //download the Main.settings from the server
+        settings.downloadSettings();
+        
+    	//start the tray icon
         setupTrayIcon();
         
-        
+        //load up the login GUI
         win = new LoginGUI();
         win.setMinimumSize(new Dimension(200, 100));
         win.pack();
         win.setVisible(true);
         win.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        
-        MySQL.establishConnection();
-        SQLite.establishConnection();
         
     }
     
@@ -77,7 +75,7 @@ public class Main {
 
 
         Image img = Toolkit.getDefaultToolkit().getImage(Main.class.
-            getResource("/images/spy16.png"));
+            getResource("/BigBrother/Client/assets/spy16.png"));
         TrayIcon trayIcon = new TrayIcon(img, "Big Brother", popMenu);
 
         try {

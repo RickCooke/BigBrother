@@ -1,4 +1,4 @@
-package BigBrother.Main;
+package BigBrother.Client;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -11,6 +11,7 @@ import javax.swing.DefaultListModel;
 
 import BigBrother.Classes.App;
 import BigBrother.Classes.AppLite;
+import BigBrother.Classes.Settings;
 import BigBrother.Classes.UserLite;
 import BigBrother.Exceptions.NoSettingsException;
 import BigBrother.Exceptions.UserDoesNotExist;
@@ -25,8 +26,8 @@ public class MySQL {
         try {
             Class.forName("com.mysql.jdbc.Driver").newInstance();
             conn = DriverManager.getConnection("jdbc:mysql://" +
-            Main.MySQL_host + "/" + Main.MySQL_database + "?user=" 
-                + Main.MySQL_username + "&password=" + Main.MySQL_password);
+            	Main.settings.MySQL_host + "/" + Main.settings.MySQL_database + "?user=" 
+                + Main.settings.MySQL_username + "&password=" + Main.settings.MySQL_password);
         } catch (SQLException ex) {
             // handle any errors
             System.out.println("SQLException: " + ex.getMessage());
@@ -84,7 +85,7 @@ public class MySQL {
         return userid;
     }
 
-    public static void getSettings() throws NoSettingsException {
+    public static void recieveSettings(Settings _settings) throws NoSettingsException {
         if (conn == null) {
             establishConnection();
         }
@@ -100,12 +101,12 @@ public class MySQL {
             ps = conn.prepareStatement(SQL);
             rs = ps.executeQuery();
             if (rs.next()) {
-                Main.polling_interval = rs.getInt("polling_interval");
-                Main.memory_flush_interval = rs.getInt("memory_flush_interval");
-                Main.local_flush_interval = rs.getInt("local_flush_interval");
-                Main.max_idle_time = rs.getInt("max_idle_time");
-                Main.start_time = rs.getInt("start_time");
-                Main.block_time = rs.getInt("block_time");
+            	_settings.polling_interval = rs.getInt("polling_interval");
+            	_settings.memory_flush_interval = rs.getInt("memory_flush_interval");
+            	_settings.local_flush_interval = rs.getInt("local_flush_interval");
+            	_settings.max_idle_time = rs.getInt("max_idle_time");
+            	_settings.start_time = rs.getInt("start_time");
+            	_settings.block_time = rs.getInt("block_time");
             } else {
                 throw new NoSettingsException("There are no settings");
             }
@@ -130,7 +131,46 @@ public class MySQL {
         }
 
     }
+    public static void sendSettings(Settings _settings) throws NoSettingsException {
+        if (conn == null) {
+            establishConnection();
+        }
 
+        String SQL = "UPDATE settings SET polling_interval=" + _settings.polling_interval +
+        		", memory_flush_interval=" + _settings.memory_flush_interval +
+        		", local_flush_interval=" +_settings.local_flush_interval + 
+        		", max_idle_time=" + _settings.max_idle_time +
+        		", start_time=" + _settings.start_time +
+        		", block_time=" + _settings.block_time;
+
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            ps = conn.prepareStatement(SQL);
+            rs = ps.executeQuery();
+        } catch (SQLException ex) {
+            System.out.println("SQLException: " + ex.getMessage());
+            System.out.println("SQLState: " + ex.getSQLState());
+            System.out.println("VendorError: " + ex.getErrorCode());
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                    rs = null;
+                }
+
+                if (ps != null) {
+                    ps.close();
+                    ps = null;
+                }
+            } catch (SQLException ex) {
+                System.out.println("SQLException: " + ex.getMessage());
+            }
+        }
+
+    }
+    
     public static ArrayList<App> getTrackedAppsArrayList(int userID) {
 
         ArrayList<App> userApps = new ArrayList<App>();

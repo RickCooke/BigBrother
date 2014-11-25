@@ -11,8 +11,8 @@ import javax.swing.*;
 
 import BigBrother.Classes.AppLite;
 import BigBrother.Classes.UserLite;
-import BigBrother.Main.Main;
-import BigBrother.Main.MySQL;
+import BigBrother.Client.Main;
+import BigBrother.Client.MySQL;
 
 /* Comment here to see if I have write access to the repo */
 
@@ -29,7 +29,7 @@ public class AdminGUI extends JFrame {
     public AdminGUI() {
         super("BigBrother Administration");
 
-        if (Main.debug)
+        if (Main.settings.debug)
             System.out.println("Admin GUI Initialized.");
 
         // Set the layout
@@ -89,7 +89,7 @@ public class AdminGUI extends JFrame {
         @Override
         public void actionPerformed(ActionEvent arg0) {
             // debug output
-            if (Main.debug)
+            if (Main.settings.debug)
                 System.out.println("New User button pressed.");
 
             UserGUI win = new UserGUI();
@@ -102,7 +102,7 @@ public class AdminGUI extends JFrame {
         @Override
         public void actionPerformed(ActionEvent arg0) {
             // debug output
-            if (Main.debug)
+            if (Main.settings.debug)
                 System.out.println("New App button pressed.");
 
             AppGUI win = new AppGUI();
@@ -113,7 +113,7 @@ public class AdminGUI extends JFrame {
 
     private void updateUsers() {
         // debug output
-        if (Main.debug)
+        if (Main.settings.debug)
             System.out.println("Updating user list...");
 
 
@@ -123,7 +123,7 @@ public class AdminGUI extends JFrame {
 
     private void updateApps(int userID) {
         // debug output
-        if (Main.debug)
+        if (Main.settings.debug)
             System.out.println("Updating tracked app list for user #" 
         + userID + "...");
 

@@ -1,9 +1,9 @@
 package WindowsAPI;
 
 
+import BigBrother.Client.Client;
+import BigBrother.Client.Main;
 import BigBrother.Exceptions.KeyboardHookFailed;
-import BigBrother.Main.Client;
-import BigBrother.Main.Main;
 
 import com.sun.jna.platform.win32.Kernel32;
 import com.sun.jna.platform.win32.User32;
@@ -26,7 +26,7 @@ public class Keyboard {
 
                 switch (wParam.intValue()) {
                     case WinUser.WM_KEYDOWN:
-                        if (Main.debug)
+                        if (Main.settings.debug)
                             System.out.println("Key : " + rawCode + " was pressed @ " + evtTime);
                         Client.setIdle(false);
                         break;
@@ -44,7 +44,7 @@ public class Keyboard {
         }
         
         hooked = true;
-        if (Main.debug)
+        if (Main.settings.debug)
             System.out.println("Keyboard Hooked");
     }
     
@@ -58,7 +58,7 @@ public class Keyboard {
         }
         
         hooked = false;
-        if (Main.debug)
+        if (Main.settings.debug)
             System.out.println("Keyboard Unhooked");
     }
 }

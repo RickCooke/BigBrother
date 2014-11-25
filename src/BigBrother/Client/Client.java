@@ -1,4 +1,4 @@
-package BigBrother.Main;
+package BigBrother.Client;
 
 import static WindowsAPI.EnumerateWindows.Kernel32.OpenProcess;
 import static WindowsAPI.EnumerateWindows.Kernel32.PROCESS_QUERY_INFORMATION;
@@ -8,7 +8,6 @@ import static WindowsAPI.EnumerateWindows.User32DLL.GetForegroundWindow;
 import static WindowsAPI.EnumerateWindows.User32DLL.GetWindowTextW;
 import static WindowsAPI.EnumerateWindows.User32DLL.GetWindowThreadProcessId;
 
-import java.awt.Dimension;
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.PointerInfo;
@@ -17,15 +16,11 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import javax.swing.JOptionPane;
-import javax.swing.WindowConstants;
-
 import BigBrother.Classes.App;
+import BigBrother.Classes.Settings;
 import BigBrother.Exceptions.CountMismatchException;
 import BigBrother.Exceptions.KeyboardHookFailed;
-import BigBrother.Exceptions.NoSettingsException;
 import BigBrother.Exceptions.RequiredAppsNotFoundException;
-import BigBrother.GUI.AdminGUI;
-import BigBrother.GUI.LoginGUI;
 import WindowsAPI.Keyboard;
 
 import com.sun.jna.Native;
@@ -35,7 +30,7 @@ import com.sun.jna.ptr.PointerByReference;
 
 
 public class Client {
-
+	
     private int OTHER_APP_INDEX = -1;
     private int IDLE_APP_INDEX = -1;
 
@@ -49,15 +44,11 @@ public class Client {
     
     public Client() {
         Keyboard.Initialize();
-        
-        // get our settings
-        syncSettings();
 
         // get our list of apps
         syncApps();
         
-        // TODO: actually find the indecies in an efficient way, we shouldn't just gurantee that
-        // they're first
+        // TODO: actually find the indecies in an efficient way
         // Figure out and set the indexes of idle and other apps
         try {
             int index = 0;
@@ -90,7 +81,7 @@ public class Client {
         test();
 
         // Prints your user apps if debug flag is set
-        if (Main.debug)
+        if (Main.settings.debug)
             for (App a : userApps)
                 a.print();
 
@@ -100,7 +91,7 @@ public class Client {
         PointerInfo pointerInfo = MouseInfo.getPointerInfo();
         lastKnownMouseLocation = pointerInfo.getLocation();
 
-        // TODO: Set up the keyboard and mouseClick listeners
+        // TODO: Set up the mouseClick listener
 
         // Set up the timers
         try {
@@ -110,7 +101,7 @@ public class Client {
                 public void run() {
                     poll();
                 }
-            }, Main.polling_interval, Main.polling_interval);
+            }, Main.settings.polling_interval, Main.settings.polling_interval);
 
             // Set up the idle timer
             resetIdleTimer();
@@ -119,7 +110,7 @@ public class Client {
             e.printStackTrace();
 
             // TODO: handle exception by using default timers? or prompt the user
-            // for valid times/notify user settings are malformed?
+            // for valid times/notify user Main.settings are malformed?
 
             // Exit if timers are not working
             System.exit(1);
@@ -138,18 +129,6 @@ public class Client {
     // ends the current session
     private void destroy() {
         // TODO: implement this
-    }
-
-    // Query server and set our local settings
-    private void syncSettings() {
-        // Attempt to set the GLOBAL settings a.k.a Main's variables
-        try {
-            MySQL.getSettings();
-        } catch (NoSettingsException e) {
-            JOptionPane.showMessageDialog(null, e.getMessage(),
-                "Error", JOptionPane.ERROR_MESSAGE);
-            System.exit(1);
-        }
     }
 
     // Query server and set our apps list
@@ -187,7 +166,7 @@ public class Client {
         PointerInfo pointerInfo = MouseInfo.getPointerInfo();
         if (lastKnownMouseLocation.distance(pointerInfo.getLocation()) > 0) {
             // debug output
-            if (Main.debug)
+            if (Main.settings.debug)
                 System.out.println("Mouse movement detected.");
 
             // set the idle flag to false
@@ -221,7 +200,7 @@ public class Client {
 
                 if (a.isMatch(windowTitle, processName)) {
                     // window was active, record it
-                    a.addCount(Main.polling_interval);
+                    a.addCount(Main.settings.polling_interval);
                     foundMatch = true;
                     break;
                 }
@@ -229,22 +208,22 @@ public class Client {
 
             // if no match was found, then it falls under the "Other" app
             if (!foundMatch)
-                userApps.get(OTHER_APP_INDEX).addCount(Main.polling_interval);
+                userApps.get(OTHER_APP_INDEX).addCount(Main.settings.polling_interval);
         } else {
             // increment idle counter
-            userApps.get(IDLE_APP_INDEX).addCount(Main.polling_interval);
+            userApps.get(IDLE_APP_INDEX).addCount(Main.settings.polling_interval);
         }
 
 
         // Debug
         for (App a : userApps)
-            if (Main.debug)
+            if (Main.settings.debug)
                 a.print2();
 
         // If we need to, flush from memory to local SQLite DB
         try {
-            if (pollNum % (Main.memory_flush_interval / 
-                Main.polling_interval) == 0)
+            if (pollNum % (Main.settings.memory_flush_interval / 
+            	Main.settings.polling_interval) == 0)
                 memFlush();
         } catch (CountMismatchException e) {
             // TODO: handle this better
@@ -252,8 +231,8 @@ public class Client {
         }
 
         // if we need to, flush from SQLite DB to server
-        if (pollNum % (Main.local_flush_interval / 
-            Main.polling_interval) == 0)
+        if (pollNum % (Main.settings.local_flush_interval / 
+        	Main.settings.polling_interval) == 0)
             localFlush();
     }
 
@@ -295,7 +274,7 @@ public class Client {
                 while (true) {
                     User32.INSTANCE.PeekMessage(msg, null, 0, 0, 0);
                     try {
-                        Thread.sleep(Main.keyboard_peek_interval);
+                        Thread.sleep(Main.settings.keyboard_peek_interval);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -304,17 +283,17 @@ public class Client {
             }
         };
         
-        idleTimer.schedule(idleTimerTask, Main.max_idle_time);
+        idleTimer.schedule(idleTimerTask, Main.settings.max_idle_time);
 
         // Debug text
-        if (Main.debug)
+        if (Main.settings.debug)
             System.out.println("Activity detected."
                 + " Idle timer has been reset.");
     }
 
     public static void setIdle(boolean _idle) {
         // Debug text if idle changed
-        if (Main.debug && idleFlag != _idle)
+        if (Main.settings.debug && idleFlag != _idle)
             System.out.println("The idle flag is being changed to: " + _idle);
 
         idleFlag = _idle;
@@ -345,8 +324,8 @@ public class Client {
         }
 
         int otherCount = userApps.get(OTHER_APP_INDEX).getCount();
-        if (otherCount != (Main.memory_flush_interval - totalCount)) {
-            if (Main.debug)
+        if (otherCount != (Main.settings.memory_flush_interval - totalCount)) {
+            if (Main.settings.debug)
                 System.out.println("Something weird happened "
                     + "where other count isn't what it should be");
 
@@ -363,7 +342,7 @@ public class Client {
             a.clear();
 
         // Print debug text
-        if (Main.debug)
+        if (Main.settings.debug)
             System.out.println("Flushed to local.");
     }
 
@@ -374,22 +353,22 @@ public class Client {
         SQLite.pushToRemote();
 
         // Print debug text
-        if (Main.debug)
+        if (Main.settings.debug)
             System.out.println("Flushed to server.");
 
         // clear the SQLite DB
         SQLite.clearStats();
 
         // Print debug text
-        if (Main.debug)
+        if (Main.settings.debug)
             System.out.println("Cleared SQLite Database.");
     }
 
     // TODO: delete this
     // test function to directly set program values, delete before release
     private void test() {
-        Main.memory_flush_interval = 5 * 1000;
-        Main.local_flush_interval = 5 * 1000;
-        Main.max_idle_time = 20 * 1000;
+        Main.settings.memory_flush_interval = 5 * 1000;
+        Main.settings.local_flush_interval = 5 * 1000;
+        Main.settings.max_idle_time = 20 * 1000;
     }
 }

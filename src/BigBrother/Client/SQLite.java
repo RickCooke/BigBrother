@@ -1,12 +1,9 @@
-package BigBrother.Main;
+package BigBrother.Client;
 
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.List;
-
 import BigBrother.Classes.App;
-import BigBrother.Exceptions.UserDoesNotExist;
 
 
 public class SQLite {
@@ -147,7 +144,7 @@ public class SQLite {
                 temp[3] = rs.getInt("count");
                 buffer.add(temp);
                 i++;
-                if(i % Main.remote_insert_buffer_size == 0) {
+                if(i % Main.settings.remote_insert_buffer_size == 0) {
                     MySQL.flushLocalBuffer(buffer);
                     buffer.clear();
                 }
@@ -191,12 +188,12 @@ public class SQLite {
 
         int unixTime = (int) (System.currentTimeMillis() / 1000L);
         
-        int block_time_in_seconds = Main.block_time / 1000;
+        int block_time_in_seconds = Main.settings.block_time / 1000;
         
-        int numBlocks = (unixTime - Main.start_time) / block_time_in_seconds;
-        int blockid = (Main.start_time + (numBlocks * block_time_in_seconds));
+        int numBlocks = (unixTime - Main.settings.start_time) / block_time_in_seconds;
+        int blockid = (Main.settings.start_time + (numBlocks * block_time_in_seconds));
         
-        if(Main.debug) {
+        if(Main.settings.debug) {
             Date date2 = new Date(blockid * 1000L);
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
             System.out.println("This blockID: " + sdf.format(date2));
