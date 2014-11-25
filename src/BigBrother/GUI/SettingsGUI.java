@@ -47,6 +47,13 @@ public class SettingsGUI extends JFrame {
 
         setLayout(new GridLayout(7, 2));
         
+        //Set default units
+        polling_interval_unit.setSelectedIndex(0);
+        memory_flush_interval_unit.setSelectedIndex(1);
+        local_flush_interval_unit.setSelectedIndex(2);
+        max_idle_time_unit.setSelectedIndex(2);
+        block_time_unit.setSelectedIndex(3);
+        
         JPanel polling_interval_group = new JPanel(new FlowLayout());
         polling_interval_TF.setColumns(10);
         polling_interval_group.add(polling_interval_TF);
