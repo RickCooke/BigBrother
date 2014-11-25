@@ -33,8 +33,8 @@ import com.sun.jna.ptr.PointerByReference;
 
 public class Client {
 
-    private int OTHER_APP_INDEX = -1;
-    private int IDLE_APP_INDEX = -1;
+    private int OTHER_APP_INDEX = 0;
+    private int IDLE_APP_INDEX = 1;
 
     private int pollNum = 0;
     private Point lastKnownMouseLocation;
@@ -51,40 +51,12 @@ public class Client {
         // get our list of apps
         syncApps();
 
-        // TODO: actually find the indecies in an efficient way
-        // Figure out and set the indexes of idle and other apps
-        try {
-            int index = 0;
-            for (App a : userApps) {
-                if (a.getAlias().equals("Idle"))
-                    IDLE_APP_INDEX = index;
-                else if (a.getAlias().equals("Other"))
-                    OTHER_APP_INDEX = index;
-                index++;
-            }
-
-            if (OTHER_APP_INDEX == -1)
-                throw new RequiredAppsNotFoundException("" + "'Other' App index not found.");
-            else if (IDLE_APP_INDEX == -1)
-                throw new RequiredAppsNotFoundException("" + "'Idle' App index not found.");
-        } catch (RequiredAppsNotFoundException e) {
-            System.out.println(e.getMessage());
-            destroy();
-        }
-
-        // TODO: make it so userApps is sorted based on specificity
-        // Note from Michael: we shouldn't need to do this, when adding initially,
-        // just add anything with both processName and windowName to the top,
-        // and anything with only 1 of them to the bottom
+        // sort the app list by priority
+        sortAppList();
 
         // TODO: delete this call before release
         // call our test function to set our hardcoded test values
         test();
-
-        // Prints your user apps if debug flag is set
-        if (Main.settings.debug)
-            for (App a : userApps)
-                a.print();
 
         setIdle(false);
 
@@ -128,10 +100,10 @@ public class Client {
         @Override
         public int compare(App a1, App a2) {
 
-            if (a1.getPriorityScore() == a2.getPriorityScore()){
+            if (a1.getPriorityScore() == a2.getPriorityScore()) {
                 return Integer.compare(a1.getAppID(), a2.getAppID());
             }
-            
+
             // Sort by highest priority score
             return Integer.compare(a2.getPriorityScore(), a1.getPriorityScore());
         }
@@ -141,29 +113,33 @@ public class Client {
     private void syncApps() {
         userApps = new ArrayList<App>();
         userApps = MySQL.getTrackedAppsArrayList(Main.loggedInUserID);
-        
+
         // add default "Other" and "Idle" apps
         // TODO: delete this, these should exist and get pulled from the DB
-        
+
         // Brian(11/18): If we rely on DB then every user must have a user_app pair
         // that adds the apps always, and does not allow them to delete.
         // seems the best way, but a lot more work
         userApps.add(new App(0, "Other", null, false, null, false, true));
         userApps.add(new App(1, "Idle", null, false, null, false, true));
-        
-        
-        System.out.println("Before priority Sorting: ");
-        for (App a : userApps)
-            if (Main.settings.debug)
-                a.print();
-        
-        Collections.sort(userApps, new AppComparator());
-        System.out.println("");
-        System.out.println("After  priority Sorting: ");
-        for (App a : userApps)
-            if (Main.settings.debug)
-                a.print();
+    }
 
+    private void sortAppList() {
+        if (Main.settings.debug) {
+            System.out.println("Before priority Sorting: ");
+            for (App a : userApps)
+                a.print();
+        }
+
+        Collections.sort(userApps, new AppComparator());
+
+        if (Main.settings.debug) {
+            System.out.println("");
+            System.out.println("After  priority Sorting: ");
+            for (App a : userApps)
+                a.print();
+            System.out.println("");
+        }
     }
 
     // Function to poll the system for its running apps and add them to memory
