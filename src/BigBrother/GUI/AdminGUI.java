@@ -33,6 +33,8 @@ public class AdminGUI extends JFrame {
         if (Main.settings.debug)
             System.out.println("Admin GUI Initialized.");
 
+        
+        
         // Set the layout
         setLayout(new BorderLayout());
         JPanel mainPanel = new JPanel();
@@ -196,7 +198,10 @@ public class AdminGUI extends JFrame {
         public void actionPerformed(ActionEvent arg0) {
             AppGUI win = new AppGUI();
             win.pack();
+            win.setSize(new Dimension(421, 166));
+            win.setMinimumSize(new Dimension(421, 166));
             win.setVisible(true);
+            
         }
     };
 

@@ -1,5 +1,6 @@
 package BigBrother.GUI;
 
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
@@ -22,6 +23,9 @@ import BigBrother.Exceptions.EmptyTFException;
 import BigBrother.Exceptions.MultipleResultsFoundException;
 import BigBrother.Exceptions.NoResultsFoundException;
 
+import javax.swing.SwingConstants;
+import javax.swing.BoxLayout;
+
 public class AppGUI extends JFrame {
 
     private boolean isExistingApp = false;
@@ -38,33 +42,56 @@ public class AppGUI extends JFrame {
     public AppGUI() {
         super("New Appliction");
 
-        setLayout(new GridLayout(4, 3));
+        
+        
+        GridLayout gridLayout = new GridLayout(4, 3);
+        getContentPane().setLayout(gridLayout);
 
-        JPanel buttonGroup = new JPanel(new FlowLayout());
+        FlowLayout fl_buttonGroup = new FlowLayout();
+        fl_buttonGroup.setVgap(2);
+        JPanel buttonGroup = new JPanel(fl_buttonGroup);
         buttonGroup.add(OKButton);
         buttonGroup.add(cancelButton);
-        
-        add(new JLabel("Alias Name:"));
-        add(aliasTF);
-        add(new JPanel(new FlowLayout())); //filler grid space
-        
-        add(new JLabel("Window Name:"));
-        add(windowTF);
-        JPanel windowRegexGroup = new JPanel(new FlowLayout());
+
+        JLabel label = new JLabel("Alias Name:");
+        label.setHorizontalAlignment(SwingConstants.CENTER);
+        getContentPane().add(label);
+        getContentPane().add(aliasTF);
+        aliasTF.setToolTipText("Enter the unique identifier for this new application");
+        getContentPane().add(new JPanel(new FlowLayout())); // filler grid space
+
+        JLabel label_1 = new JLabel("Window Name:");
+        label_1.setHorizontalAlignment(SwingConstants.CENTER);
+        getContentPane().add(label_1);
+        windowTF.setToolTipText("Enter the window name that will match this application. (OPTIONAL)");
+        getContentPane().add(windowTF);
+        FlowLayout fl_windowRegexGroup = new FlowLayout();
+        fl_windowRegexGroup.setHgap(2);
+        fl_windowRegexGroup.setVgap(2);
+        fl_windowRegexGroup.setAlignment(FlowLayout.LEFT);
+        JPanel windowRegexGroup = new JPanel(fl_windowRegexGroup);
         windowRegexGroup.add(windowIsRegex);
         windowRegexGroup.add(new JLabel("is Regex"));
-        add(windowRegexGroup);
-        
-        add(new JLabel("Process Name:"));
-        add(processTF);
-        JPanel processRegexGroup = new JPanel(new FlowLayout());
-        processRegexGroup.add(processIsRegex);
-        processRegexGroup.add(new JLabel("is Regex"));
-        add(processRegexGroup);
+        getContentPane().add(windowRegexGroup);
 
-        add(new JPanel(new FlowLayout())); //filler grid space
-        add(buttonGroup);
-        add(new JPanel(new FlowLayout())); //filler grid space
+        JLabel label_2 = new JLabel("Process Name:");
+        label_2.setHorizontalAlignment(SwingConstants.CENTER);
+        getContentPane().add(label_2);
+        processTF.setToolTipText("Enter the process name that will match this application. (OPTIONAL)");
+        getContentPane().add(processTF);
+        FlowLayout fl_processRegexGroup = new FlowLayout();
+        fl_processRegexGroup.setVgap(2);
+        fl_processRegexGroup.setHgap(2);
+        fl_processRegexGroup.setAlignment(FlowLayout.LEFT);
+        JPanel processRegexGroup = new JPanel(fl_processRegexGroup);
+        processRegexGroup.add(processIsRegex);
+        JLabel label_3 = new JLabel("is Regex");
+        processRegexGroup.add(label_3);
+        getContentPane().add(processRegexGroup);
+
+        getContentPane().add(new JPanel(new FlowLayout())); // filler grid space
+        getContentPane().add(buttonGroup);
+        getContentPane().add(new JPanel(new FlowLayout())); // filler grid space
 
         cancelButton.addActionListener(new ActionListener() {
             @Override
@@ -80,7 +107,9 @@ public class AppGUI extends JFrame {
                 try {
                     // check for formatting issues
                     if (aliasTF.getText().equals("")) {
-                        throw new EmptyTFException();
+                        throw new EmptyTFException("App Alias field cannot be empty");
+                    } else if (windowTF.getText().equals("") && processTF.getText().equals("")) {
+                        throw new EmptyTFException("You must fill out either Window name or Process name");
                     } else {
                         if (isExistingApp)
                             submitEditApp();
@@ -88,7 +117,7 @@ public class AppGUI extends JFrame {
                             submitNewApp();
                     }
                 } catch (EmptyTFException e) {
-                    JOptionPane.showMessageDialog(null, "App Alias Field Must Be Filled!", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -104,7 +133,7 @@ public class AppGUI extends JFrame {
         // set the title
         this.setTitle("Edit Existing Application: " + app.toString());
 
-        //set fields
+        // set fields
         aliasTF.setText(app.alias);
         windowTF.setText(app.window);
         windowIsRegex.setSelected(app.window_regex);
