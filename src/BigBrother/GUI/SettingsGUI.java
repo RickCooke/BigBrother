@@ -131,7 +131,7 @@ public class SettingsGUI extends JFrame {
     }
 
     private void submitSettings() throws MalformedSettingsException {
-    	Settings newSettings = new Settings();
+    	//Settings newSettings = new Settings();
     	
         // TODO: build the Settings (remember to take units into account),
     	// throw a MalformedSettingsException if something is wrong

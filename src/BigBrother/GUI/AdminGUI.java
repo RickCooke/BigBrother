@@ -2,10 +2,12 @@ package BigBrother.GUI;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowEvent;
 
 import javax.swing.*;
 
@@ -56,8 +58,13 @@ public class AdminGUI extends JFrame {
         exitMenu.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
-            	//TODO: implement this
-            	//(Is this exiting the admin GUI only or the client too?)
+            	//TODO: Should we exit the admin GUI only or the client too?
+            	
+            	//close the window
+                closeWindow();
+                
+                //enable if we're killing the whole program
+                //Client.destroy();
             }
         });
         
@@ -218,5 +225,12 @@ public class AdminGUI extends JFrame {
     	SettingsGUI win = new SettingsGUI();
         win.pack();
         win.setVisible(true);
+    }
+    
+    private void closeWindow() {
+    	WindowEvent winClosingEvent = new WindowEvent(this,
+                WindowEvent.WINDOW_CLOSING);
+            Toolkit.getDefaultToolkit().getSystemEventQueue().
+            postEvent(winClosingEvent);
     }
 };
