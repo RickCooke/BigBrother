@@ -42,6 +42,7 @@ public class Client {
     private ArrayList<App> userApps;
     
     public Client() {
+        
         Keyboard.Initialize();
 
         // get our list of apps
@@ -113,15 +114,6 @@ public class Client {
 
             // Exit if timers are not working
             destroy();
-        }
-
-
-        // TODO: is there a better way to keep the process active than just an infinite loop?
-        try {
-            while (true)
-                Thread.sleep(999999999);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         }
     }
 

@@ -40,8 +40,7 @@ public class LoginGUI extends JFrame {
 
         JPanel containerPanel = new JPanel();
         getContentPane().add(containerPanel);
-        containerPanel.setLayout(new BoxLayout(containerPanel, 
-            BoxLayout.PAGE_AXIS));
+        containerPanel.setLayout(new BoxLayout(containerPanel, BoxLayout.PAGE_AXIS));
 
         JPanel fieldPanel = new JPanel();
         containerPanel.add(fieldPanel);
@@ -72,6 +71,7 @@ public class LoginGUI extends JFrame {
         setResizable(false);
 
         loginButton.addActionListener(new ActionListener() {
+
             @Override
             public void actionPerformed(ActionEvent e) {
                 String passwordStr = new String(passwordField.getPassword());
@@ -80,28 +80,28 @@ public class LoginGUI extends JFrame {
         });
 
         // TODO: remove this to prompt for username/pw
-        //attemptLogin("defaultUser", "password");
-        //attemptLogin("bigbrother", "plzletmein"); 
+        // attemptLogin("defaultUser", "password");
+        // attemptLogin("bigbrother", "plzletmein");
         // Can't get the LoginGUI to dispose
-        // Note from Mike: commenting this out and logging in normally hangs the program for me, can't right click taskbar icon :(
-        attemptLogin("brian", "708050");
+        // Note from Mike: commenting this out and logging in normally hangs the program for me,
+        // can't right click taskbar icon :(
+        // attemptLogin("brian", "708050");
     }
 
     private void attemptLogin(String username, String password) {
         // If they enter an admin combination, show AdminGUI
-        
-        if(username.equals(Main.settings.MySQL_username) && password.equals
-            (Main.settings.MySQL_password)){
+
+        if (username.equals(Main.settings.MySQL_username) && password.equals(Main.settings.MySQL_password)) {
             dispose();
 
             AdminGUI AdminWin = new AdminGUI();
             AdminWin.pack();
             AdminWin.setVisible(true);
             AdminWin.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-            
+
             return;
         }
-        
+
         String passwordHash = MD5(password);
 
         try {
@@ -109,10 +109,9 @@ public class LoginGUI extends JFrame {
             dispose();
             new Client();
         } catch (UserDoesNotExist e) {
-            JOptionPane.showMessageDialog(this, e.getMessage(), "Error",
-                JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
-       
+
     }
 
     private String MD5(String input) {
