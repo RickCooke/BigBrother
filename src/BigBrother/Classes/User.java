@@ -14,4 +14,30 @@ public class User {
     public String toString() {
         return lastName + ", " + firstName + " (" + username + ")";
     }
+
+    public User(int _userID, String _username, String _firstName, String _lastName, int _groupNum) {
+        userID = _userID;
+        username = _username;
+        firstName = _firstName;
+        lastName = _lastName;
+        groupNum = _groupNum;
+    }
+
+    public User(int _userID, String _username, String _firstName, String _lastName, String _groupNum) {
+        userID = _userID;
+        username = _username;
+        firstName = _firstName;
+        lastName = _lastName;
+        try {
+            groupNum = Integer.parseInt(_groupNum);
+        } catch (java.lang.NumberFormatException e) {
+            groupNum = -1;
+        }
+    }
+
+    public User() {
+        // TODO Auto-generated constructor stub
+    }
+
+
 }

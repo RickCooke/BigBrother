@@ -1,6 +1,5 @@
 package BigBrother.GUI;
 
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
@@ -19,7 +18,7 @@ import javax.swing.JTextField;
 
 import BigBrother.Classes.App;
 import BigBrother.Client.MySQL;
-import BigBrother.Exceptions.EmptyTFException;
+import BigBrother.Exceptions.FormException;
 import BigBrother.Exceptions.MultipleResultsFoundException;
 import BigBrother.Exceptions.NoResultsFoundException;
 
@@ -47,6 +46,8 @@ public class AppGUI extends JFrame {
         GridLayout gridLayout = new GridLayout(4, 3);
         getContentPane().setLayout(gridLayout);
 
+        setLocationRelativeTo(null);
+        
         FlowLayout fl_buttonGroup = new FlowLayout();
         fl_buttonGroup.setVgap(2);
         JPanel buttonGroup = new JPanel(fl_buttonGroup);
@@ -107,16 +108,16 @@ public class AppGUI extends JFrame {
                 try {
                     // check for formatting issues
                     if (aliasTF.getText().equals("")) {
-                        throw new EmptyTFException("App Alias field cannot be empty");
+                        throw new FormException("App Alias field cannot be empty");
                     } else if (windowTF.getText().equals("") && processTF.getText().equals("")) {
-                        throw new EmptyTFException("You must fill out either Window name or Process name");
+                        throw new FormException("You must fill out either Window name or Process name");
                     } else {
                         if (isExistingApp)
                             submitEditApp();
                         else
                             submitNewApp();
                     }
-                } catch (EmptyTFException e) {
+                } catch (FormException e) {
                     JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }

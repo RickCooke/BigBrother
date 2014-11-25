@@ -20,8 +20,8 @@ import BigBrother.Exceptions.UnknownSelectTypeException;
 @SuppressWarnings("serial")
 public class AdminGUI extends JFrame {
 
-    private final DefaultListModel<UserLite> usersDLM = new DefaultListModel<UserLite>();
-    private final DefaultListModel<AppLite> appsDLM = new DefaultListModel<AppLite>();
+    private final static DefaultListModel<UserLite> usersDLM = new DefaultListModel<UserLite>();
+    private final static DefaultListModel<AppLite> appsDLM = new DefaultListModel<AppLite>();
     private final JList<UserLite> usersList = new JList<UserLite>(usersDLM);
     private final JList<AppLite> appsList = new JList<AppLite>(appsDLM);
 
@@ -79,15 +79,15 @@ public class AdminGUI extends JFrame {
                 openSettingsGUI();
             }
         });
+        
         JMenuItem addUserMenu = new JMenuItem("Add User");
         addUserMenu.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                UserGUI win = new UserGUI();
-                win.pack();
-                win.setVisible(true);
+                showUserGUI();
             }
         });
+        
         JMenuItem editUserMenu = new JMenuItem("Edit User");
         editUserMenu.addActionListener(new ActionListener() {
             @Override
@@ -102,15 +102,15 @@ public class AdminGUI extends JFrame {
                 }
             }
         });
+        
         JMenuItem addAppMenu = new JMenuItem("Add Application");
         addAppMenu.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                AppGUI win = new AppGUI();
-                win.pack();
-                win.setVisible(true);
+                showAppGUI();
             }
         });
+        
         JMenuItem editAppMenu = new JMenuItem("Edit Application");
         editAppMenu.addActionListener(new ActionListener() {
             @Override
@@ -185,25 +185,32 @@ public class AdminGUI extends JFrame {
     ActionListener newUserButtonAL = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent arg0) {
-            UserGUI win = new UserGUI();
-            win.pack();
-            win.setVisible(true);
+            showUserGUI();
         }
     };
 
     ActionListener newAppButtonAL = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent arg0) {
-            AppGUI win = new AppGUI();
-            win.pack();
-            win.setSize(new Dimension(421, 166));
-            win.setMinimumSize(new Dimension(421, 166));
-            win.setVisible(true);
-
+            showAppGUI();
         }
     };
+    
+    private void showUserGUI(){
+        UserGUI win = new UserGUI();
+        win.pack();
+        win.setVisible(true);
+    }
 
-    private void updateUsers() {
+    private void showAppGUI() {
+        AppGUI win = new AppGUI();
+        win.pack();
+        win.setSize(new Dimension(421, 166));
+        win.setMinimumSize(new Dimension(421, 166));
+        win.setVisible(true);
+    }
+
+    static void updateUsers() {
         // debug output
         if (Main.settings.debug)
             System.out.println("Updating user list...");
@@ -213,7 +220,7 @@ public class AdminGUI extends JFrame {
         MySQL.getUserList(usersDLM);
     }
 
-    private void updateApps(int userID) {
+    static void updateApps(int userID) {
         // debug output
         if (Main.settings.debug)
             System.out.println("Updating tracked app list for user #" + userID + "...");

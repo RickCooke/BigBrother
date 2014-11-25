@@ -9,11 +9,14 @@ import java.util.ArrayList;
 
 import javax.swing.DefaultListModel;
 
+import com.mysql.jdbc.Statement;
+
 import BigBrother.Classes.App;
 import BigBrother.Classes.AppLite;
 import BigBrother.Classes.Settings;
 import BigBrother.Classes.User;
 import BigBrother.Classes.UserLite;
+import BigBrother.Exceptions.DuplicateKeyException;
 import BigBrother.Exceptions.MultipleResultsFoundException;
 import BigBrother.Exceptions.NoResultsFoundException;
 import BigBrother.Exceptions.NoSettingsException;
@@ -417,5 +420,139 @@ public class MySQL {
             throw new NoResultsFoundException("No apps found with appID #" + appID + ".");
         else
             throw new MultipleResultsFoundException("Multiple apps found with appID #" + appID + ".");
+    }
+
+    // Serves as an alias for editUser
+    public static int addUser(User user, String password) throws DuplicateKeyException {
+        int last_inserted_id = -1;
+        if (user.userID == -1) {
+            last_inserted_id = editUser(user, password);
+        } else {
+            System.err.println("MySQL.addUser was called with a userID that wasn't -1");
+        }
+        return last_inserted_id;
+    }
+
+
+    public static int editUser(User user, String password) throws DuplicateKeyException {
+        if (conn == null) {
+            establishConnection();
+        }
+
+        String SQL;
+
+        if (user.userID == -1) {
+            SQL = "INSERT INTO users (`userid`, `username`, `password`, `firstname`, `lastname`, `group`) VALUES (?, ?, MD5(?), ?, ?, ?);";
+        } else {
+            SQL = "REPLACE INTO users (`userid`, `username`, `password`, `firstname`, `lastname`, `group`) VALUES (?, ?, MD5(?), ?, ?, ?);";
+        }
+
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        
+        try {
+            ps = conn.prepareStatement(SQL, PreparedStatement.RETURN_GENERATED_KEYS);
+
+            if (user.userID == -1) {
+                ps.setNull(1, java.sql.Types.INTEGER);
+            } else {
+                ps.setInt(1, user.userID);
+            }
+
+
+            ps.setString(2, user.username);
+            ps.setString(3, password);
+            ps.setString(4, user.firstName);
+            ps.setString(5, user.lastName);
+
+            if (user.groupNum == -1) {
+                ps.setNull(6, java.sql.Types.INTEGER);
+            } else {
+                ps.setInt(6, user.groupNum);
+            }
+
+            ps.executeUpdate();
+
+            rs = ps.getGeneratedKeys();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+
+        } catch (SQLException ex) {
+            if (ex.getSQLState().equals("23000")) {
+                throw new DuplicateKeyException();
+            } else {
+                System.out.println("SQLException: " + ex.getMessage());
+                System.out.println("SQLState: " + ex.getSQLState());
+                System.out.println("VendorError: " + ex.getErrorCode());
+            }
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                    rs = null;
+                }
+
+                if (ps != null) {
+                    ps.close();
+                    ps = null;
+                }
+            } catch (SQLException ex) {
+                System.out.println("SQLException: " + ex.getMessage());
+            }
+        }
+        
+        return -1;
+    }
+
+
+    public static void assoicateApp(int userID, int appID) {
+        if (conn == null) {
+            establishConnection();
+        }
+
+        String SQL = "INSERT INTO users_apps (`userid`, `appid`) VALUES (?, ?);";
+ 
+
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        
+        try {
+            ps = conn.prepareStatement(SQL, PreparedStatement.RETURN_GENERATED_KEYS);
+
+            ps.setInt(1, userID);
+            ps.setInt(2, appID);
+
+            ps.executeUpdate();
+
+        } catch (SQLException ex) {
+            if (ex.getSQLState().equals("23000")) {
+                try {
+                    throw new DuplicateKeyException();
+                } catch (DuplicateKeyException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            } else {
+                System.out.println("SQLException: " + ex.getMessage());
+                System.out.println("SQLState: " + ex.getSQLState());
+                System.out.println("VendorError: " + ex.getErrorCode());
+            }
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                    rs = null;
+                }
+
+                if (ps != null) {
+                    ps.close();
+                    ps = null;
+                }
+            } catch (SQLException ex) {
+                System.out.println("SQLException: " + ex.getMessage());
+            }
+        }
+        
     }
 }

@@ -21,15 +21,16 @@ import javax.swing.JTextField;
 
 import BigBrother.Classes.User;
 import BigBrother.Client.MySQL;
-import BigBrother.Exceptions.EmptyTFException;
-import BigBrother.Exceptions.MismatchedPasswordException;
+import BigBrother.Exceptions.DuplicateKeyException;
+import BigBrother.Exceptions.FormException;
 import BigBrother.Exceptions.MultipleResultsFoundException;
 import BigBrother.Exceptions.NoResultsFoundException;
 
 public class UserGUI extends JFrame {
 
     private boolean isExistingUser = false;
-
+    private int userID = -1;
+    
     private final JTextField usernameTF = new JTextField(20);
     private final JTextField passwordTF = new JPasswordField(20);
     private final JTextField confirmPasswordTF = new JPasswordField(20);
@@ -102,36 +103,41 @@ public class UserGUI extends JFrame {
 
         OKButton.addActionListener(new ActionListener() {
 
+
             @Override
             public void actionPerformed(ActionEvent arg0) {
                 try {
-                    // check for formatting issues
-                    if (firstNameTF.getText().equals("") | lastNameTF.getText().equals("") | usernameTF.getText().equals("") | passwordTF.getText().equals("") | confirmPasswordTF.getText().equals("")) {
-                        throw new EmptyTFException();
+                    if (usernameTF.getText().equals("")) {
+                        throw new FormException("Username field cannot be empty");
+                    } else if (firstNameTF.getText().equals("")) {
+                        throw new FormException("First name field cannot be empty");
+                    } else if (lastNameTF.getText().equals("")) {
+                        throw new FormException("Last name field cannot be empty");
+                    } else if (passwordTF.getText().equals("") || confirmPasswordTF.getText().equals("")) {
+                        throw new FormException("You must fill out both password and confirm password");
                     } else if (!passwordTF.getText().equals(confirmPasswordTF.getText())) {
-                        throw new MismatchedPasswordException();
+                        throw new FormException("Password and confirm password do not match");
                     } else {
-                        if (isExistingUser)
+                        if (isExistingUser) {
                             submitEditUser();
-                        else
+                        } else {
                             submitNewUser();
+                        }
                     }
-                } catch (EmptyTFException e) {
-                    JOptionPane.showMessageDialog(null, "All Text Fields Except Group Number " + "Must Be Filled!", "Error", JOptionPane.ERROR_MESSAGE);
-                } catch (MismatchedPasswordException e) {
-                    JOptionPane.showMessageDialog(null, "Passwords Do " + "Not Match!", "Error", JOptionPane.ERROR_MESSAGE);
+                } catch (FormException e) {
+                    JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
     }
 
     // opens an existing user GUI for editing
-    public UserGUI(int userID) throws MultipleResultsFoundException, NoResultsFoundException, SQLException {
+    public UserGUI(int _userID) throws MultipleResultsFoundException, NoResultsFoundException, SQLException {
         // call the normal super for a new user, but raise the flag for an existing user
         this();
         isExistingUser = true;
-
-        User user = MySQL.getUser(userID);
+        userID = _userID;
+        User user = MySQL.getUser(_userID);
 
         // set the title
         this.setTitle("Edit Existing User: " + user.toString());
@@ -151,12 +157,30 @@ public class UserGUI extends JFrame {
     }
 
     private void submitNewUser() {
-        // TODO: implement this
-
-        // TODO: remember to add new "Idle" and "Other" apps for that user
+        User tempUser = new User(userID, usernameTF.getText(), firstNameTF.getText(), lastNameTF.getText(), groupNumberTF.getText());
+        try {
+            userID = MySQL.addUser(tempUser, passwordTF.getText());
+            dispose();
+            
+            MySQL.assoicateApp(userID, 0); // Other app
+            MySQL.assoicateApp(userID, 1); // Idle app
+            
+            AdminGUI.updateUsers();
+            AdminGUI.updateApps(userID);
+            
+        } catch (DuplicateKeyException e) {
+            JOptionPane.showMessageDialog(null, "Username " + usernameTF.getText() + " already exists", "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     private void submitEditUser() {
-        // TODO: implement this
+        User tempUser = new User(userID, usernameTF.getText(), firstNameTF.getText(), lastNameTF.getText(), groupNumberTF.getText());
+        try {
+            MySQL.editUser(tempUser, passwordTF.getText());
+            dispose();
+            AdminGUI.updateUsers();
+        } catch (DuplicateKeyException e) {
+            JOptionPane.showMessageDialog(null, "Username " + usernameTF.getText() + " already exists", "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 }

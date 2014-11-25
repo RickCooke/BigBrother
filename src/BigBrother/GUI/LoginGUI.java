@@ -36,6 +36,9 @@ public class LoginGUI extends JFrame {
      */
     public LoginGUI() {
         super("BigBrother Login");
+        
+        setLocationRelativeTo(null);
+        
         getContentPane().setLayout(new FlowLayout());
 
         JPanel containerPanel = new JPanel();
@@ -81,7 +84,7 @@ public class LoginGUI extends JFrame {
 
         // TODO: remove this to prompt for username/pw
         // attemptLogin("defaultUser", "password");
-        // attemptLogin("bigbrother", "plzletmein");
+         attemptLogin("bigbrother", "plzletmein");
         // Can't get the LoginGUI to dispose
         // Note from Mike: commenting this out and logging in normally hangs the program for me,
         // can't right click taskbar icon :(
