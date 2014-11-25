@@ -24,16 +24,25 @@ public class Settings {
     public final String MySQL_password = "plzletmein";
     
 	public void downloadSettings() {
-			try {
-				MySQL.recieveSettings(this);
-	        } catch (NoSettingsException e) {
-	            JOptionPane.showMessageDialog(null, e.getMessage(),
-	                "Error", JOptionPane.ERROR_MESSAGE);
-	            System.exit(1);
-	        }
+		if(debug)
+			System.out.println("Downloading Settings...");
+		
+		try {
+			MySQL.recieveSettings(this);
+        } catch (NoSettingsException e) {
+            JOptionPane.showMessageDialog(null, e.getMessage(),
+                "Error", JOptionPane.ERROR_MESSAGE);
+            System.exit(1);
+        }
+		
+		if(debug)
+			System.out.println("Finished!");
 	}
 
 	public void uploadSettings() {
+		if(debug)
+			System.out.println("Uploading Settings...");
+		
 		try {
 			MySQL.sendSettings(this);
 		} catch (NoSettingsException e) {
@@ -41,6 +50,9 @@ public class Settings {
 	                "Error", JOptionPane.ERROR_MESSAGE);
 	            System.exit(1);
 	    }
+
+		if(debug)
+			System.out.println("Finished!");
 	}
 	
 	public String toString() {

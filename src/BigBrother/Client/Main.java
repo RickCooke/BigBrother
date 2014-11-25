@@ -29,15 +29,15 @@ public class Main {
 
         settings = new Settings();
         
-        if(settings.debug)
-        	System.out.println(settings.toString());
-        
         //connect to the SQL server
         MySQL.establishConnection();
         SQLite.establishConnection();
         
         //download the Main.settings from the server
         settings.downloadSettings();
+
+        if(settings.debug)
+        	System.out.println(settings.toString());
         
     	//start the tray icon
         setupTrayIcon();
