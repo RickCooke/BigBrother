@@ -13,6 +13,7 @@ import BigBrother.Classes.AppLite;
 import BigBrother.Classes.UserLite;
 import BigBrother.Client.Main;
 import BigBrother.Client.MySQL;
+import BigBrother.Exceptions.UnknownSelectTypeException;
 
 /* Comment here to see if I have write access to the repo */
 
@@ -72,8 +73,58 @@ public class AdminGUI extends JFrame {
                 openSettingsGUI();
             }
         });
+        JMenuItem addUserMenu = new JMenuItem("Add User");
+        addUserMenu.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+            	UserGUI win = new UserGUI();
+	            win.pack();
+	            win.setVisible(true);
+            }
+        });
+        JMenuItem editUserMenu = new JMenuItem("Edit User");
+        editUserMenu.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+				try {
+					SingleSelectGUI win = new SingleSelectGUI(0);
+		            win.pack();
+		            win.setVisible(true);
+				} catch (UnknownSelectTypeException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+            }
+        });
+        JMenuItem addAppMenu = new JMenuItem("Add Application");
+        addAppMenu.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+            	AppGUI win = new AppGUI();
+	            win.pack();
+	            win.setVisible(true);
+            }
+        });
+        JMenuItem editAppMenu = new JMenuItem("Edit Application");
+        editAppMenu.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+				try {
+					SingleSelectGUI win = new SingleSelectGUI(1);
+		            win.pack();
+		            win.setVisible(true);
+				} catch (UnknownSelectTypeException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+            }
+        });
         
         editMenu.add(settingsMenu);
+        editMenu.add(addUserMenu);
+        editMenu.add(editUserMenu);
+        editMenu.add(addAppMenu);
+        editMenu.add(editAppMenu);
 
         //add menubar
         JMenuBar menuBar = new JMenuBar();
@@ -86,7 +137,7 @@ public class AdminGUI extends JFrame {
         usersLabel.setAlignmentX(CENTER_ALIGNMENT);
         usersList.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
-                updateApps(usersList.getSelectedValue().getUserID());
+                updateApps(usersList.getSelectedValue().getID());
             }
         });
         JScrollPane usersScrollPane = new JScrollPane(usersList);
@@ -128,10 +179,6 @@ public class AdminGUI extends JFrame {
     ActionListener newUserButtonAL = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent arg0) {
-            // debug output
-            if (Main.settings.debug)
-                System.out.println("New User button pressed.");
-
             UserGUI win = new UserGUI();
             win.pack();
             win.setVisible(true);
@@ -141,10 +188,6 @@ public class AdminGUI extends JFrame {
     ActionListener newAppButtonAL = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent arg0) {
-            // debug output
-            if (Main.settings.debug)
-                System.out.println("New App button pressed.");
-
             AppGUI win = new AppGUI();
             win.pack();
             win.setVisible(true);

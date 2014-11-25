@@ -3,24 +3,27 @@ package BigBrother.Classes;
 /*comment to later be removed*/
 
 public class App {
-    private int appID = -1;
-    private int count = 0;
-    private String alias = "";
-    private String window = null;
-    private boolean window_regex = false;
-    private String process = null;
-    private boolean process_regex = false;
+    public int appID = -1;
+    public int count = 0;
+    public String alias = "";
+    public String window = null;
+    public boolean window_regex = false;
+    public String process = null;
+    public boolean process_regex = false;
+    public boolean isActive = true;
 
     public App() {}
 
     public App(int _appID, String _alias, String _window, 
-        boolean _windowIsRegex, String _process, boolean _processIsRegex) {
+        boolean _windowIsRegex, String _process, 
+        boolean _processIsRegex, boolean _isActive) {
         appID = _appID;
         alias = _alias;
         window = _window;
         window_regex = _windowIsRegex;
         process = _process;
         process_regex = _processIsRegex;
+        isActive = _isActive;
     }
 
     public void print() {

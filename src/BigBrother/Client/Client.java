@@ -142,8 +142,8 @@ public class Client {
         // Brian(11/18): If we rely on DB then every user must have a user_app pair
         // that adds the apps always, and does not allow them to delete.
         // seems the best way, but a lot more work
-        userApps.add(new App(0, "Other", null, false, null, false));
-        userApps.add(new App(1, "Idle", null, false, null, false));
+        userApps.add(new App(0, "Other", null, false, null, false, true));
+        userApps.add(new App(1, "Idle", null, false, null, false, true));
     }
 
     // Function to poll the system for its running apps and add them to memory

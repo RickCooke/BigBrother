@@ -112,7 +112,7 @@ public class SettingsGUI extends JFrame {
                 	submitSettings();
                 } catch (MalformedSettingsException e) {
                     JOptionPane.showMessageDialog(null, 
-                        "Unspecified Error!", "Error", 
+                        e.getMessage(), "Error", 
                         JOptionPane.ERROR_MESSAGE);
                 }
             }
@@ -131,8 +131,9 @@ public class SettingsGUI extends JFrame {
     	
         // TODO: build the Settings (remember to take units into account),
     	// throw a MalformedSettingsException if something is wrong
+    	throw new MalformedSettingsException("Not yet implemented!");
     	
     	//upload the new settings to the SQL DB
-		MySQL.sendSettings(newSettings);
+		//MySQL.sendSettings(newSettings);
     }
 }

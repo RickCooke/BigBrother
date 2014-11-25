@@ -1,10 +1,10 @@
 package BigBrother.Classes;
 
 public class UserLite {
-    protected int userID;
-    protected String username;
-    protected String firstName;
-    protected String lastName;
+	private int userID;
+	private String username;
+	private String firstName;
+	private String lastName;
 
     public UserLite(int _userID, String _username, 
         String _firstName, String _lastName) {
@@ -18,7 +18,7 @@ public class UserLite {
         return lastName + ", " + firstName + " (" + username + ")";
     }
 
-    public int getUserID() {
+    public int getID() {
         return userID;
     }
 }

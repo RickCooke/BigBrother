@@ -7,6 +7,7 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
+import java.sql.SQLException;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -16,7 +17,12 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import BigBrother.Classes.App;
+import BigBrother.Classes.User;
+import BigBrother.Client.MySQL;
 import BigBrother.Exceptions.EmptyTFException;
+import BigBrother.Exceptions.MultipleResultsFoundException;
+import BigBrother.Exceptions.NoResultsFoundException;
 
 public class AppGUI extends JFrame {
 
@@ -116,15 +122,21 @@ public class AppGUI extends JFrame {
 
     }
 
-    public AppGUI(int appID) {
+    public AppGUI(int appID) throws MultipleResultsFoundException, NoResultsFoundException, SQLException {
         // call the normal super for a new user, but raise the flag for an existing user
         this();
         isExistingApp = true;
 
+        App app = MySQL.getApp(appID);
         // set the title
-        this.setTitle("Edit Existing Application (AppID: " + appID + ")");
+        this.setTitle("Edit Existing Application: " + app.toString());
 
-        // TODO: get info from appID and set fields
+        //set fields
+        aliasTF.setText(app.alias);
+        windowTF.setText(app.window);
+        windowIsRegex.setSelected(app.window_regex);
+        processTF.setText(app.process);
+        processIsRegex.setSelected(app.process_regex);
     }
 
     private void closeWindow() {

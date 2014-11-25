@@ -12,7 +12,10 @@ import javax.swing.DefaultListModel;
 import BigBrother.Classes.App;
 import BigBrother.Classes.AppLite;
 import BigBrother.Classes.Settings;
+import BigBrother.Classes.User;
 import BigBrother.Classes.UserLite;
+import BigBrother.Exceptions.MultipleResultsFoundException;
+import BigBrother.Exceptions.NoResultsFoundException;
 import BigBrother.Exceptions.NoSettingsException;
 import BigBrother.Exceptions.UserDoesNotExist;
 
@@ -192,7 +195,7 @@ public class MySQL {
             while (rs.next()) {
                 App temp = new App(rs.getInt("appid"), rs.getString("alias"),
                     rs.getString("window"), rs.getBoolean("window_regex"), 
-                    rs.getString("process"), rs.getBoolean("process_regex"));
+                    rs.getString("process"), rs.getBoolean("process_regex"), true);
                 userApps.add(temp);
             }
 
@@ -253,6 +256,36 @@ public class MySQL {
         }
 
         return dlm;
+    }
+    
+    public static DefaultListModel<AppLite> 
+    getActiveAppList(DefaultListModel<AppLite> dlm) {
+      // clear the existing list
+      dlm.clear();
+
+      // make sure connection is sound
+      if (conn == null)
+          establishConnection();
+
+      // prepare the query
+      PreparedStatement ps = null;
+      ResultSet rs = null;
+      String SQL = "SELECT a.appid, a.alias FROM apps a WHERE a.active = 1";
+
+      try {
+          ps = conn.prepareStatement(SQL);
+
+          // execute query
+          rs = ps.executeQuery();
+
+          while (rs.next())
+              dlm.addElement(new AppLite(rs.getInt("appid"), 
+                  rs.getString("alias")));
+      } catch (SQLException e) {
+          System.out.println("SQLException: " + e.getMessage());
+      }
+
+      return dlm;
     }
 
     public static DefaultListModel<AppLite> getTrackedAppsDLM
@@ -353,5 +386,66 @@ public class MySQL {
                 System.out.println("SQLException: " + ex.getMessage());
             }
         }
+    }
+    
+    public static User getUser(int userID) throws MultipleResultsFoundException, NoResultsFoundException, SQLException {
+        // prepare the query
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+    	String SQL = "SELECT u.userid, u.username, u.firstname, u.lastname, u.group FROM users u "
+                + " WHERE u.userid = ?";
+
+        ps = conn.prepareStatement(SQL);
+        ps.setInt(1, userID);
+
+        // execute query
+        rs = ps.executeQuery();
+        rs.next();
+        
+        //should only get one result
+        if(rs.isFirst() && rs.isLast()) {
+            User ret = new User();
+            ret.userID = userID;
+            ret.username = rs.getString("username");
+            ret.firstName = rs.getString("firstname");
+            ret.lastName = rs.getString("lastname");
+            ret.groupNum = rs.getInt("group");
+            return ret;
+        }
+        else if(!rs.first())
+        	throw new NoResultsFoundException("No users found with userID #" + userID + ".");
+        else
+        	throw new MultipleResultsFoundException("Multiple users found with userID #" + userID + ".");
+    }
+    
+    public static App getApp(int appID) throws MultipleResultsFoundException, NoResultsFoundException, SQLException {
+        // prepare the query
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+    	String SQL = "SELECT a.appid, a.alias, a.window, a.window_regex, a.process, a.process_regex FROM apps a "
+                + " WHERE a.appid = ? AND a.active = 1";
+
+        ps = conn.prepareStatement(SQL);
+        ps.setInt(1, appID);
+
+        // execute query
+        rs = ps.executeQuery();
+        rs.next();
+
+        //should only get one result
+        if(rs.isFirst() && rs.isLast()) {
+            App ret = new App(appID,
+            		rs.getString("alias"),
+            		rs.getString("window"),
+            		rs.getBoolean("window_regex"),
+            		rs.getString("process"),
+            		rs.getBoolean("process_regex"),
+            		true);
+            return ret;
+        }
+        else if(!rs.first())
+        	throw new NoResultsFoundException("No apps found with appID #" + appID + ".");
+        else
+        	throw new MultipleResultsFoundException("Multiple apps found with appID #" + appID + ".");
     }
 }

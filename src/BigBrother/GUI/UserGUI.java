@@ -6,6 +6,7 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
+import java.sql.SQLException;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -18,8 +19,12 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
+import BigBrother.Classes.User;
+import BigBrother.Client.MySQL;
 import BigBrother.Exceptions.EmptyTFException;
 import BigBrother.Exceptions.MismatchedPasswordException;
+import BigBrother.Exceptions.MultipleResultsFoundException;
+import BigBrother.Exceptions.NoResultsFoundException;
 
 public class UserGUI extends JFrame {
 
@@ -131,15 +136,23 @@ public class UserGUI extends JFrame {
     }
 
     // opens an existing user GUI for editing
-    public UserGUI(int userID) {
+    public UserGUI(int userID) throws MultipleResultsFoundException, NoResultsFoundException, SQLException {
         // call the normal super for a new user, but raise the flag for an existing user
         this();
         isExistingUser = true;
 
+        User user = MySQL.getUser(userID);
+        
         // set the title
-        this.setTitle("Edit Existing User (UserID: " + userID + ")");
+        this.setTitle("Edit Existing User: " + user.toString());
 
-        // TODO: get info from username and set fields
+        //set fields
+        firstNameTF.setText(user.firstName);
+        lastNameTF.setText(user.lastName);
+        usernameTF.setText(user.username);
+        passwordTF.setText("");
+        confirmPasswordTF.setText("");
+        groupNumberTF.setText(String.valueOf(user.groupNum));
     }
 
     private void closeWindow() {

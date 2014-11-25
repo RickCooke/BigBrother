@@ -1,8 +1,8 @@
 package BigBrother.Classes;
 
 public class AppLite {
-    protected int appID;
-    protected String alias;
+	private int appID;
+    private String alias;
 
     public AppLite(int _appID, String _alias) {
         appID = _appID;
@@ -11,5 +11,13 @@ public class AppLite {
 
     public String toString() {
         return alias + " (appID: " + appID + ")";
+    }
+    
+    public int getID() {
+    	return appID;
+    }
+    
+    public String getAlias() {
+    	return alias;
     }
 }
