@@ -28,7 +28,8 @@ public class App {
 
     public void print() {
         System.out.println(appID + " " + alias + " " + window + " " 
-    + window_regex + " " + process + " " + process_regex);
+    + window_regex + " " + process + " " + process_regex + " " + getPriorityScore());
+  
     }
 
     public void print2() {
@@ -40,6 +41,22 @@ public class App {
         count = 0;
     }
 
+    public int getPriorityScore(){
+        // Based on http://i.imgur.com/SREBZj2.png
+        int score = 0;
+        
+        if(alias == "Other") return 20;
+        if(alias == "Idle") return 10;
+        
+        if(window != null) score += 3;
+        if(process != null) score += 1;
+        if(!window_regex) score += 1;
+        if(!process_regex) score += 1;
+        
+        return score; 
+    }
+    
+    
     public boolean isMatch(String windowTitle, String processName) {
         boolean windowMatch = false;
         boolean processMatch = false;

@@ -12,10 +12,13 @@ import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.PointerInfo;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import javax.swing.JOptionPane;
+
 import BigBrother.Classes.App;
 import BigBrother.Exceptions.CountMismatchException;
 import BigBrother.Exceptions.KeyboardHookFailed;
@@ -29,7 +32,7 @@ import com.sun.jna.ptr.PointerByReference;
 
 
 public class Client {
-	
+
     private int OTHER_APP_INDEX = -1;
     private int IDLE_APP_INDEX = -1;
 
@@ -40,14 +43,14 @@ public class Client {
     private Timer pollTimer;
     private static boolean idleFlag;
     private ArrayList<App> userApps;
-    
+
     public Client() {
-        
+
         Keyboard.Initialize();
 
         // get our list of apps
         syncApps();
-        
+
         // TODO: actually find the indecies in an efficient way
         // Figure out and set the indexes of idle and other apps
         try {
@@ -61,11 +64,9 @@ public class Client {
             }
 
             if (OTHER_APP_INDEX == -1)
-                throw new RequiredAppsNotFoundException(""
-                    + "'Other' App index not found.");
+                throw new RequiredAppsNotFoundException("" + "'Other' App index not found.");
             else if (IDLE_APP_INDEX == -1)
-                throw new RequiredAppsNotFoundException(""
-                    + "'Idle' App index not found.");
+                throw new RequiredAppsNotFoundException("" + "'Idle' App index not found.");
         } catch (RequiredAppsNotFoundException e) {
             System.out.println(e.getMessage());
             destroy();
@@ -123,6 +124,19 @@ public class Client {
         System.exit(1);
     }
 
+    public class AppComparator implements Comparator<App> {
+        @Override
+        public int compare(App a1, App a2) {
+
+            if (a1.getPriorityScore() == a2.getPriorityScore()){
+                return Integer.compare(a1.getAppID(), a2.getAppID());
+            }
+            
+            // Sort by highest priority score
+            return Integer.compare(a2.getPriorityScore(), a1.getPriorityScore());
+        }
+    }
+
     // Query server and set our apps list
     private void syncApps() {
         userApps = new ArrayList<App>();
@@ -136,6 +150,23 @@ public class Client {
         // seems the best way, but a lot more work
         userApps.add(new App(0, "Other", null, false, null, false, true));
         userApps.add(new App(1, "Idle", null, false, null, false, true));
+        
+        
+        System.out.println("Before priority Sorting: ");
+        for (App a : userApps)
+            if (Main.settings.debug)
+                a.print();
+        
+        Collections.sort(userApps, new AppComparator());
+        System.out.println("");
+        System.out.println("After  priority Sorting: ");
+        for (App a : userApps)
+            if (Main.settings.debug)
+                a.print();
+        
+        System.exit(1);
+        
+
     }
 
     // Function to poll the system for its running apps and add them to memory
@@ -172,12 +203,10 @@ public class Client {
         if (!idleFlag) {
 
             // get the Window & Process Names
-            GetWindowTextW(WindowsAPI.EnumerateWindows.User32DLL.
-                GetForegroundWindow(), buffer, 1024);
+            GetWindowTextW(WindowsAPI.EnumerateWindows.User32DLL.GetForegroundWindow(), buffer, 1024);
             windowTitle = Native.toString(buffer);
             GetWindowThreadProcessId(GetForegroundWindow(), pointer);
-            process = OpenProcess(PROCESS_QUERY_INFORMATION |
-                PROCESS_VM_READ, false, pointer.getValue());
+            process = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, false, pointer.getValue());
             GetModuleBaseNameW(process, null, buffer, 1024);
             processName = Native.toString(buffer);
 
@@ -214,8 +243,7 @@ public class Client {
 
         // If we need to, flush from memory to local SQLite DB
         try {
-            if (pollNum % (Main.settings.memory_flush_interval / 
-            	Main.settings.polling_interval) == 0)
+            if (pollNum % (Main.settings.memory_flush_interval / Main.settings.polling_interval) == 0)
                 memFlush();
         } catch (CountMismatchException e) {
             // TODO: handle this better
@@ -223,8 +251,7 @@ public class Client {
         }
 
         // if we need to, flush from SQLite DB to server
-        if (pollNum % (Main.settings.local_flush_interval / 
-        	Main.settings.polling_interval) == 0)
+        if (pollNum % (Main.settings.local_flush_interval / Main.settings.polling_interval) == 0)
             localFlush();
     }
 
@@ -239,12 +266,11 @@ public class Client {
         }
 
         try {
-            if(Keyboard.isHooked()) {
+            if (Keyboard.isHooked()) {
                 Keyboard.unhook();
             }
         } catch (KeyboardHookFailed e) {
-            JOptionPane.showMessageDialog(Main.win, e.getMessage(),
-                "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(Main.win, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
 
         // Set up the idle timer
@@ -252,16 +278,15 @@ public class Client {
         idleTimerTask = new TimerTask() {
             public void run() {
                 setIdle(true);
-                
+
                 try {
-                    if(!Keyboard.isHooked()) {
+                    if (!Keyboard.isHooked()) {
                         Keyboard.hook();
                     }
                 } catch (KeyboardHookFailed e) {
-                    JOptionPane.showMessageDialog(Main.win, e.getMessage(), 
-                        "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(Main.win, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 }
-                
+
                 User32.MSG msg = new User32.MSG();
                 while (true) {
                     User32.INSTANCE.PeekMessage(msg, null, 0, 0, 0);
@@ -271,16 +296,15 @@ public class Client {
                         e.printStackTrace();
                     }
                 }
-                
+
             }
         };
-        
+
         idleTimer.schedule(idleTimerTask, Main.settings.max_idle_time);
 
         // Debug text
         if (Main.settings.debug)
-            System.out.println("Activity detected."
-                + " Idle timer has been reset.");
+            System.out.println("Activity detected." + " Idle timer has been reset.");
     }
 
     public static void setIdle(boolean _idle) {
@@ -318,13 +342,12 @@ public class Client {
         int otherCount = userApps.get(OTHER_APP_INDEX).getCount();
         if (otherCount != (Main.settings.memory_flush_interval - totalCount)) {
             if (Main.settings.debug)
-                System.out.println("Something weird happened "
-                    + "where other count isn't what it should be");
+                System.out.println("Something weird happened " + "where other count isn't what it should be");
 
             // TODO: reenable this, it was freaking out
             // throw new
             // CountMismatchException("'Other App' poll count does not
-            //match the remainder of time not spent on other apps.");
+            // match the remainder of time not spent on other apps.");
         }
 
         // =======================================================
