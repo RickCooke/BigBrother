@@ -43,13 +43,7 @@ public class Settings {
 		if(debug)
 			System.out.println("Uploading Settings...");
 		
-		try {
-			MySQL.sendSettings(this);
-		} catch (NoSettingsException e) {
-	            JOptionPane.showMessageDialog(null, e.getMessage(),
-	                "Error", JOptionPane.ERROR_MESSAGE);
-	            System.exit(1);
-	    }
+		MySQL.sendSettings(this);
 
 		if(debug)
 			System.out.println("Finished!");

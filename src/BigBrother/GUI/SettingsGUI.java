@@ -1,7 +1,7 @@
 package BigBrother.GUI;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -9,9 +9,6 @@ import java.awt.event.WindowEvent;
 import java.text.NumberFormat;
 import java.util.Locale;
 
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -22,7 +19,7 @@ import javax.swing.JFormattedTextField;
 
 import BigBrother.Classes.Settings;
 import BigBrother.Client.MySQL;
-import BigBrother.Exceptions.NoSettingsException;
+import BigBrother.Exceptions.MalformedSettingsException;
 
 public class SettingsGUI extends JFrame {
 
@@ -48,61 +45,58 @@ public class SettingsGUI extends JFrame {
     public SettingsGUI() {
         super("Edit Settings");
 
-        setLayout(new BorderLayout());
-
+        setLayout(new GridLayout(7, 2));
         
-        JPanel panelLeft = new JPanel();
-        panelLeft.setLayout(new BoxLayout(panelLeft, BoxLayout.Y_AXIS));
-        JPanel panelRight = new JPanel();
-        panelRight.setLayout(new BoxLayout(panelRight, BoxLayout.Y_AXIS));
-        JLabel polling_interval_label = new JLabel("Polling Interval: ");
-        JLabel memory_flush_interval_label = new JLabel("Memory -> Local Flush Interval: ");
-        JLabel local_flush_interval_TF_label = new JLabel("Local -> Server Flush Interval: ");
-        JLabel max_idle_time_label = new JLabel("Time to Idle: ");
-        JLabel start_time_TF_label = new JLabel("Start Date: ");
-        JLabel block_time_label = new JLabel("Time Block Duration: ");
+        JPanel polling_interval_group = new JPanel(new FlowLayout());
+        polling_interval_TF.setColumns(10);
+        polling_interval_group.add(polling_interval_TF);
+        polling_interval_group.add(polling_interval_unit);
 
-        panelLeft.add(polling_interval_label);
-        panelLeft.add(Box.createRigidArea(new Dimension(0, 5)));
-        panelRight.add(polling_interval_TF);
-        panelRight.add(polling_interval_unit);
+        JPanel memory_flush_interval_group = new JPanel(new FlowLayout());
+        memory_flush_interval_TF.setColumns(10);
+        memory_flush_interval_group.add(memory_flush_interval_TF);
+        memory_flush_interval_group.add(memory_flush_interval_unit);
 
-        panelLeft.add(memory_flush_interval_label);
-        panelLeft.add(Box.createRigidArea(new Dimension(0, 5)));
-        panelRight.add(memory_flush_interval_TF);
-        panelRight.add(memory_flush_interval_unit);
+        JPanel local_flush_interval_group = new JPanel(new FlowLayout());
+        local_flush_interval_TF.setColumns(10);
+        local_flush_interval_group.add(local_flush_interval_TF);
+        local_flush_interval_group.add(local_flush_interval_unit);
 
-        panelLeft.add(local_flush_interval_TF_label);
-        panelLeft.add(Box.createRigidArea(new Dimension(0, 5)));
-        panelRight.add(local_flush_interval_TF);
-        panelRight.add(local_flush_interval_unit);
+        JPanel max_idle_time_group = new JPanel(new FlowLayout());
+        max_idle_time_TF.setColumns(10);
+        max_idle_time_group.add(max_idle_time_TF);
+        max_idle_time_group.add(max_idle_time_unit);
 
-        panelLeft.add(max_idle_time_label);
-        panelLeft.add(Box.createRigidArea(new Dimension(0, 5)));
-        panelRight.add(max_idle_time_TF);
-        panelRight.add(max_idle_time_unit);
+        JPanel start_time_group = new JPanel(new FlowLayout());
+        start_time_TF.setColumns(10);
+        start_time_group.add(start_time_TF);
 
-        panelLeft.add(start_time_TF_label);
-        panelLeft.add(Box.createRigidArea(new Dimension(0, 5)));
-        panelRight.add(start_time_TF);
-
-        panelLeft.add(block_time_label);
-        panelLeft.add(Box.createRigidArea(new Dimension(0, 5)));
-        panelRight.add(block_time_TF);
-        panelRight.add(block_time_unit);
-
-        panelLeft.add(Box.createRigidArea(new Dimension(0, 10)));
-        panelRight.add(Box.createRigidArea(new Dimension(0, 15)));
-        panelLeft.add(OKButton);
-        panelRight.add(cancelButton);
-        cancelButton.setAlignmentX(CENTER_ALIGNMENT);
-
-        panelLeft.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        panelRight.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-
-        add(panelLeft, BorderLayout.LINE_START);
-        add(panelRight, BorderLayout.LINE_END);
-
+        JPanel block_time_group = new JPanel(new FlowLayout());
+        block_time_TF.setColumns(10);
+        block_time_group.add(block_time_TF);
+        block_time_group.add(block_time_unit);
+        
+        add(new JLabel("Polling Interval: "));
+        add(polling_interval_group);
+        
+        add(new JLabel("Memory -> Local Flush Interval: "));
+        add(memory_flush_interval_group);
+        
+        add(new JLabel("Local -> Server Flush Interval: "));
+        add(local_flush_interval_group);
+        
+        add(new JLabel("Time to Idle: "));
+        add(max_idle_time_group);
+        
+        add(new JLabel("Start Date: "));
+        add(start_time_group);
+        
+        add(new JLabel("Time Block Duration: "));
+        add(block_time_group);
+        
+        add(OKButton);
+        add(cancelButton);
+        
         cancelButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
@@ -115,11 +109,8 @@ public class SettingsGUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent arg0) {
                 try {
-                    //TODO: check for valid settings
-                	
                 	submitSettings();
-                	
-                } catch (Exception e) {
+                } catch (MalformedSettingsException e) {
                     JOptionPane.showMessageDialog(null, 
                         "Unspecified Error!", "Error", 
                         JOptionPane.ERROR_MESSAGE);
@@ -135,17 +126,13 @@ public class SettingsGUI extends JFrame {
         postEvent(winClosingEvent);
     }
 
-    private void submitSettings() {
+    private void submitSettings() throws MalformedSettingsException {
     	Settings newSettings = new Settings();
     	
-        // TODO: build the Settings (remember to take units into account)
+        // TODO: build the Settings (remember to take units into account),
+    	// throw a MalformedSettingsException if something is wrong
     	
     	//upload the new settings to the SQL DB
-    	try {
-			MySQL.sendSettings(newSettings);
-		} catch (NoSettingsException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		MySQL.sendSettings(newSettings);
     }
 }

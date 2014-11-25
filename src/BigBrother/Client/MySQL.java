@@ -131,7 +131,7 @@ public class MySQL {
         }
 
     }
-    public static void sendSettings(Settings _settings) throws NoSettingsException {
+    public static void sendSettings(Settings _settings) {
         if (conn == null) {
             establishConnection();
         }
