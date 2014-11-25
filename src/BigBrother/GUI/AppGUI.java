@@ -41,57 +41,33 @@ public class AppGUI extends JFrame {
     public AppGUI() {
         super("New Appliction");
 
-        setLayout(new BorderLayout());
+        setLayout(new GridLayout(4, 3));
 
-        JPanel northPanel = new JPanel();
-        JPanel centerPanel = new JPanel();
-        JPanel centerTopPanel = new JPanel();
-        JPanel centerBottomPanel = new JPanel();
-        JPanel southPanel = new JPanel();
-        JPanel southTopPanel = new JPanel();
-        JPanel southBottomPanel = new JPanel();
-        JPanel southButtonPanel = new JPanel();
+        JPanel buttonGroup = new JPanel(new FlowLayout());
+        buttonGroup.add(OKButton);
+        buttonGroup.add(cancelButton);
+        
+        add(new JLabel("Alias Name:"));
+        add(aliasTF);
+        add(new JPanel(new FlowLayout())); //filler grid space
+        
+        add(new JLabel("Window Name:"));
+        add(windowTF);
+        JPanel windowRegexGroup = new JPanel(new FlowLayout());
+        windowRegexGroup.add(windowIsRegex);
+        windowRegexGroup.add(new JLabel("is Regex"));
+        add(windowRegexGroup);
+        
+        add(new JLabel("Process Name:"));
+        add(processTF);
+        JPanel processRegexGroup = new JPanel(new FlowLayout());
+        processRegexGroup.add(processIsRegex);
+        processRegexGroup.add(new JLabel("is Regex"));
+        add(processRegexGroup);
 
-        northPanel.setLayout(new BorderLayout());
-        centerPanel.setLayout(new GridLayout(1, 2));
-        centerTopPanel.setLayout(new BorderLayout());
-        centerBottomPanel.setLayout(new FlowLayout());
-        southPanel.setLayout(new GridLayout(1, 2));
-        southTopPanel.setLayout(new BorderLayout());
-        southBottomPanel.setLayout(new FlowLayout());
-
-        JLabel aliasNameLabel = new JLabel("Alias Name:");
-        JLabel windowNameLabel = new JLabel("Window Name:");
-        JLabel processNameLabel = new JLabel("Process Name:");
-        JLabel windowRegexLabel = new JLabel("Window is Regex?");
-        JLabel processRegexLabel = new JLabel("Process is Regex?");
-
-        northPanel.add(aliasNameLabel, BorderLayout.WEST);
-        northPanel.add(aliasTF, BorderLayout.EAST);
-
-        centerTopPanel.add(windowNameLabel, BorderLayout.WEST);
-        centerTopPanel.add(windowTF, BorderLayout.EAST);
-        centerBottomPanel.add(windowIsRegex);
-        centerBottomPanel.add(windowRegexLabel);
-
-
-        southTopPanel.add(processNameLabel, BorderLayout.WEST);
-        southTopPanel.add(processTF, BorderLayout.EAST);
-        southBottomPanel.add(processIsRegex);
-        southBottomPanel.add(processRegexLabel);
-        southButtonPanel.add(OKButton);
-        southButtonPanel.add(cancelButton);
-
-
-        centerPanel.add(centerTopPanel);
-        centerPanel.add(centerBottomPanel);
-        southPanel.add(southTopPanel);
-        southPanel.add(southBottomPanel);
-        southPanel.add(southButtonPanel);
-
-        add(northPanel, BorderLayout.NORTH);
-        add(centerPanel, BorderLayout.CENTER);
-        add(southPanel, BorderLayout.SOUTH);
+        add(new JPanel(new FlowLayout())); //filler grid space
+        add(buttonGroup);
+        add(new JPanel(new FlowLayout())); //filler grid space
 
         cancelButton.addActionListener(new ActionListener() {
             @Override
@@ -145,10 +121,10 @@ public class AppGUI extends JFrame {
     }
 
     private void submitNewApp() {
-        // TODO
+        // TODO: implement this
     }
 
     private void submitEditApp() {
-        // TODO
+        // TODO: implement this
     }
 }

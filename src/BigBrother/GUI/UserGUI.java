@@ -163,12 +163,12 @@ public class UserGUI extends JFrame {
     }
 
     private void submitNewUser() {
-        // TODO
+        // TODO: implement this
 
         // TODO: remember to add new "Idle" and "Other" apps for that user
     }
 
     private void submitEditUser() {
-        // TODO
+        // TODO: implement this
     }
 }
