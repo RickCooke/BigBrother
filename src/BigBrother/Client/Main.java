@@ -11,9 +11,11 @@ import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 
 import BigBrother.Classes.Settings;
+import BigBrother.GUI.AdminGUI;
 import BigBrother.GUI.LoginGUI;
 
 
@@ -23,7 +25,7 @@ public class Main {
 	
     public static int loggedInUserID;
     
-    public static LoginGUI win;
+    public static JFrame win;
     
     public static void main(String[] args) {
 
@@ -43,11 +45,7 @@ public class Main {
         setupTrayIcon();
         
         //load up the login GUI
-        win = new LoginGUI();
-        win.setMinimumSize(new Dimension(200, 100));
-        win.pack();
-        win.setVisible(true);
-        win.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        startLoginGUI();
         
     }
     
@@ -55,14 +53,23 @@ public class Main {
         
         PopupMenu popMenu = new PopupMenu();
         MenuItem adminMenuItem = new MenuItem("Admin");
+        MenuItem logoutMenuItem = new MenuItem("Logout");
         MenuItem exitMenuItem = new MenuItem("Exit");
         popMenu.add(adminMenuItem);
+        popMenu.add(logoutMenuItem);
         popMenu.add(exitMenuItem);
 
         adminMenuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                win.setVisible(true);
+            	startAdminGUI();
+            }
+        });
+
+        logoutMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            	logout();
             }
         });
         
@@ -84,5 +91,33 @@ public class Main {
             e.printStackTrace();
         }
         
+    }
+    
+    private static void logout() {
+    	//reset everything
+    	settings = new Settings();
+    	
+        //download the Main.settings from the server
+        settings.downloadSettings();
+
+        if(settings.debug)
+        	System.out.println(settings.toString());
+        
+        //load up the login GUI
+        startLoginGUI();
+    }
+    
+    private static void startLoginGUI() {
+        win = new LoginGUI();
+        win.setMinimumSize(new Dimension(200, 100));
+        win.pack();
+        win.setVisible(true);
+    }
+    
+    private static void startAdminGUI() {
+        win = new AdminGUI();
+        win.setMinimumSize(new Dimension(200, 100));
+        win.pack();
+        win.setVisible(true);
     }
 }
