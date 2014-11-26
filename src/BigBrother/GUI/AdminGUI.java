@@ -176,14 +176,16 @@ public class AdminGUI extends JFrame {
 
         usersList.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
-                updateApps(usersList.getSelectedValue().getID());
                 if (SwingUtilities.isRightMouseButton(e)) {
                     int row = usersList.locationToIndex(e.getPoint());
                     usersList.setSelectedIndex(row);
                     userPopupMenu.show(usersList, e.getX(), e.getY());
                 }
+                updateApps(usersList.getSelectedValue().getID());
             }
         });
+        
+        
         JScrollPane usersScrollPane = new JScrollPane(usersList);
         usersScrollPane.setPreferredSize(new Dimension(150, 400));
         JButton createUserButton = new JButton("New User");
