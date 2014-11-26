@@ -6,6 +6,8 @@ import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.WindowEvent;
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -121,41 +123,65 @@ public class SettingsGUI extends JFrame {
         add(cancelButton);
 
 
-
-        ActionListener ComboAL = new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.out.println(e);
+        ItemListener ComboIL = new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
                 JComboBox<String> combo = (JComboBox<String>) e.getSource();
-                try {
-                    if (combo == polling_interval_unit) {
-                        System.out.println(combo.getSelectedItem());
-                        int old = numFormat.parse(polling_interval_TF.getText()).intValue();
-                        polling_interval_TF.setValue(old / getMultiplier(combo));
-                    } else if (combo == memory_flush_interval_unit) {
-                        int old = numFormat.parse(memory_flush_interval_TF.getText()).intValue();
-                        memory_flush_interval_TF.setValue(old / getMultiplier(combo));
-                    } else if (combo == local_flush_interval_unit) {
-                        int old = numFormat.parse(local_flush_interval_TF.getText()).intValue();
-                        local_flush_interval_TF.setValue(old / getMultiplier(combo));
-                    } else if (combo == max_idle_time_unit) {
-                        int old = numFormat.parse(max_idle_time_TF.getText()).intValue();
-                        max_idle_time_TF.setValue(old / getMultiplier(combo));
-                    } else if (combo == block_time_unit) {
-                        int old = numFormat.parse(block_time_TF.getText()).intValue();
-                        block_time_TF.setValue(old / getMultiplier(combo));
+                String comboString = e.getItem().toString();
+
+                if (e.getStateChange() == 2) {
+                    try {
+                        if (combo == polling_interval_unit) {
+                            System.out.println(combo.getSelectedItem());
+                            long old = numFormat.parse(polling_interval_TF.getText()).intValue();
+                            polling_interval_TF.setValue(old * getMultiplier(comboString));
+                        } else if (combo == memory_flush_interval_unit) {
+                            long old = numFormat.parse(memory_flush_interval_TF.getText()).intValue();
+                            memory_flush_interval_TF.setValue(old * getMultiplier(comboString));
+                        } else if (combo == local_flush_interval_unit) {
+                            long old = numFormat.parse(local_flush_interval_TF.getText()).intValue();
+                            local_flush_interval_TF.setValue(old * getMultiplier(comboString));
+                        } else if (combo == max_idle_time_unit) {
+                            long old = numFormat.parse(max_idle_time_TF.getText()).intValue();
+                            max_idle_time_TF.setValue(old * getMultiplier(comboString));
+                        } else if (combo == block_time_unit) {
+                            long old = numFormat.parse(block_time_TF.getText()).intValue();
+                            block_time_TF.setValue(old * getMultiplier(comboString));
+                        }
+                    } catch (ParseException e1) {
+                        System.err.println(e1.getMessage());
                     }
-                } catch (ParseException e1) {
-                    System.err.println(e1.getMessage());
+                } else if (e.getStateChange() == 1) {
+                    try {
+                        if (combo == polling_interval_unit) {
+                            System.out.println(combo.getSelectedItem());
+                            long old = numFormat.parse(polling_interval_TF.getText()).intValue();
+                            polling_interval_TF.setValue(old / getMultiplier(comboString));
+                        } else if (combo == memory_flush_interval_unit) {
+                            long old = numFormat.parse(memory_flush_interval_TF.getText()).intValue();
+                            memory_flush_interval_TF.setValue(old / getMultiplier(comboString));
+                        } else if (combo == local_flush_interval_unit) {
+                            long old = numFormat.parse(local_flush_interval_TF.getText()).intValue();
+                            local_flush_interval_TF.setValue(old / getMultiplier(comboString));
+                        } else if (combo == max_idle_time_unit) {
+                            long old = numFormat.parse(max_idle_time_TF.getText()).intValue();
+                            max_idle_time_TF.setValue(old / getMultiplier(comboString));
+                        } else if (combo == block_time_unit) {
+                            long old = numFormat.parse(block_time_TF.getText()).intValue();
+                            block_time_TF.setValue(old / getMultiplier(comboString));
+                        }
+                    } catch (ParseException e1) {
+                        System.err.println(e1.getMessage());
+                    }
                 }
             }
         };
 
-        polling_interval_unit.addActionListener(ComboAL);
-        memory_flush_interval_unit.addActionListener(ComboAL);
-        local_flush_interval_unit.addActionListener(ComboAL);
-        max_idle_time_unit.addActionListener(ComboAL);
-        block_time_unit.addActionListener(ComboAL);
+
+        polling_interval_unit.addItemListener(ComboIL);
+        memory_flush_interval_unit.addItemListener(ComboIL);
+        local_flush_interval_unit.addItemListener(ComboIL);
+        max_idle_time_unit.addItemListener(ComboIL);
+        block_time_unit.addItemListener(ComboIL);
 
 
 
@@ -165,12 +191,6 @@ public class SettingsGUI extends JFrame {
         max_idle_time_unit.setSelectedIndex(2);
         block_time_unit.setSelectedIndex(3);
 
-        
-        polling_interval_unit.addActionListener(null);
-        memory_flush_interval_unit.addActionListener(null);
-        local_flush_interval_unit.addActionListener(null);
-        max_idle_time_unit.addActionListener(null);
-        block_time_unit.addActionListener(null);
 
 
         cancelButton.addActionListener(new ActionListener() {
@@ -255,14 +275,18 @@ public class SettingsGUI extends JFrame {
 
 
     private int getMultiplier(JComboBox<String> combo) {
-        switch (combo.getSelectedItem().toString()) {
+        return getMultiplier(combo.getSelectedItem().toString());
+    }
+
+    private int getMultiplier(String unit) {
+        switch (unit) {
             case "sec":
                 return 1000;
             case "min":
                 return 60 * 1000;
             case "hours":
                 return 60 * 60 * 1000;
-            case "day":
+            case "days":
                 return 24 * 60 * 60 * 1000;
         }
 
