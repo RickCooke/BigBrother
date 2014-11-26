@@ -506,6 +506,49 @@ public class MySQL {
     }
 
 
+    public static void deleteUser(int userID) {
+        if (conn == null) {
+            establishConnection();
+        }
+
+        String SQL = "DELETE FROM users WHERE userid = ?";
+ 
+
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        
+        try {
+            ps = conn.prepareStatement(SQL, PreparedStatement.RETURN_GENERATED_KEYS);
+
+            ps.setInt(1, userID);
+
+            int rows = ps.executeUpdate();
+            if (rows != 1) {
+                // Says ps2 is leaked, but the finally below will catch this
+                throw new SQLException("Did not DELETE user "+ userID);
+            }
+        } catch (SQLException ex) {
+            System.out.println("SQLException: " + ex.getMessage());
+            System.out.println("SQLState: " + ex.getSQLState());
+            System.out.println("VendorError: " + ex.getErrorCode());
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                    rs = null;
+                }
+
+                if (ps != null) {
+                    ps.close();
+                    ps = null;
+                }
+            } catch (SQLException ex) {
+                System.out.println("SQLException: " + ex.getMessage());
+            }
+        }
+        
+    }
+
     public static void assoicateApp(int userID, int appID) {
         if (conn == null) {
             establishConnection();
