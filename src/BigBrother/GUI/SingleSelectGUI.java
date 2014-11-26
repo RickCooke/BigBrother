@@ -24,9 +24,9 @@ import BigBrother.Exceptions.UnknownSelectTypeException;
 
 public class SingleSelectGUI extends JFrame {
 
-	private int selectType = -1;
+	private static int selectType = -1;
     private final String[] selectTypeNames = {"User", "Application"};
-    private DefaultListModel listModel;
+    private static DefaultListModel listModel;
     private JList listBox = null;
     private JScrollPane listBoxScroll = null;
 
@@ -118,7 +118,7 @@ public class SingleSelectGUI extends JFrame {
     }
 
     
-    private void updateList() {
+    static void updateList() {
 
     	//clear current list
     	if(listModel == null)
@@ -132,7 +132,7 @@ public class SingleSelectGUI extends JFrame {
 	    	listModel.addElement(e);
     }
     
-    private DefaultListModel getList() {
+    private static DefaultListModel getList() {
         DefaultListModel dlm = null;
 
         // create the correct DLM
@@ -158,21 +158,15 @@ public class SingleSelectGUI extends JFrame {
             JOptionPane.showMessageDialog(this, "You must first make a selection before you can delete", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        int dialogResult = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete:  " + listBox.getSelectedValue(), "Warning", JOptionPane.YES_NO_OPTION);
-        if (dialogResult == JOptionPane.YES_OPTION) {
-            if (selectType == 0) {
-                int userID = ((UserLite) listBox.getSelectedValue()).getID();
-                MySQL.deleteUser(userID);
-                listBox.clearSelection();
-                listBox = new JList(getList());
-                AdminGUI.updateUsers();
-            }
+
+        if (selectType == 0) {
+            int userID = ((UserLite) listBox.getSelectedValue()).getID();
+            AdminGUI.deleteUser(userID);
         }
+
         if (selectType == 1) {
             // TODO: delete an app from the database
             // just set the app's 'active' to false
         }
-
-
     }
 }
