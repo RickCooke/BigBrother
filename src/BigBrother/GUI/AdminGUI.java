@@ -176,15 +176,11 @@ public class AdminGUI extends JFrame {
 
         usersList.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
-
-
-
+                updateApps(usersList.getSelectedValue().getID());
                 if (SwingUtilities.isRightMouseButton(e)) {
                     int row = usersList.locationToIndex(e.getPoint());
                     usersList.setSelectedIndex(row);
                     userPopupMenu.show(usersList, e.getX(), e.getY());
-                } else {
-                    updateApps(usersList.getSelectedValue().getID());
                 }
             }
         });
