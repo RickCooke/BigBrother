@@ -1,7 +1,9 @@
 package BigBrother.GUI;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -9,8 +11,12 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.sql.SQLException;
+import java.util.Calendar;
+import java.util.Date;
 
 import javax.swing.*;
+
+import com.toedter.calendar.JDateChooser;
 
 import BigBrother.Classes.AppLite;
 import BigBrother.Classes.UserLite;
@@ -184,8 +190,8 @@ public class AdminGUI extends JFrame {
                 updateApps(usersList.getSelectedValue().getID());
             }
         });
-        
-        
+
+
         JScrollPane usersScrollPane = new JScrollPane(usersList);
         usersScrollPane.setPreferredSize(new Dimension(150, 400));
         JButton createUserButton = new JButton("New User");
@@ -213,6 +219,7 @@ public class AdminGUI extends JFrame {
         appsPanel.add(monitorAppButton);
         appsPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 20, 20));
 
+       
         mainPanel.add(appsPanel);
 
         add(mainPanel, BorderLayout.CENTER);
@@ -301,5 +308,28 @@ public class AdminGUI extends JFrame {
     private void closeWindow() {
         WindowEvent winClosingEvent = new WindowEvent(this, WindowEvent.WINDOW_CLOSING);
         Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(winClosingEvent);
+    }
+
+    public static JPanel buildDatePanel(Date in_date) {
+        JPanel datePanel = new JPanel();
+
+        JDateChooser dateChooser = new JDateChooser();
+        dateChooser.setDate(in_date);
+        dateChooser.setDateFormatString("MM/dd/YY");
+        dateChooser.setSize(new Dimension(150, 0));
+
+        datePanel.add(dateChooser);
+
+
+        SpinnerDateModel model = new SpinnerDateModel();
+        model.setCalendarField(Calendar.MINUTE);
+        JSpinner timeSpinner = new JSpinner(model);
+        timeSpinner.setValue(in_date); 
+        JComponent editor = new JSpinner.DateEditor(timeSpinner, "hh:mm:ss a");
+        timeSpinner.setEditor(editor);
+
+        datePanel.add(timeSpinner);
+
+        return datePanel;
     }
 };
