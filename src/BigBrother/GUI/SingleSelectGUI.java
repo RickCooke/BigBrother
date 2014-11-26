@@ -66,11 +66,9 @@ public class SingleSelectGUI extends JFrame {
         JPanel buttonsRow = new JPanel(new FlowLayout());
         JButton OKButton = new JButton("Edit");
         JButton deleteButton = new JButton("Delete");
-        JButton updateButton = new JButton("Update List"); //TODO: probably don't need this in the final version
         JButton cancelButton = new JButton("Cancel");
         buttonsRow.add(OKButton);
         buttonsRow.add(deleteButton);
-        buttonsRow.add(updateButton); //TODO: probably don't need this in the final version
         buttonsRow.add(cancelButton);
 
         Box verticalBox = Box.createVerticalBox();
@@ -91,13 +89,6 @@ public class SingleSelectGUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent arg0) {
                 deleteItem();
-            }
-        });
-
-        updateButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                updateList();
             }
         });
         
