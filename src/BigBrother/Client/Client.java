@@ -54,10 +54,6 @@ public class Client {
         // sort the app list by priority
         sortAppList();
 
-        // TODO: delete this call before release
-        // call our test function to set our hardcoded test values
-        test();
-
         setIdle(false);
 
         // init mouse location
@@ -349,13 +345,5 @@ public class Client {
         // Print debug text
         if (Main.settings.debug)
             System.out.println("Cleared SQLite Database.");
-    }
-
-    // TODO: delete this
-    // test function to directly set program values, delete before release
-    private void test() {
-        Main.settings.memory_flush_interval = 5 * 1000;
-        Main.settings.local_flush_interval = 5 * 1000;
-        Main.settings.max_idle_time = 20 * 1000;
     }
 }

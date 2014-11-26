@@ -687,8 +687,9 @@ public class MySQL {
             ps.setInt(6, settings.block_time);
 
             int rows = ps.executeUpdate();
-            if (rows != 1) {
-                // Says ps2 is leaked, but the finally below will catch this
+            // rows = 1, no updates needed
+            // rows = 2 updates done
+            if( rows != 1 && rows != 2 ) {
                 throw new MalformedSettingsException("Settings malformed");
             }
 

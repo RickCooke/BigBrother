@@ -33,6 +33,7 @@ import com.toedter.calendar.JDateChooser;
 
 import BigBrother.Classes.Settings;
 import BigBrother.Client.Main;
+import BigBrother.Client.MySQL;
 import BigBrother.Exceptions.FormException;
 import BigBrother.Exceptions.MalformedSettingsException;
 
@@ -193,7 +194,7 @@ public class SettingsGUI extends JFrame {
         max_idle_time_unit.setSelectedIndex(2);
         block_time_unit.setSelectedIndex(3);
 
-        // If preferred units won't work, change to what ddoes
+        // If preferred units won't work, change to what does
         changeToLargestUnit();
 
 
@@ -237,21 +238,34 @@ public class SettingsGUI extends JFrame {
                         if (newSettings.memory_flush_interval < newSettings.polling_interval) {
                             throw new FormException("Memory flush must be greater or equal to Polling interval");
                         } else if (newSettings.local_flush_interval < newSettings.memory_flush_interval) {
-                            throw new FormException("Local flush must be greater or equal to Memory interval");
+                            throw new FormException("Local flush must be greater or equal to Memory flush interval");
+                        } else if (newSettings.block_time < newSettings.memory_flush_interval) {
+                            throw new FormException("Block time must be greater or equal to Memory flush interval");
+                        } else if (newSettings.max_idle_time < newSettings.polling_interval) {
+                            throw new FormException("Max idle time must be greater or equal to Polling interval");
                         } else if (newSettings.memory_flush_interval % newSettings.polling_interval != 0) {
                             throw new FormException("Memory flush must be a multiple of Polling interval");
                         } else if (newSettings.local_flush_interval % newSettings.polling_interval != 0) {
                             throw new FormException("Local flush must be a multiple of Polling interval");
+                        } else if (newSettings.max_idle_time % newSettings.polling_interval != 0) {
+                            throw new FormException("max idle time must be a multiple of Polling interval");
                         }
                         newSettings.start_time_string = getStartTimeString();
                         System.out.println(newSettings);
-                        submitSettings();
+
+                        submitSettings(newSettings);
                     }
                 } catch (FormException | ParseException | MalformedSettingsException e) {
                     JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
+    }
+    
+    public void submitSettings(Settings newSettings) throws MalformedSettingsException{
+        MySQL.updateSettings(newSettings);
+        Main.settings.downloadSettings();
+        dispose();
     }
 
     private void changeToLargestUnit() {
@@ -261,7 +275,7 @@ public class SettingsGUI extends JFrame {
 
 
         for (int i = 0; i < arrayTF.length; i++) {
-            int ii = 3;
+            int ii = 4;
             while (arrayTF[i].getText().equals("0")) {
                 arrayCB[i].setSelectedIndex(0);
                 arrayTF[i].setValue(originals[i]);
@@ -314,18 +328,6 @@ public class SettingsGUI extends JFrame {
         return 1;
     }
 
-    private void submitSettings() throws MalformedSettingsException {
-
-
-        // TODO: build the Settings (remember to take units into account),
-        // throw a MalformedSettingsException if something is wrong
-
-
-        // upload the new settings to the SQL DB
-        // TODO: uncomment this code, it's just commented cause it's unreachable code from the
-        // placeholder throw above
-        // MySQL.sendSettings(newSettings);
-    }
 
     public static JPanel buildDatePanel(Date in_date) {
         JPanel datePanel = new JPanel();
