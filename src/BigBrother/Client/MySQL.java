@@ -17,6 +17,7 @@ import BigBrother.Classes.Settings;
 import BigBrother.Classes.User;
 import BigBrother.Classes.UserLite;
 import BigBrother.Exceptions.DuplicateKeyException;
+import BigBrother.Exceptions.MalformedSettingsException;
 import BigBrother.Exceptions.MultipleResultsFoundException;
 import BigBrother.Exceptions.NoResultsFoundException;
 import BigBrother.Exceptions.NoSettingsException;
@@ -93,7 +94,9 @@ public class MySQL {
             establishConnection();
         }
 
-        String SQL = "SELECT polling_interval, memory_flush_interval, " + "local_flush_interval, max_idle_time, UNIX_TIMESTAMP(start_time)" + " as start_time, block_time FROM settings";
+        String SQL =
+                    "SELECT polling_interval, memory_flush_interval, " + "local_flush_interval, max_idle_time, start_time, UNIX_TIMESTAMP(start_time)"
+                                + " as start_time_timestamp, block_time FROM settings";
 
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -106,48 +109,12 @@ public class MySQL {
                 _settings.memory_flush_interval = rs.getInt("memory_flush_interval");
                 _settings.local_flush_interval = rs.getInt("local_flush_interval");
                 _settings.max_idle_time = rs.getInt("max_idle_time");
-                _settings.start_time = rs.getInt("start_time");
+                _settings.start_time_string = rs.getString("start_time");
+                _settings.start_time = rs.getInt("start_time_timestamp");
                 _settings.block_time = rs.getInt("block_time");
             } else {
                 throw new NoSettingsException("There are no settings");
             }
-        } catch (SQLException ex) {
-            System.out.println("SQLException: " + ex.getMessage());
-            System.out.println("SQLState: " + ex.getSQLState());
-            System.out.println("VendorError: " + ex.getErrorCode());
-        } finally {
-            try {
-                if (rs != null) {
-                    rs.close();
-                    rs = null;
-                }
-
-                if (ps != null) {
-                    ps.close();
-                    ps = null;
-                }
-            } catch (SQLException ex) {
-                System.out.println("SQLException: " + ex.getMessage());
-            }
-        }
-
-    }
-
-    public static void sendSettings(Settings _settings) {
-        if (conn == null) {
-            establishConnection();
-        }
-
-        String SQL =
-                    "UPDATE settings SET polling_interval=" + _settings.polling_interval + ", memory_flush_interval=" + _settings.memory_flush_interval + ", local_flush_interval="
-                                + _settings.local_flush_interval + ", max_idle_time=" + _settings.max_idle_time + ", start_time=" + _settings.start_time + ", block_time=" + _settings.block_time;
-
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-
-        try {
-            ps = conn.prepareStatement(SQL);
-            rs = ps.executeQuery();
         } catch (SQLException ex) {
             System.out.println("SQLException: " + ex.getMessage());
             System.out.println("SQLState: " + ex.getSQLState());
@@ -449,7 +416,7 @@ public class MySQL {
 
         PreparedStatement ps = null;
         ResultSet rs = null;
-        
+
         try {
             ps = conn.prepareStatement(SQL, PreparedStatement.RETURN_GENERATED_KEYS);
 
@@ -501,7 +468,7 @@ public class MySQL {
                 System.out.println("SQLException: " + ex.getMessage());
             }
         }
-        
+
         return -1;
     }
 
@@ -512,11 +479,11 @@ public class MySQL {
         }
 
         String SQL = "DELETE FROM users WHERE userid = ?";
- 
+
 
         PreparedStatement ps = null;
         ResultSet rs = null;
-        
+
         try {
             ps = conn.prepareStatement(SQL, PreparedStatement.RETURN_GENERATED_KEYS);
 
@@ -525,7 +492,7 @@ public class MySQL {
             int rows = ps.executeUpdate();
             if (rows != 1) {
                 // Says ps2 is leaked, but the finally below will catch this
-                throw new SQLException("Did not DELETE user "+ userID);
+                throw new SQLException("Did not DELETE user " + userID);
             }
         } catch (SQLException ex) {
             System.out.println("SQLException: " + ex.getMessage());
@@ -546,7 +513,7 @@ public class MySQL {
                 System.out.println("SQLException: " + ex.getMessage());
             }
         }
-        
+
     }
 
     public static void assoicateApp(int userID, int appID) {
@@ -555,11 +522,11 @@ public class MySQL {
         }
 
         String SQL = "INSERT INTO users_apps (`userid`, `appid`) VALUES (?, ?);";
- 
+
 
         PreparedStatement ps = null;
         ResultSet rs = null;
-        
+
         try {
             ps = conn.prepareStatement(SQL, PreparedStatement.RETURN_GENERATED_KEYS);
 
@@ -596,6 +563,55 @@ public class MySQL {
                 System.out.println("SQLException: " + ex.getMessage());
             }
         }
-        
+
+    }
+
+    public static void updateSettings(Settings settings) throws MalformedSettingsException {
+        if (conn == null) {
+            establishConnection();
+        }
+
+        String SQL = "REPLACE INTO settings (`id`, `polling_interval`, `memory_flush_interval`, `local_flush_interval`, `max_idle_time`, `start_time`, `block_time`) VALUES (1, ?, ?, ?, ?, ?, ?)";
+
+
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            ps = conn.prepareStatement(SQL, PreparedStatement.RETURN_GENERATED_KEYS);
+
+            ps.setFloat(1, settings.polling_interval);
+            ps.setInt(2, settings.memory_flush_interval);
+            ps.setInt(3, settings.local_flush_interval);
+            ps.setInt(4, settings.max_idle_time);
+            ps.setString(5, settings.start_time_string);
+            ps.setInt(6, settings.block_time);
+
+            int rows = ps.executeUpdate();
+            if (rows != 1) {
+                // Says ps2 is leaked, but the finally below will catch this
+                throw new MalformedSettingsException("Settings malformed");
+            }
+
+        } catch (SQLException ex) {
+            System.out.println("SQLException: " + ex.getMessage());
+            System.out.println("SQLState: " + ex.getSQLState());
+            System.out.println("VendorError: " + ex.getErrorCode());
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                    rs = null;
+                }
+
+                if (ps != null) {
+                    ps.close();
+                    ps = null;
+                }
+            } catch (SQLException ex) {
+                System.out.println("SQLException: " + ex.getMessage());
+            }
+        }
+
     }
 }

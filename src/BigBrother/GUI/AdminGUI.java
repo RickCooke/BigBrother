@@ -309,27 +309,4 @@ public class AdminGUI extends JFrame {
         WindowEvent winClosingEvent = new WindowEvent(this, WindowEvent.WINDOW_CLOSING);
         Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(winClosingEvent);
     }
-
-    public static JPanel buildDatePanel(Date in_date) {
-        JPanel datePanel = new JPanel();
-
-        JDateChooser dateChooser = new JDateChooser();
-        dateChooser.setDate(in_date);
-        dateChooser.setDateFormatString("MM/dd/YY");
-        dateChooser.setSize(new Dimension(150, 0));
-
-        datePanel.add(dateChooser);
-
-
-        SpinnerDateModel model = new SpinnerDateModel();
-        model.setCalendarField(Calendar.MINUTE);
-        JSpinner timeSpinner = new JSpinner(model);
-        timeSpinner.setValue(in_date); 
-        JComponent editor = new JSpinner.DateEditor(timeSpinner, "hh:mm:ss a");
-        timeSpinner.setEditor(editor);
-
-        datePanel.add(timeSpinner);
-
-        return datePanel;
-    }
 };

@@ -1,5 +1,6 @@
 package BigBrother.GUI;
 
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
@@ -7,6 +8,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.text.NumberFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -14,11 +17,16 @@ import java.util.Locale;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JFormattedTextField;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerDateModel;
+
+import com.toedter.calendar.JDateChooser;
 
 import BigBrother.Classes.Settings;
 import BigBrother.Exceptions.MalformedSettingsException;
@@ -41,6 +49,9 @@ public class SettingsGUI extends JFrame {
 
     private final JButton OKButton = new JButton("Update");
     private final JButton cancelButton = new JButton("Cancel");
+
+    private final static JDateChooser dateChooser = new JDateChooser();
+    private static JSpinner timeSpinner = new JSpinner();
 
     // opens the Settings GUI
     public SettingsGUI() {
@@ -96,10 +107,9 @@ public class SettingsGUI extends JFrame {
         // TODO: find a Date Picker Library
         // maybe this one? https://github.com/JDatePicker/JDatePicker
         add(new JLabel("Start Date: "));
-        
-        
-        
-        add(AdminGUI.buildDatePanel(roundToHr(new Date())));
+
+        add(buildDatePanel(roundToHr(new Date())));
+
 
         add(new JLabel("Time Block Duration: "));
         add(block_time_group);
@@ -133,22 +143,64 @@ public class SettingsGUI extends JFrame {
     }
 
     private void submitSettings() throws MalformedSettingsException {
-        // Settings newSettings = new Settings();
+        Settings newSettings = new Settings();
+
+        
+        
+        SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("yyyy-MM-dd");
+        String formattedDate = dateFormat.format(dateChooser.getDate());
+
+        SimpleDateFormat timeFormat = new java.text.SimpleDateFormat("HH:mm:ss");
+        String formattedTime = timeFormat.format(timeSpinner.getValue());
+
+        SimpleDateFormat fmt = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        try {
+            Date result = fmt.parse(formattedDate + " " + formattedTime);
+            newSettings.start_time_string = fmt.format(result);
+        } catch (ParseException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+
 
         // TODO: build the Settings (remember to take units into account),
         // throw a MalformedSettingsException if something is wrong
-        throw new MalformedSettingsException("Not yet implemented!");
+       
 
         // upload the new settings to the SQL DB
         // TODO: uncomment this code, it's just commented cause it's unreachable code from the
         // placeholder throw above
         // MySQL.sendSettings(newSettings);
     }
-    
-    public Date roundToHr(Date d){
+
+    public static JPanel buildDatePanel(Date in_date) {
+        JPanel datePanel = new JPanel();
+
+
+        dateChooser.setDateFormatString("MM/dd/yy");
+        dateChooser.setDate(in_date);
+
+        datePanel.add(dateChooser);
+
+
+        SpinnerDateModel model = new SpinnerDateModel();
+        model.setCalendarField(Calendar.MINUTE);
+        timeSpinner = new JSpinner(model);
+        timeSpinner.setValue(in_date);
+        JComponent editor = new JSpinner.DateEditor(timeSpinner, "hh:mm:ss a");
+        timeSpinner.setEditor(editor);
+
+        datePanel.add(timeSpinner);
+
+        return datePanel;
+    }
+
+    public Date roundToHr(Date d) {
         Calendar date = new GregorianCalendar();
         date.setTime(d);
-        int deltaHr = date.get(Calendar.MINUTE)/30;
+        int deltaHr = date.get(Calendar.MINUTE) / 30;
 
         date.set(Calendar.SECOND, 0);
         date.set(Calendar.MILLISECOND, 0);

@@ -15,6 +15,7 @@ public class Settings {
     public int max_idle_time;
     public int block_time;
     public int start_time;
+    public String start_time_string;
     public int keyboard_peek_interval = 10;
     public int remote_insert_buffer_size = 100;
 
@@ -33,16 +34,6 @@ public class Settings {
             JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             System.exit(1);
         }
-
-        if (debug)
-            System.out.println("Finished!");
-    }
-
-    public void uploadSettings() {
-        if (debug)
-            System.out.println("Uploading Settings...");
-
-        MySQL.sendSettings(this);
 
         if (debug)
             System.out.println("Finished!");
