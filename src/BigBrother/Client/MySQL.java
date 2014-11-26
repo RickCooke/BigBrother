@@ -301,34 +301,6 @@ public class MySQL {
 
         return dlm;
     }
-
-    public static void setAppTracked(int userID, int appID, boolean tracked) {
-        // make sure connection is sound
-        if (conn == null)
-            establishConnection();
-
-        // prepare the query
-        PreparedStatement ps = null;
-        String SQL;
-        
-        if(tracked)
-        	SQL = "INSERT INTO users_apps (userid, appid) VALUES (?, ?)";
-        else
-        	SQL = "DELETE FROM users_apps WHERE userid = ? AND appid = ?";
-
-        try {
-            ps = conn.prepareStatement(SQL);
-            ps.setInt(1, userID);
-            ps.setInt(2, appID);
-
-            // execute query
-            ps.executeUpdate();
-            ps.close();
-
-        } catch (SQLException e) {
-            System.out.println("SQLException: " + e.getMessage());
-        }
-    }
     
     public static void flushLocalBuffer(ArrayList<int[]> buffer) {
         int rows = 0;
@@ -459,7 +431,72 @@ public class MySQL {
         return last_inserted_id;
     }
 
+	public static int editApp(App newApp) throws DuplicateKeyException {
+        if (conn == null) {
+            establishConnection();
+        }
 
+        String SQL;
+
+        if (newApp.getAppID() == -1) {
+            SQL = "INSERT INTO apps (`appid`, `alias`, `window`, `window_regex`, `process`, `process_regex`, `active`) VALUES (?, ?, ?, ?, ?, ?, 1);";
+        } else {
+            SQL = "REPLACE INTO apps (`appid`, `alias`, `window`, `window_regex`, `process`, `process_regex`, `active`) VALUES (?, ?, ?, ?, ?, ?, 1);";
+        }
+
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            ps = conn.prepareStatement(SQL, PreparedStatement.RETURN_GENERATED_KEYS);
+
+            if (newApp.getAppID() == -1) {
+                ps.setNull(1, java.sql.Types.INTEGER);
+            } else {
+                ps.setInt(1, newApp.getAppID());
+            }
+
+
+            ps.setString(2, newApp.alias);
+            ps.setString(3, newApp.window);
+            ps.setBoolean(4, newApp.window_regex);
+            ps.setString(5, newApp.process);
+            ps.setBoolean(6, newApp.process_regex);
+
+            ps.executeUpdate();
+
+            rs = ps.getGeneratedKeys();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+
+        } catch (SQLException ex) {
+            if (ex.getSQLState().equals("23000")) {
+                throw new DuplicateKeyException();
+            } else {
+                System.out.println("SQLException: " + ex.getMessage());
+                System.out.println("SQLState: " + ex.getSQLState());
+                System.out.println("VendorError: " + ex.getErrorCode());
+            }
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                    rs = null;
+                }
+
+                if (ps != null) {
+                    ps.close();
+                    ps = null;
+                }
+            } catch (SQLException ex) {
+                System.out.println("SQLException: " + ex.getMessage());
+            }
+        }
+
+        return -1;
+	}
+	
     public static int editUser(User user, String password) throws DuplicateKeyException {
         if (conn == null) {
             establishConnection();
@@ -575,13 +612,16 @@ public class MySQL {
 
     }
 
-    public static void assoicateApp(int userID, int appID) {
+    public static void setAppTracked(int userID, int appID, boolean tracked) {
         if (conn == null) {
             establishConnection();
         }
 
-        String SQL = "INSERT INTO users_apps (`userid`, `appid`) VALUES (?, ?);";
-
+        String SQL;
+        if(tracked)
+        	SQL = "INSERT INTO users_apps (userid, appid) VALUES (?, ?)";
+        else
+        	SQL = "DELETE FROM users_apps WHERE userid = ? AND appid = ?";
 
         PreparedStatement ps = null;
         ResultSet rs = null;

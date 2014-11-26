@@ -18,6 +18,7 @@ import javax.swing.JTextField;
 
 import BigBrother.Classes.App;
 import BigBrother.Client.MySQL;
+import BigBrother.Exceptions.DuplicateKeyException;
 import BigBrother.Exceptions.FormException;
 import BigBrother.Exceptions.MultipleResultsFoundException;
 import BigBrother.Exceptions.NoResultsFoundException;
@@ -27,7 +28,7 @@ import javax.swing.BoxLayout;
 
 public class AppGUI extends JFrame {
 
-    private boolean isExistingApp = false;
+    private int appID = -1; //-1 if new app, appID if existing
 
     private final JTextField aliasTF = new JTextField(20);
     private final JTextField windowTF = new JTextField(20);
@@ -112,10 +113,7 @@ public class AppGUI extends JFrame {
                     } else if (windowTF.getText().equals("") && processTF.getText().equals("")) {
                         throw new FormException("You must fill out either Window name or Process name");
                     } else {
-                        if (isExistingApp)
-                            submitEditApp();
-                        else
-                            submitNewApp();
+                        submitApp();
                     }
                 } catch (FormException e) {
                     JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -125,10 +123,10 @@ public class AppGUI extends JFrame {
 
     }
 
-    public AppGUI(int appID) throws MultipleResultsFoundException, NoResultsFoundException, SQLException {
+    public AppGUI(int _appID) throws MultipleResultsFoundException, NoResultsFoundException, SQLException {
         // call the normal super for a new user, but raise the flag for an existing user
         this();
-        isExistingApp = true;
+        appID = _appID;
 
         App app = MySQL.getApp(appID);
         // set the title
@@ -147,11 +145,23 @@ public class AppGUI extends JFrame {
         Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(winClosingEvent);
     }
 
-    private void submitNewApp() {
-        // TODO: implement this
-    }
-
-    private void submitEditApp() {
-        // TODO: implement this
+    private void submitApp() {
+    	App newApp = new App(appID,
+    			aliasTF.getText(),
+    			windowTF.getText(),
+    			windowIsRegex.isSelected(),
+    			processTF.getText(),
+    			processIsRegex.isSelected(),
+    			true);
+    	
+    	try {
+			MySQL.editApp(newApp);
+		} catch (DuplicateKeyException e) {
+			e.printStackTrace();
+		}
+    	
+    	closeWindow();
+    	SingleSelectGUI.updateList();
+    	AdminGUI.updateApps();
     }
 }
