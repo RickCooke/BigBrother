@@ -162,8 +162,8 @@ public class UserGUI extends JFrame {
             userID = MySQL.addUser(tempUser, passwordTF.getText());
             dispose();
             
-            MySQL.assoicateApp(userID, 0); // Other app
-            MySQL.assoicateApp(userID, 1); // Idle app
+            MySQL.setAppTracked(userID, 0, true); // Other app
+            MySQL.setAppTracked(userID, 1, true); // Idle app
             
             AdminGUI.updateUsers();
             AdminGUI.updateApps(userID);

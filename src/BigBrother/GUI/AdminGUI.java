@@ -33,17 +33,15 @@ public class AdminGUI extends JFrame {
     private final static DefaultListModel<UserLite> usersDLM = new DefaultListModel<UserLite>();
     private final static DefaultListModel<AppLite> trackedAppsDLM = new DefaultListModel<AppLite>();
     private final static DefaultListModel<AppLite> nonTrackedAppsDLM = new DefaultListModel<AppLite>();
-    private final JList<UserLite> usersList = new JList<UserLite>(usersDLM);
-    private final JList<AppLite> trackedAppsList = new JList<AppLite>(trackedAppsDLM);
-    private final JList<AppLite> nonTrackedAppsList = new JList<AppLite>(nonTrackedAppsDLM);
+    private final static JList<UserLite> usersList = new JList<UserLite>(usersDLM);
+    private final static JList<AppLite> trackedAppsList = new JList<AppLite>(trackedAppsDLM);
+    private final static JList<AppLite> nonTrackedAppsList = new JList<AppLite>(nonTrackedAppsDLM);
 
     public AdminGUI() {
         super("BigBrother Administration");
 
         if (Main.settings.debug)
             System.out.println("Admin GUI Initialized.");
-
-
 
         // Set the layout
         setLayout(new BorderLayout());
@@ -208,15 +206,11 @@ public class AdminGUI extends JFrame {
         appsLabel.setAlignmentX(CENTER_ALIGNMENT);
         JScrollPane appsScrollPane = new JScrollPane(trackedAppsList);
         appsScrollPane.setPreferredSize(new Dimension(200, 400));
-        JButton monitorAppButton = new JButton("Monitor New Application");
-        monitorAppButton.setAlignmentX(CENTER_ALIGNMENT);
-        monitorAppButton.addActionListener(newAppButtonAL);
 
         JPanel trackedAppsPanel = new JPanel();
         trackedAppsPanel.setLayout(new BoxLayout(trackedAppsPanel, BoxLayout.Y_AXIS));
         trackedAppsPanel.add(appsLabel);
         trackedAppsPanel.add(appsScrollPane);
-        trackedAppsPanel.add(monitorAppButton);
         
         // Add buttons
         JPanel appButtonsPanel = new JPanel();
@@ -233,11 +227,15 @@ public class AdminGUI extends JFrame {
         nonTrackedAppsLabel.setAlignmentX(CENTER_ALIGNMENT);
         JScrollPane nonTrackedAppsScrollPane = new JScrollPane(nonTrackedAppsList);
         nonTrackedAppsScrollPane.setPreferredSize(new Dimension(200, 400));
+        JButton newAppButton = new JButton("Create New Application");
+        newAppButton.setAlignmentX(CENTER_ALIGNMENT);
+        newAppButton.addActionListener(newAppButtonAL);
 
         JPanel nonTrackedAppsPanel = new JPanel();
         nonTrackedAppsPanel.setLayout(new BoxLayout(nonTrackedAppsPanel, BoxLayout.Y_AXIS));
         nonTrackedAppsPanel.add(nonTrackedAppsLabel);
         nonTrackedAppsPanel.add(nonTrackedAppsScrollPane);
+        nonTrackedAppsPanel.add(newAppButton);
 
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.X_AXIS));
@@ -327,6 +325,11 @@ public class AdminGUI extends JFrame {
         SingleSelectGUI.updateList();
     }
 
+    public static void updateApps() {
+    	if(usersList.getSelectedValue() != null)
+    		updateApps(usersList.getSelectedValue().getID());
+    }
+    
     public static void updateApps(int userID) {
         // debug output
         if (Main.settings.debug)
