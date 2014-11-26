@@ -3,6 +3,7 @@ package BigBrother.GUI;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -30,9 +31,11 @@ import BigBrother.Exceptions.UnknownSelectTypeException;
 public class AdminGUI extends JFrame {
 
     private final static DefaultListModel<UserLite> usersDLM = new DefaultListModel<UserLite>();
-    private final static DefaultListModel<AppLite> appsDLM = new DefaultListModel<AppLite>();
+    private final static DefaultListModel<AppLite> trackedAppsDLM = new DefaultListModel<AppLite>();
+    private final static DefaultListModel<AppLite> nonTrackedAppsDLM = new DefaultListModel<AppLite>();
     private final JList<UserLite> usersList = new JList<UserLite>(usersDLM);
-    private final JList<AppLite> appsList = new JList<AppLite>(appsDLM);
+    private final JList<AppLite> trackedAppsList = new JList<AppLite>(trackedAppsDLM);
+    private final JList<AppLite> nonTrackedAppsList = new JList<AppLite>(nonTrackedAppsDLM);
 
     public AdminGUI() {
         super("BigBrother Administration");
@@ -44,12 +47,6 @@ public class AdminGUI extends JFrame {
 
         // Set the layout
         setLayout(new BorderLayout());
-        JPanel mainPanel = new JPanel();
-        JPanel usersPanel = new JPanel();
-        JPanel appsPanel = new JPanel();
-        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.X_AXIS));
-        usersPanel.setLayout(new BoxLayout(usersPanel, BoxLayout.Y_AXIS));
-        appsPanel.setLayout(new BoxLayout(appsPanel, BoxLayout.Y_AXIS));
 
         // Setup the menu bar
         JMenu fileMenu = new JMenu("File");
@@ -198,34 +195,75 @@ public class AdminGUI extends JFrame {
         createUserButton.setAlignmentX(CENTER_ALIGNMENT);
         createUserButton.addActionListener(newUserButtonAL);
 
+        JPanel usersPanel = new JPanel();
+        usersPanel.setLayout(new BoxLayout(usersPanel, BoxLayout.Y_AXIS));
         usersPanel.add(usersLabel);
         usersPanel.add(usersScrollPane);
         usersPanel.add(createUserButton);
         usersPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 10));
 
-        mainPanel.add(usersPanel);
 
         // Monitored apps section
         JLabel appsLabel = new JLabel("Monitored Applications");
         appsLabel.setAlignmentX(CENTER_ALIGNMENT);
-        JScrollPane appsScrollPane = new JScrollPane(appsList);
+        JScrollPane appsScrollPane = new JScrollPane(trackedAppsList);
         appsScrollPane.setPreferredSize(new Dimension(200, 400));
         JButton monitorAppButton = new JButton("Monitor New Application");
         monitorAppButton.setAlignmentX(CENTER_ALIGNMENT);
         monitorAppButton.addActionListener(newAppButtonAL);
 
-        appsPanel.add(appsLabel);
-        appsPanel.add(appsScrollPane);
-        appsPanel.add(monitorAppButton);
-        appsPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 20, 20));
+        JPanel trackedAppsPanel = new JPanel();
+        trackedAppsPanel.setLayout(new BoxLayout(trackedAppsPanel, BoxLayout.Y_AXIS));
+        trackedAppsPanel.add(appsLabel);
+        trackedAppsPanel.add(appsScrollPane);
+        trackedAppsPanel.add(monitorAppButton);
+        
+        // Add buttons
+        JPanel appButtonsPanel = new JPanel();
+        appButtonsPanel.setLayout(new GridLayout(2,1));
+        JButton trackButton = new JButton("<");
+        JButton untrackButton = new JButton(">");
+        appButtonsPanel.add(trackButton);
+        appButtonsPanel.add(untrackButton);
+        appButtonsPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 20, 20));
+        
 
-       
-        mainPanel.add(appsPanel);
+        // Non-Monitored apps section
+        JLabel nonTrackedAppsLabel = new JLabel("Non-Monitored Applications");
+        nonTrackedAppsLabel.setAlignmentX(CENTER_ALIGNMENT);
+        JScrollPane nonTrackedAppsScrollPane = new JScrollPane(nonTrackedAppsList);
+        nonTrackedAppsScrollPane.setPreferredSize(new Dimension(200, 400));
+
+        JPanel nonTrackedAppsPanel = new JPanel();
+        nonTrackedAppsPanel.setLayout(new BoxLayout(nonTrackedAppsPanel, BoxLayout.Y_AXIS));
+        nonTrackedAppsPanel.add(nonTrackedAppsLabel);
+        nonTrackedAppsPanel.add(nonTrackedAppsScrollPane);
+
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.X_AXIS));
+        mainPanel.add(usersPanel);
+        mainPanel.add(trackedAppsPanel);
+        mainPanel.add(appButtonsPanel);
+        mainPanel.add(nonTrackedAppsPanel);
 
         add(mainPanel, BorderLayout.CENTER);
 
         // update the users list
         updateUsers();
+        
+        //set button listeners
+        trackButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                setAppTracked(true);
+            }
+        });
+        untrackButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                setAppTracked(false);
+            }
+        });
     }
 
 
@@ -289,14 +327,15 @@ public class AdminGUI extends JFrame {
         SingleSelectGUI.updateList();
     }
 
-    static void updateApps(int userID) {
+    public static void updateApps(int userID) {
         // debug output
         if (Main.settings.debug)
             System.out.println("Updating tracked app list for user #" + userID + "...");
 
 
         // update the tracked app list
-        MySQL.getTrackedAppsDLM(userID, appsDLM);
+        MySQL.updateTrackedAppDLM(userID, trackedAppsDLM);
+        MySQL.updateNonTrackedAppDLM(userID, nonTrackedAppsDLM);
     }
 
     private void openSettingsGUI() {
@@ -308,5 +347,48 @@ public class AdminGUI extends JFrame {
     private void closeWindow() {
         WindowEvent winClosingEvent = new WindowEvent(this, WindowEvent.WINDOW_CLOSING);
         Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(winClosingEvent);
+    }
+    
+    private void setAppTracked(boolean tracked) {
+    	if(usersList.getSelectedValue() == null)
+    		return;
+    	
+    	int userID = usersList.getSelectedValue().getID();
+    	int appID = -1;
+	    	if(nonTrackedAppsList.getSelectedValue() != null && tracked)
+	    		appID = nonTrackedAppsList.getSelectedValue().getID();
+	    	else if(trackedAppsList.getSelectedValue() != null && !tracked)
+	    		appID = trackedAppsList.getSelectedValue().getID();
+    	
+	    if(appID == -1)
+	    	return;
+	    
+    	MySQL.setAppTracked(userID, appID, tracked);
+    	
+    	//update the apps list since it just changed
+    	updateApps(userID);
+    }
+
+    public static JPanel buildDatePanel(Date in_date) {
+        JPanel datePanel = new JPanel();
+
+        JDateChooser dateChooser = new JDateChooser();
+        dateChooser.setDate(in_date);
+        dateChooser.setDateFormatString("MM/dd/YY");
+        dateChooser.setSize(new Dimension(150, 0));
+
+        datePanel.add(dateChooser);
+
+
+        SpinnerDateModel model = new SpinnerDateModel();
+        model.setCalendarField(Calendar.MINUTE);
+        JSpinner timeSpinner = new JSpinner(model);
+        timeSpinner.setValue(in_date); 
+        JComponent editor = new JSpinner.DateEditor(timeSpinner, "hh:mm:ss a");
+        timeSpinner.setEditor(editor);
+
+        datePanel.add(timeSpinner);
+
+        return datePanel;
     }
 };

@@ -186,9 +186,9 @@ public class MySQL {
         return userApps;
     }
 
-    public static DefaultListModel<AppLite> getTrackedAppsDLM(int userID, DefaultListModel<AppLite> dlm) {
+    public static void updateTrackedAppDLM(int userID, DefaultListModel<AppLite> dlm) {
         // clear the existing list
-        dlm.clear();
+    	dlm.clear();
 
         // make sure connection is sound
         if (conn == null)
@@ -197,7 +197,9 @@ public class MySQL {
         // prepare the query
         PreparedStatement ps = null;
         ResultSet rs = null;
-        String SQL = "SELECT a.appid, a.alias FROM users_apps u, " + "apps a WHERE u.userid = ? AND u.appid = a.appid AND a.active = 1";
+        
+        String SQL = "SELECT a.appid, a.alias FROM users_apps u, " +
+        		"apps a WHERE u.userid = ? AND u.appid = a.appid AND a.active = 1";
 
         try {
             ps = conn.prepareStatement(SQL);
@@ -207,14 +209,43 @@ public class MySQL {
             rs = ps.executeQuery();
 
             while (rs.next())
-                dlm.addElement(new AppLite(rs.getInt("appid"), rs.getString("alias")));
+            		dlm.addElement(new AppLite(rs.getInt("appid"), rs.getString("alias")));
         } catch (SQLException e) {
             System.out.println("SQLException: " + e.getMessage());
         }
-
-        return dlm;
     }
 
+    public static void updateNonTrackedAppDLM(int userID, DefaultListModel<AppLite> dlm) {
+        // clear the existing list
+    	dlm.clear();
+
+        // make sure connection is sound
+        if (conn == null)
+            establishConnection();
+
+        // prepare the query
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        
+        //TODO: figure out this call, currently selects all inactive app links for testing
+        String SQL = "SELECT appid, alias FROM apps WHERE appid NOT IN" +
+        		" (SELECT a.appid FROM users_apps u, apps a WHERE u.userid = ?" +
+        		" AND u.appid = a.appid AND a.active = 1) AND appid != 0 AND appid != 1";
+
+        try {
+            ps = conn.prepareStatement(SQL);
+            ps.setInt(1, userID);
+
+            // execute query
+            rs = ps.executeQuery();
+
+            while (rs.next())
+            		dlm.addElement(new AppLite(rs.getInt("appid"), rs.getString("alias")));
+        } catch (SQLException e) {
+            System.out.println("SQLException: " + e.getMessage());
+        }
+    }
+    
     public static DefaultListModel<UserLite> getUserList(DefaultListModel<UserLite> dlm) {
         // clear the existing list
         dlm.clear();
@@ -271,6 +302,34 @@ public class MySQL {
         return dlm;
     }
 
+    public static void setAppTracked(int userID, int appID, boolean tracked) {
+        // make sure connection is sound
+        if (conn == null)
+            establishConnection();
+
+        // prepare the query
+        PreparedStatement ps = null;
+        String SQL;
+        
+        if(tracked)
+        	SQL = "INSERT INTO users_apps (userid, appid) VALUES (?, ?)";
+        else
+        	SQL = "DELETE FROM users_apps WHERE userid = ? AND appid = ?";
+
+        try {
+            ps = conn.prepareStatement(SQL);
+            ps.setInt(1, userID);
+            ps.setInt(2, appID);
+
+            // execute query
+            ps.executeUpdate();
+            ps.close();
+
+        } catch (SQLException e) {
+            System.out.println("SQLException: " + e.getMessage());
+        }
+    }
+    
     public static void flushLocalBuffer(ArrayList<int[]> buffer) {
         int rows = 0;
 
