@@ -65,12 +65,12 @@ public class SettingsGUI extends JFrame {
 
         setLayout(new GridLayout(7, 2));
 
-
-        memory_flush_interval_TF.setValue(Main.settings.polling_interval);
+        polling_interval_TF.setValue(Main.settings.polling_interval);
+        memory_flush_interval_TF.setValue(Main.settings.memory_flush_interval);
         local_flush_interval_TF.setValue(Main.settings.local_flush_interval);
         max_idle_time_TF.setValue(Main.settings.max_idle_time);
         block_time_TF.setValue(Main.settings.block_time);
-        polling_interval_TF.setValue(Main.settings.polling_interval);
+        
 
 
         JPanel polling_interval_group = new JPanel(new FlowLayout());
@@ -132,7 +132,6 @@ public class SettingsGUI extends JFrame {
                 if (e.getStateChange() == 2) {
                     try {
                         if (combo == polling_interval_unit) {
-                            System.out.println(combo.getSelectedItem());
                             long old = numFormat.parse(polling_interval_TF.getText()).intValue();
                             polling_interval_TF.setValue(old * getMultiplier(comboString));
                         } else if (combo == memory_flush_interval_unit) {
@@ -155,12 +154,12 @@ public class SettingsGUI extends JFrame {
                     // Convert from MS to whatever combo is
                     try {
                         if (combo == polling_interval_unit) {
-                            System.out.println(combo.getSelectedItem());
                             long old = numFormat.parse(polling_interval_TF.getText()).intValue();
                             polling_interval_TF.setValue(old / getMultiplier(comboString));
                         } else if (combo == memory_flush_interval_unit) {
                             long old = numFormat.parse(memory_flush_interval_TF.getText()).intValue();
                             memory_flush_interval_TF.setValue(old / getMultiplier(comboString));
+                            System.out.println(old + "/" + getMultiplier(comboString));
                         } else if (combo == local_flush_interval_unit) {
                             long old = numFormat.parse(local_flush_interval_TF.getText()).intValue();
                             local_flush_interval_TF.setValue(old / getMultiplier(comboString));
