@@ -72,7 +72,6 @@ public class SettingsGUI extends JFrame {
         polling_interval_TF.setValue(Main.settings.polling_interval);
 
 
-
         JPanel polling_interval_group = new JPanel(new FlowLayout());
         polling_interval_TF.setColumns(10);
         polling_interval_group.add(polling_interval_TF);
@@ -128,6 +127,7 @@ public class SettingsGUI extends JFrame {
                 JComboBox<String> combo = (JComboBox<String>) e.getSource();
                 String comboString = e.getItem().toString();
 
+                // Convert to MS
                 if (e.getStateChange() == 2) {
                     try {
                         if (combo == polling_interval_unit) {
@@ -151,6 +151,7 @@ public class SettingsGUI extends JFrame {
                         System.err.println(e1.getMessage());
                     }
                 } else if (e.getStateChange() == 1) {
+                    // Convert from MS to whatever combo is
                     try {
                         if (combo == polling_interval_unit) {
                             System.out.println(combo.getSelectedItem());
@@ -185,12 +186,15 @@ public class SettingsGUI extends JFrame {
 
 
 
-        // Set default units polling_interval_unit.setSelectedIndex(0);
+        // Set preferred units
+        polling_interval_unit.setSelectedIndex(0);
         memory_flush_interval_unit.setSelectedIndex(1);
         local_flush_interval_unit.setSelectedIndex(2);
         max_idle_time_unit.setSelectedIndex(2);
         block_time_unit.setSelectedIndex(3);
 
+        // If preferred units won't work, change to what ddoes
+        changeToLargestUnit();
 
 
         cancelButton.addActionListener(new ActionListener() {
@@ -250,6 +254,24 @@ public class SettingsGUI extends JFrame {
         });
     }
 
+    private void changeToLargestUnit() {
+        JFormattedTextField[] arrayTF = {polling_interval_TF, memory_flush_interval_TF, local_flush_interval_TF, max_idle_time_TF, block_time_TF};
+        JComboBox[] arrayCB = {polling_interval_unit, memory_flush_interval_unit, local_flush_interval_unit, max_idle_time_unit, block_time_unit};
+        int[] originals = {(int) Main.settings.polling_interval, Main.settings.memory_flush_interval, Main.settings.local_flush_interval, Main.settings.max_idle_time, Main.settings.block_time};
+
+
+        for (int i = 0; i < arrayTF.length; i++) {
+            int ii = 3;
+            while (arrayTF[i].getText().equals("0")) {
+                arrayCB[i].setSelectedIndex(0);
+                arrayTF[i].setValue(originals[i]);
+                arrayCB[i].setSelectedIndex(ii);
+                ii--;
+            }
+        }
+    }
+
+
     private void closeWindow() {
         WindowEvent winClosingEvent = new WindowEvent(this, WindowEvent.WINDOW_CLOSING);
         Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(winClosingEvent);
@@ -268,7 +290,6 @@ public class SettingsGUI extends JFrame {
 
         Date result = fmt.parse(formattedDate + " " + formattedTime);
         startTime = fmt.format(result);
-
 
         return startTime;
     }
