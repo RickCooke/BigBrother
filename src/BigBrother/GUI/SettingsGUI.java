@@ -7,6 +7,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.text.NumberFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Locale;
 
 import javax.swing.JButton;
@@ -81,10 +84,10 @@ public class SettingsGUI extends JFrame {
         add(new JLabel("Polling Interval: "));
         add(polling_interval_group);
 
-        add(new JLabel("Memory -> Local Flush Interval: "));
+        add(new JLabel("Memory => Local Flush Interval: "));
         add(memory_flush_interval_group);
 
-        add(new JLabel("Local -> Server Flush Interval: "));
+        add(new JLabel("Local => Server Flush Interval: "));
         add(local_flush_interval_group);
 
         add(new JLabel("Time to Idle: "));
@@ -93,7 +96,10 @@ public class SettingsGUI extends JFrame {
         // TODO: find a Date Picker Library
         // maybe this one? https://github.com/JDatePicker/JDatePicker
         add(new JLabel("Start Date: "));
-        add(new JLabel("***PLACEHOLDER FOR DATE PICKER***"));
+        
+        
+        
+        add(AdminGUI.buildDatePanel(roundToHr(new Date())));
 
         add(new JLabel("Time Block Duration: "));
         add(block_time_group);
@@ -137,5 +143,18 @@ public class SettingsGUI extends JFrame {
         // TODO: uncomment this code, it's just commented cause it's unreachable code from the
         // placeholder throw above
         // MySQL.sendSettings(newSettings);
+    }
+    
+    public Date roundToHr(Date d){
+        Calendar date = new GregorianCalendar();
+        date.setTime(d);
+        int deltaHr = date.get(Calendar.MINUTE)/30;
+
+        date.set(Calendar.SECOND, 0);
+        date.set(Calendar.MILLISECOND, 0);
+        date.set(Calendar.MINUTE, 0);
+        date.add(Calendar.HOUR, deltaHr);
+
+        return date.getTime();
     }
 }
