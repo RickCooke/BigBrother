@@ -6,6 +6,7 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
+
 import javax.swing.Box;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -23,17 +24,21 @@ import BigBrother.Exceptions.UnknownSelectTypeException;
 
 public class SingleSelectGUI extends JFrame {
 
+	private int selectType = -1;
     private final String[] selectTypeNames = {"User", "Application"};
     private DefaultListModel listModel;
     private JList listBox = null;
+    private JScrollPane listBoxScroll = null;
 
     // selectType determines what the user is selecting from, tied to the index in the
     // selectTypeNames array
     // 0 - User
     // 1 - App
-    public SingleSelectGUI(final int selectType) throws UnknownSelectTypeException {
+    public SingleSelectGUI(final int _selectType) throws UnknownSelectTypeException {
         super();
 
+        selectType = _selectType;
+        
         // set the title of the frame
         if (selectType >= selectTypeNames.length) {
             throw new UnknownSelectTypeException("Unknown value of selectType.");
@@ -43,21 +48,29 @@ public class SingleSelectGUI extends JFrame {
 
         setLayout(new FlowLayout());
 
-        // init the list of selections
-        listModel = getList(selectType);
-
-        // JList
+        // init the JList
+        if(selectType == 0)
+        	listModel = new DefaultListModel<UserLite>();
+        else if(selectType == 1)
+        	listModel = new DefaultListModel<AppLite>();
+        else
+            throw new UnknownSelectTypeException("Unknown value of selectType.");
+        
+        updateList();
+        
         listBox = new JList(listModel);
-        JScrollPane listBoxScroll = new JScrollPane(listBox, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        listBoxScroll = new JScrollPane(listBox, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         listBoxScroll.setPreferredSize(new Dimension(100, 300));
 
         // buttons row
         JPanel buttonsRow = new JPanel(new FlowLayout());
         JButton OKButton = new JButton("Edit");
         JButton deleteButton = new JButton("Delete");
+        JButton updateButton = new JButton("Update List"); //TODO: probably don't need this in the final version
         JButton cancelButton = new JButton("Cancel");
         buttonsRow.add(OKButton);
         buttonsRow.add(deleteButton);
+        buttonsRow.add(updateButton); //TODO: probably don't need this in the final version
         buttonsRow.add(cancelButton);
 
         Box verticalBox = Box.createVerticalBox();
@@ -77,10 +90,17 @@ public class SingleSelectGUI extends JFrame {
         deleteButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                deleteItem(selectType);
+                deleteItem();
             }
         });
 
+        updateButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                updateList();
+            }
+        });
+        
         OKButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
@@ -106,7 +126,22 @@ public class SingleSelectGUI extends JFrame {
         });
     }
 
-    private DefaultListModel getList(int selectType) {
+    
+    private void updateList() {
+
+    	//clear current list
+    	if(listModel == null)
+    		return;
+    	
+    	listModel.clear();
+    	
+    	Object[] newArray = getList().toArray();
+    	
+    	for(Object e : newArray)
+	    	listModel.addElement(e);
+    }
+    
+    private DefaultListModel getList() {
         DefaultListModel dlm = null;
 
         // create the correct DLM
@@ -127,7 +162,7 @@ public class SingleSelectGUI extends JFrame {
         Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(winClosingEvent);
     }
 
-    private void deleteItem(int selectType) {
+    private void deleteItem() {
         if (listBox.getSelectedIndex() == -1) {
             JOptionPane.showMessageDialog(this, "You must first make a selection before you can delete", "Error", JOptionPane.ERROR_MESSAGE);
             return;
@@ -138,7 +173,7 @@ public class SingleSelectGUI extends JFrame {
                 int userID = ((UserLite) listBox.getSelectedValue()).getID();
                 MySQL.deleteUser(userID);
                 listBox.clearSelection();
-                listBox = new JList(getList(selectType));
+                listBox = new JList(getList());
                 AdminGUI.updateUsers();
             }
         }
