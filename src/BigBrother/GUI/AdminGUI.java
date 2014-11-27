@@ -55,6 +55,7 @@ public class AdminGUI extends JFrame {
         // Setup the menu bar
         JMenu fileMenu = new JMenu("File");
         JMenu editMenu = new JMenu("Edit");
+        JMenu viewMenu = new JMenu("View");
 
         // Add File Item Menus
         JMenuItem logoutMenu = new JMenuItem("Logout");
@@ -142,10 +143,36 @@ public class AdminGUI extends JFrame {
         editMenu.add(addAppMenu);
         editMenu.add(editAppMenu);
 
+        
+        // add view menu items
+                JMenuItem userStatsMenu = new JMenuItem("User Stats");
+                userStatsMenu.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent arg0) {
+                        UserStatsGUI win = new UserStatsGUI();
+                        win.pack();
+                        win.setVisible(true);
+                    }
+                });
+                
+                JMenuItem appStatsMenu = new JMenuItem("App Stats");
+                appStatsMenu.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent arg0) {
+                        AppStatsGUI win = new AppStatsGUI();
+                        win.pack();
+                        win.setVisible(true);
+                    }
+                });
+                
+                viewMenu.add(userStatsMenu);
+                viewMenu.add(appStatsMenu);
         // add menubar
         JMenuBar menuBar = new JMenuBar();
         menuBar.add(fileMenu);
         menuBar.add(editMenu);
+        menuBar.add(viewMenu);
+        
         setJMenuBar(menuBar);
 
         // Users section
