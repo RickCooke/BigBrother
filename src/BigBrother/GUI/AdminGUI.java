@@ -26,6 +26,12 @@ import BigBrother.Client.MySQL;
 import BigBrother.Exceptions.MultipleResultsFoundException;
 import BigBrother.Exceptions.NoResultsFoundException;
 import BigBrother.Exceptions.UnknownSelectTypeException;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.SoftBevelBorder;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.MatteBorder;
+import java.awt.Color;
+import javax.swing.border.EtchedBorder;
 
 @SuppressWarnings("serial")
 public class AdminGUI extends JFrame {
@@ -44,7 +50,7 @@ public class AdminGUI extends JFrame {
             System.out.println("Admin GUI Initialized.");
 
         // Set the layout
-        setLayout(new BorderLayout());
+        getContentPane().setLayout(new BorderLayout());
 
         // Setup the menu bar
         JMenu fileMenu = new JMenu("File");
@@ -188,9 +194,9 @@ public class AdminGUI extends JFrame {
 
 
         JScrollPane usersScrollPane = new JScrollPane(usersList);
-        usersScrollPane.setPreferredSize(new Dimension(150, 400));
+        usersScrollPane.setPreferredSize(new Dimension(200, 300));
         JButton createUserButton = new JButton("New User");
-        createUserButton.setAlignmentX(CENTER_ALIGNMENT);
+        createUserButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         createUserButton.addActionListener(newUserButtonAL);
 
         JPanel usersPanel = new JPanel();
@@ -198,16 +204,17 @@ public class AdminGUI extends JFrame {
         usersPanel.add(usersLabel);
         usersPanel.add(usersScrollPane);
         usersPanel.add(createUserButton);
-        usersPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 10));
+        usersPanel.setBorder(new EmptyBorder(0, 0, 0, 20));
 
 
         // Monitored apps section
         JLabel appsLabel = new JLabel("Monitored Applications");
         appsLabel.setAlignmentX(CENTER_ALIGNMENT);
         JScrollPane appsScrollPane = new JScrollPane(trackedAppsList);
-        appsScrollPane.setPreferredSize(new Dimension(200, 400));
+        appsScrollPane.setPreferredSize(new Dimension(200, 300));
 
         JPanel trackedAppsPanel = new JPanel();
+        trackedAppsPanel.setBorder(new EmptyBorder(0, 0, 25, 0));
         trackedAppsPanel.setLayout(new BoxLayout(trackedAppsPanel, BoxLayout.Y_AXIS));
         trackedAppsPanel.add(appsLabel);
         trackedAppsPanel.add(appsScrollPane);
@@ -219,14 +226,14 @@ public class AdminGUI extends JFrame {
         JButton untrackButton = new JButton(">");
         appButtonsPanel.add(trackButton);
         appButtonsPanel.add(untrackButton);
-        appButtonsPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 20, 20));
+        appButtonsPanel.setBorder(new EmptyBorder(15, 20, 25, 20));
         
 
         // Non-Monitored apps section
         JLabel nonTrackedAppsLabel = new JLabel("Non-Monitored Applications");
         nonTrackedAppsLabel.setAlignmentX(CENTER_ALIGNMENT);
         JScrollPane nonTrackedAppsScrollPane = new JScrollPane(nonTrackedAppsList);
-        nonTrackedAppsScrollPane.setPreferredSize(new Dimension(200, 400));
+        nonTrackedAppsScrollPane.setPreferredSize(new Dimension(200, 300));
         JButton newAppButton = new JButton("Create New Application");
         newAppButton.setAlignmentX(CENTER_ALIGNMENT);
         newAppButton.addActionListener(newAppButtonAL);
@@ -238,13 +245,14 @@ public class AdminGUI extends JFrame {
         nonTrackedAppsPanel.add(newAppButton);
 
         JPanel mainPanel = new JPanel();
+        mainPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.X_AXIS));
         mainPanel.add(usersPanel);
         mainPanel.add(trackedAppsPanel);
         mainPanel.add(appButtonsPanel);
         mainPanel.add(nonTrackedAppsPanel);
 
-        add(mainPanel, BorderLayout.CENTER);
+        getContentPane().add(mainPanel, BorderLayout.CENTER);
 
         // update the users list
         updateUsers();
