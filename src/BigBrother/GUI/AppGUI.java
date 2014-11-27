@@ -1,5 +1,6 @@
 package BigBrother.GUI;
 
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
@@ -28,7 +29,7 @@ import javax.swing.BoxLayout;
 
 public class AppGUI extends JFrame {
 
-    private int appID = -1; //-1 if new app, appID if existing
+    private int appID = -1; // -1 if new app, appID if existing
 
     private final JTextField aliasTF = new JTextField(20);
     private final JTextField windowTF = new JTextField(20);
@@ -44,11 +45,16 @@ public class AppGUI extends JFrame {
 
 
 
+        setSize(new Dimension(421, 166));
+        setMinimumSize(new Dimension(421, 166));
+        pack();
+        setVisible(true);
+
         GridLayout gridLayout = new GridLayout(4, 3);
         getContentPane().setLayout(gridLayout);
 
         setLocationRelativeTo(null);
-        
+
         FlowLayout fl_buttonGroup = new FlowLayout();
         fl_buttonGroup.setVgap(2);
         JPanel buttonGroup = new JPanel(fl_buttonGroup);
@@ -146,22 +152,15 @@ public class AppGUI extends JFrame {
     }
 
     private void submitApp() {
-    	App newApp = new App(appID,
-    			aliasTF.getText(),
-    			windowTF.getText(),
-    			windowIsRegex.isSelected(),
-    			processTF.getText(),
-    			processIsRegex.isSelected(),
-    			true);
-    	
-    	try {
-			MySQL.editApp(newApp);
-		} catch (DuplicateKeyException e) {
-			e.printStackTrace();
-		}
-    	
-    	closeWindow();
-    	SingleSelectGUI.updateList();
-    	AdminGUI.updateApps();
+        App newApp = new App(appID, aliasTF.getText(), windowTF.getText(), windowIsRegex.isSelected(), processTF.getText(), processIsRegex.isSelected(), true);
+
+
+        MySQL.editApp(newApp);
+        closeWindow();
+        SingleSelectGUI.updateList();
+        AdminGUI.updateApps();
+
+
+
     }
 }

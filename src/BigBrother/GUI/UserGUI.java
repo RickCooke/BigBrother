@@ -45,6 +45,13 @@ public class UserGUI extends JFrame {
     public UserGUI() {
         super("New User");
 
+        setResizable(false);
+        setSize(new Dimension(385, 225));
+        setMinimumSize(new Dimension(385, 225));
+        pack();
+        setVisible(true);
+        
+        
         setLayout(new BorderLayout());
 
         JPanel panelLeft = new JPanel();

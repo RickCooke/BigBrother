@@ -152,47 +152,8 @@ public class AdminGUI extends JFrame {
         JLabel usersLabel = new JLabel("Users");
         usersLabel.setAlignmentX(CENTER_ALIGNMENT);
 
-
-
-        final JPopupMenu userPopupMenu = new JPopupMenu();
-        JMenuItem UserMenuEdit = new JMenuItem("Edit");
-        JMenuItem UserMenuDelete = new JMenuItem("Delete");
-
-        userPopupMenu.add(UserMenuEdit);
-        userPopupMenu.add(new JPopupMenu.Separator());
-        userPopupMenu.add(UserMenuDelete);
-
-
-        UserMenuEdit.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                int id = usersList.getSelectedValue().getID();
-                showUserGUI(id);
-            }
-        });
-
-        UserMenuDelete.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                int id = usersList.getSelectedValue().getID();
-                deleteUser(id);
-            }
-        });
-
-
-
-        usersList.addMouseListener(new MouseAdapter() {
-            public void mouseClicked(MouseEvent e) {
-                if (SwingUtilities.isRightMouseButton(e)) {
-                    int row = usersList.locationToIndex(e.getPoint());
-                    usersList.setSelectedIndex(row);
-                    userPopupMenu.show(usersList, e.getX(), e.getY());
-                }
-                updateApps(usersList.getSelectedValue().getID());
-            }
-        });
-
-
+        usersList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        
         JScrollPane usersScrollPane = new JScrollPane(usersList);
         usersScrollPane.setPreferredSize(new Dimension(200, 300));
         JButton createUserButton = new JButton("New User");
@@ -208,6 +169,10 @@ public class AdminGUI extends JFrame {
 
 
         // Monitored apps section
+        
+        trackedAppsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        
+        
         JLabel appsLabel = new JLabel("Monitored Applications");
         appsLabel.setAlignmentX(CENTER_ALIGNMENT);
         JScrollPane appsScrollPane = new JScrollPane(trackedAppsList);
@@ -218,6 +183,9 @@ public class AdminGUI extends JFrame {
         trackedAppsPanel.setLayout(new BoxLayout(trackedAppsPanel, BoxLayout.Y_AXIS));
         trackedAppsPanel.add(appsLabel);
         trackedAppsPanel.add(appsScrollPane);
+
+
+        
         
         // Add buttons
         JPanel appButtonsPanel = new JPanel();
@@ -230,6 +198,9 @@ public class AdminGUI extends JFrame {
         
 
         // Non-Monitored apps section
+        
+        nonTrackedAppsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        
         JLabel nonTrackedAppsLabel = new JLabel("Non-Monitored Applications");
         nonTrackedAppsLabel.setAlignmentX(CENTER_ALIGNMENT);
         JScrollPane nonTrackedAppsScrollPane = new JScrollPane(nonTrackedAppsList);
@@ -270,6 +241,9 @@ public class AdminGUI extends JFrame {
                 setAppTracked(false);
             }
         });
+        
+        
+        createRightClickMenus();
     }
 
 
@@ -289,8 +263,6 @@ public class AdminGUI extends JFrame {
 
     private void showUserGUI() {
         UserGUI win = new UserGUI();
-        win.pack();
-        win.setVisible(true);
     }
 
     private void showUserGUI(int userID) {
@@ -301,26 +273,40 @@ public class AdminGUI extends JFrame {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        win.pack();
-        win.setVisible(true);
     }
 
+    private void showAppGUI() {
+        AppGUI win = new AppGUI();
+    }
+  
+    private void showAppGUI(int appID) {
+        try {
+            AppGUI win = new AppGUI(appID);
+        } catch (MultipleResultsFoundException | NoResultsFoundException | SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+    
     static void deleteUser(int userID) {
         int dialogResult = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete?", "Warning", JOptionPane.YES_NO_OPTION);
         if (dialogResult == JOptionPane.YES_OPTION) {
             MySQL.deleteUser(userID);
-            AdminGUI.updateUsers();
+            updateUsers();
         }
     }
 
 
-    private void showAppGUI() {
-        AppGUI win = new AppGUI();
-        win.pack();
-        win.setSize(new Dimension(421, 166));
-        win.setMinimumSize(new Dimension(421, 166));
-        win.setVisible(true);
+    public static void deleteApp(int appID) {
+        int dialogResult = JOptionPane.showConfirmDialog(null, "This will mark the application as inactive and untrack it from all users\nAre you sure you want to delete?", "Warning", JOptionPane.YES_NO_OPTION);
+        if (dialogResult == JOptionPane.YES_OPTION) {
+            MySQL.setAppInactive(appID);
+            MySQL.deleteAppTrackFromAll(appID);
+            updateApps();
+            SingleSelectGUI.updateList();
+        }
     }
+
 
     static void updateUsers() {
         // debug output
@@ -334,8 +320,9 @@ public class AdminGUI extends JFrame {
     }
 
     public static void updateApps() {
-    	if(usersList.getSelectedValue() != null)
+    	if(usersList.getSelectedValue() != null) {
     		updateApps(usersList.getSelectedValue().getID());
+    	}
     }
     
     public static void updateApps(int userID) {
@@ -402,4 +389,124 @@ public class AdminGUI extends JFrame {
 
         return datePanel;
     }
+    
+    private void createRightClickMenus() {
+
+
+        final JPopupMenu userPopupMenu = new JPopupMenu();
+        JMenuItem UserMenuEdit = new JMenuItem("Edit");
+        JMenuItem UserMenuDelete = new JMenuItem("Delete");
+
+        userPopupMenu.add(UserMenuEdit);
+        userPopupMenu.add(new JPopupMenu.Separator());
+        userPopupMenu.add(UserMenuDelete);
+
+
+        UserMenuEdit.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                int id = usersList.getSelectedValue().getID();
+                showUserGUI(id);
+            }
+        });
+
+        UserMenuDelete.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                int id = usersList.getSelectedValue().getID();
+                deleteUser(id);
+            }
+        });
+
+
+
+        usersList.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                if (SwingUtilities.isRightMouseButton(e)) {
+                    int row = usersList.locationToIndex(e.getPoint());
+                    usersList.setSelectedIndex(row);
+                    userPopupMenu.show(usersList, e.getX(), e.getY());
+                }
+                updateApps(usersList.getSelectedValue().getID());
+            }
+        });
+
+        
+        final JPopupMenu trackedAppsPopupMenu = new JPopupMenu();
+        JMenuItem trackedAppsMenuEdit = new JMenuItem("Edit");
+        JMenuItem trackedAppsMenuDelete = new JMenuItem("Delete");
+
+        trackedAppsPopupMenu.add(trackedAppsMenuEdit);
+        trackedAppsPopupMenu.add(new JPopupMenu.Separator());
+        trackedAppsPopupMenu.add(trackedAppsMenuDelete);
+
+
+        trackedAppsMenuEdit.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                int id = trackedAppsList.getSelectedValue().getID();
+                showAppGUI(id);
+            }
+        });
+
+        trackedAppsMenuDelete.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                int id = trackedAppsList.getSelectedValue().getID();
+                deleteApp(id);
+            }
+        });
+
+
+
+        trackedAppsList.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                if (SwingUtilities.isRightMouseButton(e)) {
+                    int row = trackedAppsList.locationToIndex(e.getPoint());
+                    trackedAppsList.setSelectedIndex(row);
+                    trackedAppsPopupMenu.show(trackedAppsList, e.getX(), e.getY());
+                }
+            }
+        });
+        
+        
+        
+        final JPopupMenu nonTrackedAppsPopupMenu = new JPopupMenu();
+        JMenuItem nonTrackedAppsMenuEdit = new JMenuItem("Edit");
+        JMenuItem nonTrackedAppsMenuDelete = new JMenuItem("Delete");
+
+        nonTrackedAppsPopupMenu.add(nonTrackedAppsMenuEdit);
+        nonTrackedAppsPopupMenu.add(new JPopupMenu.Separator());
+        nonTrackedAppsPopupMenu.add(nonTrackedAppsMenuDelete);
+
+
+        nonTrackedAppsMenuEdit.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                int id = nonTrackedAppsList.getSelectedValue().getID();
+                showAppGUI(id);
+            }
+        });
+
+        nonTrackedAppsMenuDelete.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                int id = nonTrackedAppsList.getSelectedValue().getID();
+                deleteApp(id);
+            }
+        });
+
+
+
+        nonTrackedAppsList.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                if (SwingUtilities.isRightMouseButton(e)) {
+                    int row = nonTrackedAppsList.locationToIndex(e.getPoint());
+                    nonTrackedAppsList.setSelectedIndex(row);
+                    nonTrackedAppsPopupMenu.show(nonTrackedAppsList, e.getX(), e.getY());
+                }
+            }
+        });
+    }
+
 };

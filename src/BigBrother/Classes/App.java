@@ -26,6 +26,10 @@ public class App {
         isActive = _isActive;
     }
 
+    public String toString() {
+        return alias + " (appID: " + appID + ")";
+    }
+    
     public void print() {
         System.out.println(appID + " " + alias + " " + window + " " + window_regex + " " + process + " " + process_regex + " " + getPriorityScore());
 

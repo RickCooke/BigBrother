@@ -188,7 +188,7 @@ public class MySQL {
 
     public static void updateTrackedAppDLM(int userID, DefaultListModel<AppLite> dlm) {
         // clear the existing list
-    	dlm.clear();
+        dlm.clear();
 
         // make sure connection is sound
         if (conn == null)
@@ -197,9 +197,8 @@ public class MySQL {
         // prepare the query
         PreparedStatement ps = null;
         ResultSet rs = null;
-        
-        String SQL = "SELECT a.appid, a.alias FROM users_apps u, " +
-        		"apps a WHERE u.userid = ? AND u.appid = a.appid AND a.active = 1";
+
+        String SQL = "SELECT a.appid, a.alias FROM users_apps u, " + "apps a WHERE u.userid = ? AND u.appid = a.appid AND a.active = 1";
 
         try {
             ps = conn.prepareStatement(SQL);
@@ -209,7 +208,7 @@ public class MySQL {
             rs = ps.executeQuery();
 
             while (rs.next())
-            		dlm.addElement(new AppLite(rs.getInt("appid"), rs.getString("alias")));
+                dlm.addElement(new AppLite(rs.getInt("appid"), rs.getString("alias")));
         } catch (SQLException e) {
             System.out.println("SQLException: " + e.getMessage());
         }
@@ -217,7 +216,7 @@ public class MySQL {
 
     public static void updateNonTrackedAppDLM(int userID, DefaultListModel<AppLite> dlm) {
         // clear the existing list
-    	dlm.clear();
+        dlm.clear();
 
         // make sure connection is sound
         if (conn == null)
@@ -226,11 +225,11 @@ public class MySQL {
         // prepare the query
         PreparedStatement ps = null;
         ResultSet rs = null;
-        
-        //TODO: figure out this call, currently selects all inactive app links for testing
-        String SQL = "SELECT appid, alias FROM apps WHERE appid NOT IN" +
-        		" (SELECT a.appid FROM users_apps u, apps a WHERE u.userid = ?" +
-        		" AND u.appid = a.appid AND a.active = 1) AND appid != 0 AND appid != 1";
+
+
+        String SQL =
+                    "SELECT appid, alias FROM apps WHERE active=1 AND appid NOT IN" + " (SELECT a.appid FROM users_apps u, apps a WHERE u.userid = ?"
+                                + " AND u.appid = a.appid AND a.active = 1) AND appid != 0 AND appid != 1";
 
         try {
             ps = conn.prepareStatement(SQL);
@@ -239,13 +238,14 @@ public class MySQL {
             // execute query
             rs = ps.executeQuery();
 
-            while (rs.next())
-            		dlm.addElement(new AppLite(rs.getInt("appid"), rs.getString("alias")));
+            while (rs.next()) {
+                dlm.addElement(new AppLite(rs.getInt("appid"), rs.getString("alias")));
+            }
         } catch (SQLException e) {
             System.out.println("SQLException: " + e.getMessage());
         }
     }
-    
+
     public static DefaultListModel<UserLite> getUserList(DefaultListModel<UserLite> dlm) {
         // clear the existing list
         dlm.clear();
@@ -301,7 +301,7 @@ public class MySQL {
 
         return dlm;
     }
-    
+
     public static void flushLocalBuffer(ArrayList<int[]> buffer) {
         int rows = 0;
 
@@ -431,7 +431,7 @@ public class MySQL {
         return last_inserted_id;
     }
 
-	public static int editApp(App newApp) throws DuplicateKeyException {
+    public static int editApp(App newApp) {
         if (conn == null) {
             establishConnection();
         }
@@ -471,13 +471,9 @@ public class MySQL {
             }
 
         } catch (SQLException ex) {
-            if (ex.getSQLState().equals("23000")) {
-                throw new DuplicateKeyException();
-            } else {
-                System.out.println("SQLException: " + ex.getMessage());
-                System.out.println("SQLState: " + ex.getSQLState());
-                System.out.println("VendorError: " + ex.getErrorCode());
-            }
+            System.out.println("SQLException: " + ex.getMessage());
+            System.out.println("SQLState: " + ex.getSQLState());
+            System.out.println("VendorError: " + ex.getErrorCode());
         } finally {
             try {
                 if (rs != null) {
@@ -495,8 +491,8 @@ public class MySQL {
         }
 
         return -1;
-	}
-	
+    }
+
     public static int editUser(User user, String password) throws DuplicateKeyException {
         if (conn == null) {
             establishConnection();
@@ -587,7 +583,6 @@ public class MySQL {
 
             int rows = ps.executeUpdate();
             if (rows != 1) {
-                // Says ps2 is leaked, but the finally below will catch this
                 throw new SQLException("Did not DELETE user " + userID);
             }
         } catch (SQLException ex) {
@@ -618,16 +613,16 @@ public class MySQL {
         }
 
         String SQL;
-        if(tracked)
-        	SQL = "INSERT INTO users_apps (userid, appid) VALUES (?, ?)";
-        else
-        	SQL = "DELETE FROM users_apps WHERE userid = ? AND appid = ?";
-
+        if (tracked) {
+            SQL = "INSERT INTO users_apps (userid, appid) VALUES (?, ?)";
+        } else {
+            SQL = "DELETE FROM users_apps WHERE userid = ? AND appid = ?";
+        }
         PreparedStatement ps = null;
         ResultSet rs = null;
 
         try {
-            ps = conn.prepareStatement(SQL, PreparedStatement.RETURN_GENERATED_KEYS);
+            ps = conn.prepareStatement(SQL);
 
             ps.setInt(1, userID);
             ps.setInt(2, appID);
@@ -689,10 +684,91 @@ public class MySQL {
             int rows = ps.executeUpdate();
             // rows = 1, no updates needed
             // rows = 2 updates done
-            if( rows != 1 && rows != 2 ) {
+            if (rows != 1 && rows != 2) {
                 throw new MalformedSettingsException("Settings malformed");
             }
 
+        } catch (SQLException ex) {
+            System.out.println("SQLException: " + ex.getMessage());
+            System.out.println("SQLState: " + ex.getSQLState());
+            System.out.println("VendorError: " + ex.getErrorCode());
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                    rs = null;
+                }
+
+                if (ps != null) {
+                    ps.close();
+                    ps = null;
+                }
+            } catch (SQLException ex) {
+                System.out.println("SQLException: " + ex.getMessage());
+            }
+        }
+
+    }
+
+    public static void deleteAppTrackFromAll(int appID) {
+        if (conn == null) {
+            establishConnection();
+        }
+
+        String SQL = "DELETE FROM users_apps WHERE appid = ?";
+
+
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            ps = conn.prepareStatement(SQL);
+
+            ps.setInt(1, appID);
+
+            ps.executeUpdate();
+        } catch (SQLException ex) {
+            System.out.println("SQLException: " + ex.getMessage());
+            System.out.println("SQLState: " + ex.getSQLState());
+            System.out.println("VendorError: " + ex.getErrorCode());
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                    rs = null;
+                }
+
+                if (ps != null) {
+                    ps.close();
+                    ps = null;
+                }
+            } catch (SQLException ex) {
+                System.out.println("SQLException: " + ex.getMessage());
+            }
+        }
+
+    }
+
+    public static void setAppInactive(int appID) {
+        if (conn == null) {
+            establishConnection();
+        }
+
+        String SQL = "UPDATE apps SET active = 0 WHERE appid = ?";
+
+
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            ps = conn.prepareStatement(SQL);
+
+            ps.setInt(1, appID);
+
+            int rows = ps.executeUpdate();
+            if (rows != 1) {
+                throw new SQLException("Did not UPDATE app " + appID);
+            }
         } catch (SQLException ex) {
             System.out.println("SQLException: " + ex.getMessage());
             System.out.println("SQLState: " + ex.getSQLState());
