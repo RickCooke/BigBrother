@@ -107,7 +107,7 @@ public class StatsGUI extends JFrame {
     
     dateLabel = new JLabel("Date: ");
     dateChooser = new JDateChooser();
-    dateChooser.setDateFormatString("MM/dd/YY");
+    dateChooser.setDateFormatString("MM/dd/yy");
     dateChooser.setDate(roundToHr(new Date()));
     dateChooser.setSize(new Dimension(150, 0));
     dateChooser.addPropertyChangeListener(new PropertyChangeListener() {
