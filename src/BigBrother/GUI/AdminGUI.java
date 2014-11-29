@@ -145,28 +145,18 @@ public class AdminGUI extends JFrame {
 
         
         // add view menu items
-                JMenuItem userStatsMenu = new JMenuItem("User Stats");
-                userStatsMenu.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent arg0) {
-                        UserStatsGUI win = new UserStatsGUI();
-                        win.pack();
-                        win.setVisible(true);
-                    }
-                });
+        JMenuItem statsMenu = new JMenuItem("Usage Statistics");
+        statsMenu.addActionListener(new ActionListener() {
+          @Override
+          public void actionPerformed(ActionEvent arg0) {
+            StatsGUI win = new StatsGUI();
+            win.pack();
+            win.setVisible(true);
+          }
+        });
+
+        viewMenu.add(statsMenu);
                 
-                JMenuItem appStatsMenu = new JMenuItem("App Stats");
-                appStatsMenu.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent arg0) {
-                        AppStatsGUI win = new AppStatsGUI();
-                        win.pack();
-                        win.setVisible(true);
-                    }
-                });
-                
-                viewMenu.add(userStatsMenu);
-                viewMenu.add(appStatsMenu);
         // add menubar
         JMenuBar menuBar = new JMenuBar();
         menuBar.add(fileMenu);
