@@ -791,117 +791,123 @@ public class MySQL {
         }
 
     }
+
     /**
      * functions for data visualization
      */
     public static Integer[] getTrackedApps(int user_id, String start, String end) {
-      if (conn == null) {
-        establishConnection();
-      }
-      
-      String SQL = "SELECT DISTINCT appid FROM stats2 WHERE blockid >= ? AND blockid <= ? AND userid = ?";
-      Integer[] trackedApps = null;
-
-      PreparedStatement ps = null;
-      ResultSet rs = null;
-      
-      try {
-        ps = conn.prepareStatement(SQL);
-        ps.setString(1, start);
-        ps.setString(2, end);
-        ps.setInt(3, user_id);
-        rs = ps.executeQuery();
-        
-        ArrayList<Integer> trackedAppsList = new ArrayList<Integer>();
-        while(rs.next()) {
-          trackedAppsList.add(rs.getInt(1));
+        if (conn == null) {
+            establishConnection();
         }
-        trackedApps = trackedAppsList.toArray(new Integer[trackedAppsList.size()]);
-    } catch (SQLException ex) {
-        System.out.println("SQLException: " + ex.getMessage());
-        System.out.println("SQLState: " + ex.getSQLState());
-        System.out.println("VendorError: " + ex.getErrorCode());
-    } finally {
+
+        String SQL = "SELECT DISTINCT appid FROM stats WHERE blockid >= ? AND blockid <= ? AND userid = ?";
+        Integer[] trackedApps = null;
+
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
         try {
-            if (rs != null) {
-                rs.close();
-                rs = null;
+            ps = conn.prepareStatement(SQL);
+            ps.setString(1, start);
+            ps.setString(2, end);
+            ps.setInt(3, user_id);
+            rs = ps.executeQuery();
+
+            ArrayList<Integer> trackedAppsList = new ArrayList<Integer>();
+            while (rs.next()) {
+                trackedAppsList.add(rs.getInt(1));
             }
-            if (ps != null) {
-                ps.close();
-                ps = null;
-            }
+            trackedApps = trackedAppsList.toArray(new Integer[trackedAppsList.size()]);
         } catch (SQLException ex) {
             System.out.println("SQLException: " + ex.getMessage());
+            System.out.println("SQLState: " + ex.getSQLState());
+            System.out.println("VendorError: " + ex.getErrorCode());
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                    rs = null;
+                }
+                if (ps != null) {
+                    ps.close();
+                    ps = null;
+                }
+            } catch (SQLException ex) {
+                System.out.println("SQLException: " + ex.getMessage());
+            }
         }
+
+        return trackedApps;
     }
-      
-    return trackedApps;
-  }
-    
+
     public static Integer[] getAppData(int user_id, int app_id, String start, String end, String[] labels) {
-      if (conn == null) {
-        establishConnection();
-      }
-      
-      String SQL = "SELECT appid, blockid, count FROM stats2 WHERE blockid >= ? AND blockid <= ? AND userid = ? AND appid = ?";
-
-      PreparedStatement ps = null;
-      ResultSet rs = null;
-      
-      Integer[] data = null;
-      
-      try {
-        ps = conn.prepareStatement(SQL);
-
-        ps.setString(1, start);
-        ps.setString(2, end);
-        ps.setInt(3, user_id);
-        ps.setInt(4, app_id);
-
-        rs = ps.executeQuery();
-        rs.last();
-        data = new Integer[rs.getRow()];
-        rs.beforeFirst();
-        
-        for (int i = 0; i < data.length; i++) {
-          data[i] = 0; // initialize all to zero
+        if (conn == null) {
+            establishConnection();
         }
+
+        System.out.println(start);
+        System.out.println(end);
+
+
+        String SQL = "SELECT appid, blockid, count FROM stats WHERE blockid >= ? AND blockid <= ? AND userid = ? AND appid = ?";
+
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        Integer[] data = null;
         
-        while(rs.next()) {
-           String date = rs.getString(2);
-           // TODO: fix this. SQL adds a .0 to datetime and
-           //     it caused the label to not equal the date.
-           //     this is just a cheap fix for now.
-           date = date.substring(0, date.length() - 2);
-           for (int i = 0; i < labels.length; i++) {
-             // if label exists, add it to the data array
-             if (labels[i].equals(date)) {
-               data[i] = rs.getInt(3) / 1000;
-               break;
-             }
-           }
-        }
-        
-        
-    } catch (SQLException ex) {
-        System.out.println("SQLException: " + ex.getMessage());
-        System.out.println("SQLState: " + ex.getSQLState());
-        System.out.println("VendorError: " + ex.getErrorCode());
-    } finally {
         try {
-            if (rs != null) {
-                rs.close();
-                rs = null;
+            ps = conn.prepareStatement(SQL);
+
+            ps.setString(1, start);
+            ps.setString(2, end);
+            ps.setInt(3, user_id);
+            ps.setInt(4, app_id);
+
+            rs = ps.executeQuery();
+            rs.last();
+            data = new Integer[labels.length];
+            rs.beforeFirst();
+
+            for (int i = 0; i < data.length; i++) {
+                data[i] = 0; // initialize all to zero
             }
-            if (ps != null) {
-                ps.close();
-                ps = null;
+
+            while (rs.next()) {
+                String date = rs.getString(2);
+                // TODO: fix this. SQL adds a .0 to datetime and
+                // it caused the label to not equal the date.
+                // this is just a cheap fix for now.
+                date = date.substring(0, date.length() - 2);
+
+                for (int i = 0; i < labels.length; i++) {
+                    // if label exists, add it to the data array
+                    if (labels[i].equals(date)) {
+                        data[i] = rs.getInt(3) / 1000;
+                        break;
+                    }
+                }
             }
+
+
         } catch (SQLException ex) {
             System.out.println("SQLException: " + ex.getMessage());
+            System.out.println("SQLState: " + ex.getSQLState());
+            System.out.println("VendorError: " + ex.getErrorCode());
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                    rs = null;
+                }
+                if (ps != null) {
+                    ps.close();
+                    ps = null;
+                }
+            } catch (SQLException ex) {
+                System.out.println("SQLException: " + ex.getMessage());
+            }
         }
+        return data;
     }
-      return data;
-  }
 }

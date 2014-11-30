@@ -32,7 +32,8 @@ public class ViewStatsGUI extends JFrame
         true,                      // tooltips
         false                      // urls
     );
-    
+
+
     chart.setBackgroundPaint(Color.white);
 
     final CategoryPlot plot = (CategoryPlot) chart.getPlot();
