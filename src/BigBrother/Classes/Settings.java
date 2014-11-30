@@ -13,7 +13,7 @@ public class Settings {
     public int memory_flush_interval;
     public int local_flush_interval;
     public int max_idle_time;
-    public int block_time;
+    public static int block_time;
     public int start_time;
     public String start_time_string;
     public int keyboard_peek_interval = 10;

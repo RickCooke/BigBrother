@@ -15,23 +15,35 @@ package BigBrother.GUI;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+
+import org.jfree.data.category.CategoryDataset;
+import org.jfree.data.category.DefaultCategoryDataset;
+import org.jfree.data.xy.*;
+import org.joda.time.*;
+import org.joda.time.format.DateTimeFormat;
 
 import com.toedter.calendar.*;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
+import BigBrother.Classes.Settings;
 import BigBrother.Classes.UserLite;
 import BigBrother.Client.MySQL;
+import BigBrother.Exceptions.MultipleResultsFoundException;
+import BigBrother.Exceptions.NoResultsFoundException;
 
 public class StatsGUI extends JFrame {
   // west panel vars
@@ -79,10 +91,10 @@ public class StatsGUI extends JFrame {
       @Override
       public void valueChanged(ListSelectionEvent e)
       {
-        // TODO: Fix selecting users
-        Object[] selectedValues = userList.getSelectedValues();
+        // TODO: Select multiple users?
+        UserLite selectedValue = userList.getSelectedValue();
         
-        if (selectedValues.length > 0) {
+        if (selectedValue != null) {
           viewLinePlot.setEnabled(true);
           viewPieChart.setEnabled(true);
         } else {
@@ -151,14 +163,14 @@ public class StatsGUI extends JFrame {
     timeSpinnerStart = new JSpinner(modelStart);
     long eightHoursAgo = System.currentTimeMillis() - (8 * 60 * 60 * 1000);
     timeSpinnerStart.setValue(roundToHr(new Date(eightHoursAgo)));
-    JComponent editorStart = new JSpinner.DateEditor(timeSpinnerStart, "hh:mm:ss a");
+    JComponent editorStart = new JSpinner.DateEditor(timeSpinnerStart, "HH:mm:ss");
     timeSpinnerStart.setEditor(editorStart);
     
     modelEnd = new SpinnerDateModel();
     modelEnd.setCalendarField(Calendar.MINUTE);
     timeSpinnerEnd = new JSpinner(modelEnd);
     timeSpinnerEnd.setValue(roundToHr(new Date()));
-    JComponent editorEnd = new JSpinner.DateEditor(timeSpinnerEnd, "hh:mm:ss a");
+    JComponent editorEnd = new JSpinner.DateEditor(timeSpinnerEnd, "HH:mm:ss");
     timeSpinnerEnd.setEditor(editorEnd);
 
     eastPanelMid.add(startTimeLabel);
@@ -185,24 +197,13 @@ public class StatsGUI extends JFrame {
         {
           // TODO Auto-generated catch block
           e1.printStackTrace();
-        }
+        }     
+
+        // TODO: allow selecting multiple users?
+        UserLite selectedUser = userList.getSelectedValue();
+        int user_id = selectedUser.getID();
+        DefaultCategoryDataset data = getDatasetLineChart(start, end, user_id);
         
-        
-        System.out.println(start.toString());
-        System.out.println(end.toString());
-        
-        // for each selected user:
-        
-        // TODO: Fix user selecting
-        UserLite[] selectedUsers = (UserLite[]) userList.getSelectedValues();
-        int len = selectedUsers.length;
-        int[][] data = new int[len][];
-        for (int i = 0; i < len; i++) {
-          int id = selectedUsers[i].getID();
-          
-          // should return array of values
-          data[len] = getUsageStats(start, end, id);
-        }
         // plot data
         ViewStatsGUI win = new ViewStatsGUI(data);
         win.pack();
@@ -236,14 +237,64 @@ public class StatsGUI extends JFrame {
     eastPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
   }
   
-  private int[] getUsageStats(String start, String end, int id) {
-    int[] stats = null;
+  private DefaultCategoryDataset getDatasetLineChart(String start, String end, int user_id) {
+    DefaultCategoryDataset stats = new DefaultCategoryDataset();
     
-    // TODO: function will check the database and return stats for user with id=id.
-    // is there is no data on this range, will return all 0s. if there is partial data,
-    // it will return the partial data with 0s at every other point.
+    String[] xAxisLabels = null;
+    try {
+      xAxisLabels = getXAxisLabels(start, end);
+    } catch (ParseException e){
+      e.printStackTrace();
+    }
     
+    Integer[] apps = MySQL.getTrackedApps(user_id, start, end);
+    
+    if (apps == null) {
+      System.out.println("No apps tracked during this time!");
+      // throw some exception about no data for this time;
+    }
+    
+    for (int app : apps) {
+      String name = "" + app;
+      
+      
+      Integer[] appData = MySQL.getAppData(user_id, app, start, end, xAxisLabels);
+      for (int i = 0; i < appData.length; i++) {
+        stats.addValue(appData[i], name, xAxisLabels[i]);
+      }
+      
+    }
     return stats;
+  }
+  
+  public int getNumBlocks(String start, String end, int block_size) {
+    final org.joda.time.format.DateTimeFormatter format = 
+        DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+    final DateTime date1 = format.parseDateTime(start);
+    final DateTime date2 = format.parseDateTime(end);
+    
+    return Seconds.secondsBetween(date1, date2).getSeconds() / block_size;
+  }
+  
+  public String[] getXAxisLabels(String start, String end) throws ParseException {
+    // int block_size = Settings.block_time / 1000; // to seconds
+    int block_size = 60; // debug: set to one minute
+    int numBlocks = getNumBlocks(start, end, block_size);
+    
+    System.out.println("block size: "  + block_size);
+    
+    String[] labels = new String[numBlocks + 1];
+    
+    final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    final Date date = df.parse(start); // conversion from String
+    final java.util.Calendar cal = GregorianCalendar.getInstance();
+    cal.setTime(date);
+    
+    for (int i = 0; i <= numBlocks; i++) {
+      labels[i] = df.format( cal.getTime() );
+      cal.add(GregorianCalendar.SECOND, block_size);
+    }
+    return labels;
   }
 
   public Date roundToHr(Date d) {
