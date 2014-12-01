@@ -30,8 +30,8 @@ public class Time extends ApplicationFrame {
 
 
         // Lazy to do it
-        start = "2014-11-24 17:00:00";
-        end = "2014-11-24 18:00:00";
+       // start = "2014-11-24 17:00:00";
+       // end = "2014-11-24 18:00:00";
 
         String[] xAxisLabels = getXAxisLabels(start, end);
 
@@ -57,6 +57,7 @@ public class Time extends ApplicationFrame {
         final JFreeChart chart = createChart(dataset);
         final ChartPanel chartPanel = new ChartPanel(chart);
         chartPanel.setPreferredSize(new java.awt.Dimension(560, 370));
+        chartPanel.setRangeZoomable(false);
         chartPanel.setMouseZoomable(true, false);
         setContentPane(chartPanel);
     }

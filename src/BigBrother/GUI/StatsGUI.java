@@ -106,14 +106,16 @@ public class StatsGUI extends JFrame {
     }
 
     public void renderEastPanel(JPanel eastPanel) {
-        long eightHoursAgo = System.currentTimeMillis() - (8 * 60 * 60 * 1000);
-
+        long eightBlocksAgo = System.currentTimeMillis() - 20*(Main.settings.block_time);
+        Date startDate = roundToMin(new Date(eightBlocksAgo));
+        Date endDate = roundToMin(new Date());
+       
         JPanel eastPanelTop = new JPanel(new FlowLayout());
         JPanel eastPanelMid = new JPanel(new FlowLayout());
         JPanel eastPanelBot = new JPanel(new FlowLayout());
         dateChooserStart = new JDateChooser();
         dateChooserStart.setDateFormatString("MM/dd/yy");
-        dateChooserStart.setDate(roundToHr(new Date()));
+        dateChooserStart.setDate(startDate);
         dateChooserStart.setSize(new Dimension(150, 0));
         dateChooserStart.addPropertyChangeListener(new PropertyChangeListener() {
             @Override
@@ -137,7 +139,7 @@ public class StatsGUI extends JFrame {
         modelEnd = new SpinnerDateModel();
         modelEnd.setCalendarField(Calendar.MINUTE);
         timeSpinnerEnd = new JSpinner(modelEnd);
-        timeSpinnerEnd.setValue(roundToHr(new Date()));
+        timeSpinnerEnd.setValue(endDate);
         JComponent editorEnd = new JSpinner.DateEditor(timeSpinnerEnd, "HH:mm:ss");
         timeSpinnerEnd.setEditor(editorEnd);
         endTimeLabel = new JLabel("End Time:");
@@ -145,7 +147,7 @@ public class StatsGUI extends JFrame {
 
         dateChooserEnd = new JDateChooser();
         dateChooserEnd.setDateFormatString("MM/dd/yy");
-        dateChooserEnd.setDate(roundToHr(new Date()));
+        dateChooserEnd.setDate(endDate);
         dateChooserEnd.setSize(new Dimension(150, 0));
         dateChooserEnd.addPropertyChangeListener(new PropertyChangeListener() {
             @Override
@@ -223,7 +225,7 @@ public class StatsGUI extends JFrame {
 
         timeSpinnerStart = new JSpinner(modelStart);
         eastPanelTop.add(timeSpinnerStart);
-        timeSpinnerStart.setValue(roundToHr(new Date(eightHoursAgo)));
+        timeSpinnerStart.setValue(startDate);
 
 
         JComponent editorStart = new JSpinner.DateEditor(timeSpinnerStart, "HH:mm:ss");
@@ -305,6 +307,18 @@ public class StatsGUI extends JFrame {
         return date.getTime();
     }
 
+    public Date roundToMin(Date d) {
+        Calendar date = new GregorianCalendar();
+        date.setTime(d);
+        int deltaHr = date.get(Calendar.SECOND) / 30;
+
+        date.set(Calendar.SECOND, 0);
+        date.set(Calendar.MILLISECOND, 0);
+        date.add(Calendar.MINUTE, deltaHr);
+
+        return date.getTime();
+    }
+    
     private String getDateTimeString(JDateChooser date, JSpinner time) throws ParseException {
         String dateTime;
         SimpleDateFormat fmt = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

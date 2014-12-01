@@ -85,11 +85,11 @@ public class LoginGUI extends JFrame {
 
         // TODO: remove this to prompt for username/pw
         // attemptLogin("defaultUser", "password");
-         attemptLogin("bigbrother", "plzletmein");
+         attemptLogin("bigbrother2", "plzletmein");
         // Can't get the LoginGUI to dispose
         // Note from Mike: commenting this out and logging in normally hangs the program for me,
         // can't right click taskbar icon :(
-         //attemptLogin("brian", "708050");
+        // attemptLogin("brian", "708050");
     }
 
     private void attemptLogin(String username, String password) {

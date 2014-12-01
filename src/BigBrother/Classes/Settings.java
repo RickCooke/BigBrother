@@ -20,8 +20,8 @@ public class Settings {
     public int remote_insert_buffer_size = 100;
 
     public final String MySQL_host = "23.94.98.164";
-    public final String MySQL_database = "bigbrother";
-    public final String MySQL_username = "bigbrother";
+    public final String MySQL_database = "bigbrother2";
+    public final String MySQL_username = "bigbrother2";
     public final String MySQL_password = "plzletmein";
 
     public void downloadSettings() {
