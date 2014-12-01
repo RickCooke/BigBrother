@@ -880,8 +880,7 @@ public class MySQL {
                 // it caused the label to not equal the date.
                 // this is just a cheap fix for now.
 
-                // date = date.substring(0, date.length() - 2);
-                date = df.parse(date).toString();
+                date = date.substring(0, date.length() - 2);
                 for (int i = 0; i < labels.length; i++) {
                     // if label exists, add it to the data array
                     if (labels[i].equals(date)) {
@@ -896,9 +895,6 @@ public class MySQL {
             System.out.println("SQLException: " + ex.getMessage());
             System.out.println("SQLState: " + ex.getSQLState());
             System.out.println("VendorError: " + ex.getErrorCode());
-        } catch (ParseException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
         } finally {
             try {
                 if (rs != null) {
