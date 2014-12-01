@@ -25,27 +25,27 @@ import BigBrother.Client.Main;
 import BigBrother.Client.MySQL;
 
 public class Time extends ApplicationFrame {
-    public Time(final String title, int user_id,  String start, String end) {
+    public Time(final String title, int user_id, String start, String end) {
         super(title);
 
-        String[] xAxisLabels = null;
-        try {
-            xAxisLabels = getXAxisLabels(start, end);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        
+
+        // Lazy to do it
+        start = "2014-11-24 17:00:00";
+        end = "2014-11-24 18:00:00";
+
+        String[] xAxisLabels = getXAxisLabels(start, end);
+
         ArrayList<App> apps = MySQL.getTrackedAppsArrayList(user_id);
         apps.add(new App(0, "Other", null, false, null, false, true));
         apps.add(new App(1, "Idle", null, false, null, false, true));
 
-        int block_size = Main.settings.block_time/1000;
+        int block_size = Main.settings.block_time / 1000;
         int numBlocks = getNumBlocks(start, end, block_size);
 
-        
-        MilliDTSC dataset = new MilliDTSC(100, numBlocks, new MultipleOfMillisecond(Main.settings.block_time));
-        dataset.setTimeBase(new MultipleOfMillisecond(Main.settings.block_time));
-        
+        MilliDTSC dataset = new MilliDTSC(apps.size(), numBlocks, new MultipleOfMillisecond(Main.settings.block_time));
+
+        Date date = stringToDate(start);
+        dataset.setTimeBase(new MultipleOfMillisecond(date, Main.settings.block_time));
 
         int i = 0;
         for (App app : apps) {
@@ -82,6 +82,11 @@ public class Time extends ApplicationFrame {
 
         private static final long serialVersionUID = 1L;
         private int periodMs = 100;
+
+        public MultipleOfMillisecond(Date date, int periodMs) {
+            super(date);
+            this.periodMs = periodMs;
+        }
 
         public MultipleOfMillisecond(int periodMs) {
             super();
@@ -126,31 +131,44 @@ public class Time extends ApplicationFrame {
         }
     }
 
-    
+
     public int getNumBlocks(String start, String end, int block_size) {
-      final org.joda.time.format.DateTimeFormatter format = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
-      final DateTime date1 = format.parseDateTime(start);
-      final DateTime date2 = format.parseDateTime(end);
-      return Seconds.secondsBetween(date1, date2).getSeconds() / block_size;
-  }
-    
-    public String[] getXAxisLabels(String start, String end) throws ParseException {
-      int block_size = Main.settings.block_time / 1000; // to seconds
-      int numBlocks = getNumBlocks(start, end, block_size);
+        final org.joda.time.format.DateTimeFormatter format = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+        final DateTime date1 = format.parseDateTime(start);
+        final DateTime date2 = format.parseDateTime(end);
+        return Seconds.secondsBetween(date1, date2).getSeconds() / block_size;
+    }
 
-      System.out.println("block size: " + block_size);
+    public String[] getXAxisLabels(String start, String end)  {
+        int block_size = Main.settings.block_time / 1000; // to seconds
+        int numBlocks = getNumBlocks(start, end, block_size);
 
-      String[] labels = new String[numBlocks + 1];
+        System.out.println("block size: " + block_size);
 
-      final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-      final Date date = df.parse(start); // conversion from String
-      final java.util.Calendar cal = GregorianCalendar.getInstance();
-      cal.setTime(date);
+        String[] labels = new String[numBlocks + 1];
 
-      for (int i = 0; i <= numBlocks; i++) {
-          labels[i] = df.format(cal.getTime());
-          cal.add(GregorianCalendar.SECOND, block_size);
-      }
-      return labels;
-  }
+        final Date date = stringToDate(start);
+        
+        final java.util.Calendar cal = GregorianCalendar.getInstance();
+        cal.setTime(date);
+
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        
+        for (int i = 0; i <= numBlocks; i++) {
+            labels[i] = df.format(cal.getTime());
+            cal.add(GregorianCalendar.SECOND, block_size);
+        }
+        return labels;
+    }
+
+    private Date stringToDate(String date_string) {
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date = null;
+        try {
+            date = df.parse(date_string);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        } // conversion from String
+        return date;
+    }
 }
