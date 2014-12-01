@@ -84,7 +84,7 @@ public class LoginGUI extends JFrame {
 
         // TODO: remove this to prompt for username/pw
         // attemptLogin("defaultUser", "password");
-         attemptLogin("bigbrother", "plzletmein");
+        // attemptLogin("bigbrother", "plzletmein");
         // Can't get the LoginGUI to dispose
         // Note from Mike: commenting this out and logging in normally hangs the program for me,
         // can't right click taskbar icon :(
@@ -106,14 +106,17 @@ public class LoginGUI extends JFrame {
         }
 
         String passwordHash = MD5(password);
-
+        boolean client = false;
         try {
             Main.loggedInUserID = MySQL.checkPassword(username, passwordHash);
             dispose();
             new Client();
         } catch (UserDoesNotExist e) {
             JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            client = true;
         }
+        if(!client)
+            JOptionPane.showMessageDialog(this, "Welcome " + username, "Big Brother Client", JOptionPane.INFORMATION_MESSAGE);
 
     }
 
