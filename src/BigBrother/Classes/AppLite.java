@@ -10,7 +10,7 @@ public class AppLite {
     }
 
     public String toString() {
-        return alias + " (appID: " + appID + ")";
+        return alias;
     }
 
     public int getID() {
