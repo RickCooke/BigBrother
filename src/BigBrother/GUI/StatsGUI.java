@@ -26,6 +26,7 @@ import javax.swing.event.ListSelectionListener;
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.xy.*;
+import org.jfree.ui.RefineryUtilities;
 import org.joda.time.*;
 import org.joda.time.format.DateTimeFormat;
 
@@ -173,6 +174,8 @@ public class StatsGUI extends JFrame {
                     e1.printStackTrace();
                 }
 
+                
+                /*
                 // TODO: allow selecting multiple users?
                 UserLite selectedUser = userList.getSelectedValue();
                 int user_id = selectedUser.getID();
@@ -182,6 +185,17 @@ public class StatsGUI extends JFrame {
                 ViewStatsGUI win = new ViewStatsGUI(data);
                 win.pack();
                 win.setVisible(true);
+                
+                */
+
+                UserLite selectedUser = userList.getSelectedValue();
+                int user_id = selectedUser.getID();
+                
+                final String title = "Time Series Management";
+                final Time demo = new Time(title, user_id, start, end);
+                demo.pack();
+                RefineryUtilities.positionFrameRandomly(demo);
+                demo.setVisible(true);
             }
         });
         viewPieChart = new JButton("View Usage Totals");
