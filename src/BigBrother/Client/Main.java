@@ -52,26 +52,8 @@ public class Main {
     public static void setupTrayIcon() {
 
         PopupMenu popMenu = new PopupMenu();
-        MenuItem adminMenuItem = new MenuItem("Admin");
-        MenuItem logoutMenuItem = new MenuItem("Logout");
         MenuItem exitMenuItem = new MenuItem("Exit");
-        popMenu.add(adminMenuItem);
-        popMenu.add(logoutMenuItem);
         popMenu.add(exitMenuItem);
-
-        adminMenuItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                startAdminGUI();
-            }
-        });
-
-        logoutMenuItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                logout();
-            }
-        });
 
         exitMenuItem.addActionListener(new ActionListener() {
             @Override

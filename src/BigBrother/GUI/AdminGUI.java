@@ -448,9 +448,7 @@ public class AdminGUI extends JFrame {
                 deleteUser(id);
             }
         });
-
-
-
+        
         usersList.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 if (SwingUtilities.isRightMouseButton(e)) {
