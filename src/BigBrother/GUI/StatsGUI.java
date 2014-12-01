@@ -75,9 +75,10 @@ public class StatsGUI extends JFrame {
 
     public void renderWestPanel(JPanel westPanel) {
         MySQL.getUserList(usersDLM);
-        usersLabel = new JLabel("Select at least one user", JLabel.CENTER);
+        usersLabel = new JLabel("Select user", JLabel.CENTER);
         usersLabel.setAlignmentX(CENTER_ALIGNMENT);
         userList = new JList<UserLite>(usersDLM);
+        userList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         userList.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
