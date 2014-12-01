@@ -21,8 +21,8 @@ public class Settings {
 
     // Hardcoded external MySQL server location & credentials 
     public final String MySQL_host = "23.94.98.164";
-    public final String MySQL_database = "bigbrother2";
-    public final String MySQL_username = "bigbrother2";
+    public final String MySQL_database = "bigbrother";
+    public final String MySQL_username = "bigbrother";
     public final String MySQL_password = "plzletmein";
 
     //Download the existing settings from the database
