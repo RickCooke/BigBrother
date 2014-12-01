@@ -9,25 +9,28 @@ public class Settings {
 
     public final boolean debug = true;
 
-    public long polling_interval;
-    public int memory_flush_interval;
-    public int local_flush_interval;
-    public int max_idle_time;
-    public int block_time;
-    public int start_time;
-    public String start_time_string;
-    public int keyboard_peek_interval = 10;
+    public long polling_interval; //the interval in ms between polls
+    public int memory_flush_interval; //the interval in ms between when data is flushed from memory to the local sqlite DB
+    public int local_flush_interval; //the interval in ms between when data is flushed from the local sqlite DB to the external mySQL DB
+    public int max_idle_time; //the interval in ms before the "idle" flag is raised
+    public int block_time; //the duration in ms of one "block" of time
+    public int start_time; //the start date that data began being collected
+    public String start_time_string; //the start date that data began being collected
+    public int keyboard_peek_interval = 10; //the interval in ms at which the app looks at keyboard use to check idle
     public int remote_insert_buffer_size = 100;
 
+    // Hardcoded external MySQL server location & credentials 
     public final String MySQL_host = "23.94.98.164";
     public final String MySQL_database = "bigbrother2";
     public final String MySQL_username = "bigbrother2";
     public final String MySQL_password = "plzletmein";
 
+    //Download the existing settings from the database
     public void downloadSettings() {
         if (debug)
             System.out.println("Downloading Settings...");
 
+        //try to pull them from SQL
         try {
             MySQL.recieveSettings(this);
         } catch (NoSettingsException e) {
@@ -39,6 +42,7 @@ public class Settings {
             System.out.println("Finished!");
     }
 
+    //print out settings (should only be used in debug mode)
     public String toString() {
         String retStr = "";
 

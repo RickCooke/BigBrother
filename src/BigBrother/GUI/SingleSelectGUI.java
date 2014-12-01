@@ -18,6 +18,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import BigBrother.Classes.AppLite;
+import BigBrother.Classes.DLMSorter;
 import BigBrother.Classes.UserLite;
 import BigBrother.Client.MySQL;
 import BigBrother.Exceptions.UnknownSelectTypeException;
@@ -134,6 +135,8 @@ public class SingleSelectGUI extends JFrame {
         for (Object e : newArray) {
             listModel.addElement(e);
         }
+
+        DLMSorter.sort(listModel);
     }
 
     private static DefaultListModel getList() {

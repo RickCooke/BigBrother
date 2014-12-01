@@ -80,18 +80,10 @@ public class Client {
 
             // TODO: handle exception by using default timers? or prompt the user
             // for valid times/notify user Main.settings are malformed?
-
-            // Exit if timers are not working
-            destroy();
         }
     }
 
-    // ends the current session
-    public static void destroy() {
-        // TODO: implement this
-        System.exit(1);
-    }
-
+    //Compare two apps to one another
     public class AppComparator implements Comparator<App> {
         @Override
         public int compare(App a1, App a2) {
@@ -111,11 +103,6 @@ public class Client {
         userApps = MySQL.getTrackedAppsArrayList(Main.loggedInUserID);
 
         // add default "Other" and "Idle" apps
-        // TODO: delete this, these should exist and get pulled from the DB
-
-        // Brian(11/18): If we rely on DB then every user must have a user_app pair
-        // that adds the apps always, and does not allow them to delete.
-        // seems the best way, but a lot more work
         userApps.add(new App(0, "Other", null, false, null, false, true));
         userApps.add(new App(1, "Idle", null, false, null, false, true));
     }
@@ -127,6 +114,7 @@ public class Client {
                 a.print();
         }
 
+        //Sort the DLM
         Collections.sort(userApps, new AppComparator());
 
         if (Main.settings.debug) {

@@ -11,10 +11,10 @@ public class User {
     private ArrayList<Integer> appsTracked; // list of appIDs being tracked for this user (we never
                                             // actually use this, FYI)
 
-    public String toString() {
-        return lastName + ", " + firstName + " (" + username + ")";
-    }
+    //Default Constructor doesn't need to do anything
+    public User() { }
 
+    //Other constructors with different input types for the user's group
     public User(int _userID, String _username, String _firstName, String _lastName, int _groupNum) {
         userID = _userID;
         username = _username;
@@ -35,9 +35,8 @@ public class User {
         }
     }
 
-    public User() {
-        // TODO Auto-generated constructor stub
+    //String representation of a user
+    public String toString() {
+        return lastName + ", " + firstName + " (" + username + ")";
     }
-
-
 }
