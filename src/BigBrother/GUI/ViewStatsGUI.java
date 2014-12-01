@@ -1,11 +1,13 @@
 package BigBrother.GUI;
 
-import javax.swing.*;
 
 import org.jfree.chart.*;
 import org.jfree.chart.plot.*;
 import org.jfree.data.category.DefaultCategoryDataset;
+
 import java.awt.*;
+
+import javax.swing.JFrame;
 
 public class ViewStatsGUI extends JFrame
 {

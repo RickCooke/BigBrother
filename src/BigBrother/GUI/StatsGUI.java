@@ -11,21 +11,16 @@ package BigBrother.GUI;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
-
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
-import org.jfree.data.xy.*;
 import org.jfree.ui.RefineryUtilities;
 import org.joda.time.*;
 import org.joda.time.format.DateTimeFormat;
@@ -35,12 +30,9 @@ import com.toedter.calendar.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-import BigBrother.Classes.Settings;
 import BigBrother.Classes.UserLite;
 import BigBrother.Client.Main;
 import BigBrother.Client.MySQL;
-import BigBrother.Exceptions.MultipleResultsFoundException;
-import BigBrother.Exceptions.NoResultsFoundException;
 
 public class StatsGUI extends JFrame {
     // west panel vars
@@ -172,7 +164,6 @@ public class StatsGUI extends JFrame {
                     start = getDateTimeString(dateChooserStart, timeSpinnerStart);
                     end = getDateTimeString(dateChooserEnd, timeSpinnerEnd);
                 } catch (ParseException e1) {
-                    // TODO Auto-generated catch block
                     e1.printStackTrace();
                 }
 

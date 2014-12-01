@@ -1,13 +1,6 @@
 package BigBrother.Classes;
 
 import java.util.Comparator;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
-
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-
-/* comment to later be removed */
 
 public class App {
     public int appID = -1;

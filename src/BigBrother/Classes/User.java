@@ -8,8 +8,6 @@ public class User {
     public String firstName;
     public String lastName;
     public int groupNum;
-    private ArrayList<Integer> appsTracked; // list of appIDs being tracked for this user (we never
-                                            // actually use this, FYI)
 
     //Default Constructor doesn't need to do anything
     public User() { }

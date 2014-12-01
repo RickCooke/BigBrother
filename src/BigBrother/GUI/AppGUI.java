@@ -21,13 +21,11 @@ import javax.swing.JTextField;
 
 import BigBrother.Classes.App;
 import BigBrother.Client.MySQL;
-import BigBrother.Exceptions.DuplicateKeyException;
 import BigBrother.Exceptions.FormException;
 import BigBrother.Exceptions.MultipleResultsFoundException;
 import BigBrother.Exceptions.NoResultsFoundException;
 
 import javax.swing.SwingConstants;
-import javax.swing.BoxLayout;
 
 public class AppGUI extends JFrame {
 

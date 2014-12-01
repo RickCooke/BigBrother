@@ -1,18 +1,14 @@
 package BigBrother.Client;
 
-import java.awt.List;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import javax.swing.DefaultListModel;
-
-import org.jfree.data.xy.XYSeries;
 
 import BigBrother.Classes.App;
 import BigBrother.Classes.AppLite;
@@ -25,9 +21,6 @@ import BigBrother.Exceptions.MultipleResultsFoundException;
 import BigBrother.Exceptions.NoResultsFoundException;
 import BigBrother.Exceptions.NoSettingsException;
 import BigBrother.Exceptions.UserDoesNotExist;
-
-// Notice, do not import com.mysql.jdbc.*
-// or you will have problems!
 
 public class MySQL {
     private static Connection conn = null;
@@ -368,8 +361,6 @@ public class MySQL {
                 int appid = b[2];
                 int count = b[3];
 
-                // TODO: check if userid Main.loggedInUserID
-
                 ps.setInt(1, count);
                 ps.setInt(2, blockid);
                 ps.setInt(3, userid);
@@ -677,7 +668,6 @@ public class MySQL {
                 try {
                     throw new DuplicateKeyException();
                 } catch (DuplicateKeyException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
             } else {
