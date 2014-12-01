@@ -13,7 +13,7 @@ public class Settings {
     public int memory_flush_interval;
     public int local_flush_interval;
     public int max_idle_time;
-    public static int block_time;
+    public int block_time;
     public int start_time;
     public String start_time_string;
     public int keyboard_peek_interval = 10;
@@ -48,7 +48,7 @@ public class Settings {
         retStr += "local_flush_interval: " + local_flush_interval + "\n";
         retStr += "max_idle_time: " + max_idle_time + "\n";
         retStr += "block_time: " + block_time + "\n";
-        retStr += "start_time: " + start_time_string + "(" + start_time + ")\n";
+        retStr += "start_time: " + start_time_string + " (" + start_time + ")\n";
         retStr += "keyboard_peek_interval: " + keyboard_peek_interval + "\n";
         retStr += "remote_insert_buffer_size: " + remote_insert_buffer_size + "\n";
 
