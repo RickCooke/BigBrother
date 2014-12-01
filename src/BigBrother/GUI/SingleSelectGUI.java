@@ -23,157 +23,198 @@ import BigBrother.Classes.UserLite;
 import BigBrother.Client.MySQL;
 import BigBrother.Exceptions.UnknownSelectTypeException;
 
-public class SingleSelectGUI extends JFrame {
+public class SingleSelectGUI extends JFrame
+{
 
-    private static int selectType = -1;
-    private final String[] selectTypeNames = {"User", "Application"};
-    private static DefaultListModel listModel;
-    private JList listBox = null;
-    private JScrollPane listBoxScroll = null;
+  private static int selectType = -1;
+  private final String[] selectTypeNames = { "User", "Application" };
+  private static DefaultListModel listModel;
+  private JList listBox = null;
+  private JScrollPane listBoxScroll = null;
 
-    // selectType determines what the user is selecting from, tied to the index in the
-    // selectTypeNames array
-    // 0 - User
-    // 1 - App
-    
-    public SingleSelectGUI(final int _selectType) throws UnknownSelectTypeException {
-        super();
+  // selectType determines what the user is selecting from, tied to the index in
+  // the
+  // selectTypeNames array
+  // 0 - User
+  // 1 - App
 
-        setSize(new Dimension(400, 400));
-        setMinimumSize(new Dimension(400, 400));
-        pack();
-        setVisible(true);
-        
-        selectType = _selectType;
+  public SingleSelectGUI(final int _selectType)
+      throws UnknownSelectTypeException
+  {
+    super();
 
-        // set the title of the frame
-        if (selectType >= selectTypeNames.length) {
+    setSize(new Dimension(400, 400));
+    setMinimumSize(new Dimension(400, 400));
+    pack();
+    setVisible(true);
+
+    selectType = _selectType;
+
+    // set the title of the frame
+    if( selectType >= selectTypeNames.length )
+    {
+      throw new UnknownSelectTypeException("Unknown value of selectType.");
+    }
+
+    setTitle("Edit " + selectTypeNames[selectType]);
+
+    setLayout(new FlowLayout());
+
+    // init the JList
+    if( selectType == 0 )
+      listModel = new DefaultListModel<UserLite>();
+    else if( selectType == 1 )
+      listModel = new DefaultListModel<AppLite>();
+    else
+      throw new UnknownSelectTypeException("Unknown value of selectType.");
+
+    updateList();
+
+    listBox = new JList(listModel);
+    listBoxScroll = new JScrollPane(listBox,
+        JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+        JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+    listBoxScroll.setPreferredSize(new Dimension(100, 300));
+
+    // buttons row
+    JPanel buttonsRow = new JPanel(new FlowLayout());
+    JButton editButton = new JButton("Edit");
+    JButton deleteButton = new JButton("Delete");
+    JButton cancelButton = new JButton("Cancel");
+    buttonsRow.add(editButton);
+    buttonsRow.add(deleteButton);
+    buttonsRow.add(cancelButton);
+
+    Box verticalBox = Box.createVerticalBox();
+    verticalBox.add(new JLabel("Select The " + selectTypeNames[selectType]
+        + " You Wish To Edit:"));
+    verticalBox.add(listBoxScroll);
+    verticalBox.add(buttonsRow);
+
+    add(verticalBox);
+
+    cancelButton.addActionListener(new ActionListener()
+    {
+      @Override
+      public void actionPerformed(ActionEvent arg0)
+      {
+        closeWindow();
+      }
+    });
+
+    deleteButton.addActionListener(new ActionListener()
+    {
+      @Override
+      public void actionPerformed(ActionEvent arg0)
+      {
+        deleteItem();
+      }
+    });
+
+    editButton.addActionListener(new ActionListener()
+    {
+      @Override
+      public void actionPerformed(ActionEvent arg0)
+      {
+        JFrame win = null;
+        try
+        {
+          if( selectType == 0 )
+          {
+            int id = ((UserLite) listBox.getSelectedValue()).getID();
+            win = new UserGUI(id);
+          }
+          else if( selectType == 1 )
+          {
+            int id = ((AppLite) listBox.getSelectedValue()).getID();
+            win = new AppGUI(id);
+          }
+          else
+          {
             throw new UnknownSelectTypeException("Unknown value of selectType.");
+          }
         }
+        catch( Exception e )
+        {
+          JOptionPane.showMessageDialog(null, e.getMessage(), "Error",
+              JOptionPane.ERROR_MESSAGE);
+        }
+      }
+    });
+  }
 
-        setTitle("Edit " + selectTypeNames[selectType]);
 
-        setLayout(new FlowLayout());
+  static void updateList()
+  {
 
-        // init the JList
-        if (selectType == 0)
-            listModel = new DefaultListModel<UserLite>();
-        else if (selectType == 1)
-            listModel = new DefaultListModel<AppLite>();
-        else
-            throw new UnknownSelectTypeException("Unknown value of selectType.");
-
-        updateList();
-
-        listBox = new JList(listModel);
-        listBoxScroll = new JScrollPane(listBox, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        listBoxScroll.setPreferredSize(new Dimension(100, 300));
-
-        // buttons row
-        JPanel buttonsRow = new JPanel(new FlowLayout());
-        JButton editButton = new JButton("Edit");
-        JButton deleteButton = new JButton("Delete");
-        JButton cancelButton = new JButton("Cancel");
-        buttonsRow.add(editButton);
-        buttonsRow.add(deleteButton);
-        buttonsRow.add(cancelButton);
-
-        Box verticalBox = Box.createVerticalBox();
-        verticalBox.add(new JLabel("Select The " + selectTypeNames[selectType] + " You Wish To Edit:"));
-        verticalBox.add(listBoxScroll);
-        verticalBox.add(buttonsRow);
-
-        add(verticalBox);
-
-        cancelButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                closeWindow();
-            }
-        });
-
-        deleteButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                deleteItem();
-            }
-        });
-
-        editButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                JFrame win = null;
-                try {
-                    if (selectType == 0) {
-                        int id = ((UserLite) listBox.getSelectedValue()).getID();
-                        win = new UserGUI(id);
-                    } else if (selectType == 1) {
-                        int id = ((AppLite) listBox.getSelectedValue()).getID();
-                        win = new AppGUI(id);
-                    } else {
-                        throw new UnknownSelectTypeException("Unknown value of selectType.");
-                    }
-                } catch (Exception e) {
-                    JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                }
-            }
-        });
+    // clear current list
+    if( listModel == null )
+    {
+      return;
     }
 
+    listModel.clear();
 
-    static void updateList() {
+    Object[] newArray = getList().toArray();
 
-        // clear current list
-        if (listModel == null) {
-            return;
-        }
-
-        listModel.clear();
-
-        Object[] newArray = getList().toArray();
-
-        for (Object e : newArray) {
-            listModel.addElement(e);
-        }
-
-        DLMSorter.sort(listModel);
+    for( Object e : newArray )
+    {
+      listModel.addElement(e);
     }
 
-    private static DefaultListModel getList() {
-        DefaultListModel defaultListModel = null;
+    DLMSorter.sort(listModel);
+  }
 
-        // create the correct DLM
-        if (selectType == 0) {
-            defaultListModel = new DefaultListModel<UserLite>();
-            MySQL.getUserList(defaultListModel);
-        } else if (selectType == 1) {
-            defaultListModel = new DefaultListModel<AppLite>();
-            MySQL.getActiveAppList(defaultListModel);
-        } else {
-            System.err.println("Unknown value of selectType.");
-        }
-        return defaultListModel;
+  private static DefaultListModel getList()
+  {
+    DefaultListModel defaultListModel = null;
+
+    // create the correct DLM
+    if( selectType == 0 )
+    {
+      defaultListModel = new DefaultListModel<UserLite>();
+      MySQL.getUserList(defaultListModel);
+    }
+    else if( selectType == 1 )
+    {
+      defaultListModel = new DefaultListModel<AppLite>();
+      MySQL.getActiveAppList(defaultListModel);
+    }
+    else
+    {
+      System.err.println("Unknown value of selectType.");
+    }
+    return defaultListModel;
+  }
+
+  private void closeWindow()
+  {
+    WindowEvent winClosingEvent = new WindowEvent(this,
+        WindowEvent.WINDOW_CLOSING);
+    Toolkit.getDefaultToolkit().getSystemEventQueue()
+        .postEvent(winClosingEvent);
+  }
+
+  private void deleteItem()
+  {
+    if( listBox.getSelectedIndex() == -1 )
+    {
+      JOptionPane.showMessageDialog(this,
+          "You must first make a selection before you can delete", "Error",
+          JOptionPane.ERROR_MESSAGE);
+      return;
     }
 
-    private void closeWindow() {
-        WindowEvent winClosingEvent = new WindowEvent(this, WindowEvent.WINDOW_CLOSING);
-        Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(winClosingEvent);
+    if( selectType == 0 )
+    {
+      int userID = ((UserLite) listBox.getSelectedValue()).getID();
+      AdminGUI.deleteUser(userID);
     }
 
-    private void deleteItem() {
-        if (listBox.getSelectedIndex() == -1) {
-            JOptionPane.showMessageDialog(this, "You must first make a selection before you can delete", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        if (selectType == 0) {
-            int userID = ((UserLite) listBox.getSelectedValue()).getID();
-            AdminGUI.deleteUser(userID);
-        }
-
-        if (selectType == 1) {
-            int appID = ((AppLite) listBox.getSelectedValue()).getID();
-            AdminGUI.deleteApp(appID);
-        }
+    if( selectType == 1 )
+    {
+      int appID = ((AppLite) listBox.getSelectedValue()).getID();
+      AdminGUI.deleteApp(appID);
     }
+  }
 }

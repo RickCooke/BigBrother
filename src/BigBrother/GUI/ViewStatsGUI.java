@@ -25,159 +25,202 @@ import BigBrother.Classes.App;
 import BigBrother.Client.Main;
 import BigBrother.Client.MySQL;
 
-public class ViewStatsGUI extends JFrame {
-    public ViewStatsGUI(final String title, int user_id, String start, String end) {
-        super(title);
+public class ViewStatsGUI extends JFrame
+{
+  public ViewStatsGUI(final String title, int user_id, String start, String end)
+  {
+    super(title);
 
 
-        // Lazy to do it
-        //start = "2014-11-24 17:00:00";
-        //end = "2014-11-25 18:00:00";
+    // Lazy to do it
+    // start = "2014-11-24 17:00:00";
+    // end = "2014-11-25 18:00:00";
 
-        String[] xAxisLabels = getXAxisLabels(start, end);
+    String[] xAxisLabels = getXAxisLabels(start, end);
 
-        ArrayList<App> apps = MySQL.getTrackedAppsArrayListThroughDate(user_id, start, end);
-        apps.add(new App(0, "Other", null, false, null, false, true));
-        apps.add(new App(1, "Idle", null, false, null, false, true));
+    ArrayList<App> apps = MySQL.getTrackedAppsArrayListThroughDate(user_id,
+        start, end);
+    apps.add(new App(0, "Other", null, false, null, false, true));
+    apps.add(new App(1, "Idle", null, false, null, false, true));
 
-        int block_size = Main.settings.block_time / 1000;
-        int numBlocks = getNumBlocks(start, end, block_size);
+    int block_size = Main.settings.block_time / 1000;
+    int numBlocks = getNumBlocks(start, end, block_size);
 
-        MilliDTSC dataset = new MilliDTSC(apps.size(), numBlocks, new MultipleOfMillisecond(Main.settings.block_time));
+    MilliDTSC dataset = new MilliDTSC(apps.size(), numBlocks,
+        new MultipleOfMillisecond(Main.settings.block_time));
 
-        Date date = stringToDate(start);
-        dataset.setTimeBase(new MultipleOfMillisecond(date, Main.settings.block_time));
+    Date date = stringToDate(start);
+    dataset.setTimeBase(new MultipleOfMillisecond(date,
+        Main.settings.block_time));
 
-        int i = 0;
-        for (App app : apps) {
-            float[] appData = MySQL.getAppData2(user_id, app.appID, start, end, xAxisLabels);
-            dataset.addSeries(appData, i, app.alias);
-            i++;
-        }
-
-        String chartTitle = "";
-        if (start.substring(0, 10).equals(end.substring(0, 10))) {
-          chartTitle = "Usage Stats for " + (start.substring(0, 10)).toString();
-        } else {
-          chartTitle = "Usage Start from " + (start.substring(0, 10)).toString() 
-              + " to " + (end.substring(0, 10)).toString();
-        }
-        final JFreeChart chart = createChart(dataset, chartTitle);
-        final ChartPanel chartPanel = new ChartPanel(chart);
-        chartPanel.setPreferredSize(new java.awt.Dimension(560, 370));
-        chartPanel.setRangeZoomable(false);
-        chartPanel.setMouseZoomable(true, false);
-        setContentPane(chartPanel);
+    int i = 0;
+    for( App app : apps )
+    {
+      float[] appData = MySQL.getAppData2(user_id, app.appID, start, end,
+          xAxisLabels);
+      dataset.addSeries(appData, i, app.alias);
+      i++;
     }
 
-    private JFreeChart createChart(final XYDataset dataset, String title) {
-        return ChartFactory.createTimeSeriesChart(title, "Time", "Seconds", dataset, true, true, false);
+    String chartTitle = "";
+    if( start.substring(0, 10).equals(end.substring(0, 10)) )
+    {
+      chartTitle = "Usage Stats for " + (start.substring(0, 10)).toString();
+    }
+    else
+    {
+      chartTitle = "Usage Start from " + (start.substring(0, 10)).toString()
+          + " to " + (end.substring(0, 10)).toString();
+    }
+    final JFreeChart chart = createChart(dataset, chartTitle);
+    final ChartPanel chartPanel = new ChartPanel(chart);
+    chartPanel.setPreferredSize(new java.awt.Dimension(560, 370));
+    chartPanel.setRangeZoomable(false);
+    chartPanel.setMouseZoomable(true, false);
+    setContentPane(chartPanel);
+  }
+
+  private JFreeChart createChart(final XYDataset dataset, String title)
+  {
+    return ChartFactory.createTimeSeriesChart(title, "Time", "Seconds",
+        dataset, true, true, false);
+  }
+
+  private static class MilliDTSC extends DynamicTimeSeriesCollection
+  {
+
+    public MilliDTSC(int nSeries, int nMoments, RegularTimePeriod timeSample)
+    {
+      super(nSeries, nMoments, timeSample);
+      if( timeSample instanceof MultipleOfMillisecond )
+      {
+        this.pointsInTime = new MultipleOfMillisecond[nMoments];
+      }
+      else if( timeSample instanceof Millisecond )
+      {
+        this.pointsInTime = new Millisecond[nMoments];
+      }
     }
 
-    private static class MilliDTSC extends DynamicTimeSeriesCollection {
+  }
 
-        public MilliDTSC(int nSeries, int nMoments, RegularTimePeriod timeSample) {
-            super(nSeries, nMoments, timeSample);
-            if (timeSample instanceof MultipleOfMillisecond) {
-                this.pointsInTime = new MultipleOfMillisecond[nMoments];
-            } else if (timeSample instanceof Millisecond) {
-                this.pointsInTime = new Millisecond[nMoments];
-            }
+  public class MultipleOfMillisecond extends Millisecond
+  {
+
+    private static final long serialVersionUID = 1L;
+    private int periodMs = 100;
+
+    public MultipleOfMillisecond(Date date, int periodMs)
+    {
+      super(date);
+      this.periodMs = periodMs;
+    }
+
+    public MultipleOfMillisecond(int periodMs)
+    {
+      super();
+      this.periodMs = periodMs;
+    }
+
+    public MultipleOfMillisecond(int periodMs, int millisecond, Second second)
+    {
+      super(millisecond, second);
+      this.periodMs = periodMs;
+    }
+
+    @Override
+    public RegularTimePeriod next()
+    {
+
+      RegularTimePeriod result = null;
+      if( getMillisecond() + periodMs <= LAST_MILLISECOND_IN_SECOND )
+      {
+        result = new MultipleOfMillisecond(periodMs,
+            (int) (getMillisecond() + periodMs), getSecond());
+      }
+      else
+      {
+        Second next = (Second) getSecond().next();
+        if( next != null )
+        {
+          result = new MultipleOfMillisecond(periodMs, (int) (getMillisecond()
+              + periodMs - LAST_MILLISECOND_IN_SECOND - 1), next);
         }
+      }
+      return result;
 
     }
 
-    public class MultipleOfMillisecond extends Millisecond {
+    @Override
+    public RegularTimePeriod previous()
+    {
 
-        private static final long serialVersionUID = 1L;
-        private int periodMs = 100;
-
-        public MultipleOfMillisecond(Date date, int periodMs) {
-            super(date);
-            this.periodMs = periodMs;
+      RegularTimePeriod result = null;
+      if( getMillisecond() - periodMs >= FIRST_MILLISECOND_IN_SECOND )
+      {
+        result = new MultipleOfMillisecond(periodMs, (int) getMillisecond()
+            - periodMs, getSecond());
+      }
+      else
+      {
+        Second previous = (Second) getSecond().previous();
+        if( previous != null )
+        {
+          result = new MultipleOfMillisecond(periodMs, (int) (getMillisecond()
+              - periodMs + LAST_MILLISECOND_IN_SECOND + 1), previous);
         }
+      }
+      return result;
 
-        public MultipleOfMillisecond(int periodMs) {
-            super();
-            this.periodMs = periodMs;
-        }
-
-        public MultipleOfMillisecond(int periodMs, int millisecond, Second second) {
-            super(millisecond, second);
-            this.periodMs = periodMs;
-        }
-
-        @Override
-        public RegularTimePeriod next() {
-
-            RegularTimePeriod result = null;
-            if (getMillisecond() + periodMs <= LAST_MILLISECOND_IN_SECOND) {
-                result = new MultipleOfMillisecond(periodMs, (int) (getMillisecond() + periodMs), getSecond());
-            } else {
-                Second next = (Second) getSecond().next();
-                if (next != null) {
-                    result = new MultipleOfMillisecond(periodMs, (int) (getMillisecond() + periodMs - LAST_MILLISECOND_IN_SECOND - 1), next);
-                }
-            }
-            return result;
-
-        }
-
-        @Override
-        public RegularTimePeriod previous() {
-
-            RegularTimePeriod result = null;
-            if (getMillisecond() - periodMs >= FIRST_MILLISECOND_IN_SECOND) {
-                result = new MultipleOfMillisecond(periodMs, (int) getMillisecond() - periodMs, getSecond());
-            } else {
-                Second previous = (Second) getSecond().previous();
-                if (previous != null) {
-                    result = new MultipleOfMillisecond(periodMs, (int) (getMillisecond() - periodMs + LAST_MILLISECOND_IN_SECOND + 1), previous);
-                }
-            }
-            return result;
-
-        }
     }
+  }
 
 
-    public int getNumBlocks(String start, String end, int block_size) {
-        final org.joda.time.format.DateTimeFormatter format = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
-        final DateTime date1 = format.parseDateTime(start);
-        final DateTime date2 = format.parseDateTime(end);
-        return Seconds.secondsBetween(date1, date2).getSeconds() / block_size;
+  public int getNumBlocks(String start, String end, int block_size)
+  {
+    final org.joda.time.format.DateTimeFormatter format = DateTimeFormat
+        .forPattern("yyyy-MM-dd HH:mm:ss");
+    final DateTime date1 = format.parseDateTime(start);
+    final DateTime date2 = format.parseDateTime(end);
+    return Seconds.secondsBetween(date1, date2).getSeconds() / block_size;
+  }
+
+  public String[] getXAxisLabels(String start, String end)
+  {
+    int block_size = Main.settings.block_time / 1000; // to seconds
+    int numBlocks = getNumBlocks(start, end, block_size);
+
+    System.out.println("block size: " + block_size);
+
+    String[] labels = new String[numBlocks + 1];
+
+    final Date date = stringToDate(start);
+
+    final java.util.Calendar cal = GregorianCalendar.getInstance();
+    cal.setTime(date);
+
+    SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+    for( int i = 0; i <= numBlocks; i++ )
+    {
+      labels[i] = df.format(cal.getTime());
+      cal.add(GregorianCalendar.SECOND, block_size);
     }
+    return labels;
+  }
 
-    public String[] getXAxisLabels(String start, String end)  {
-        int block_size = Main.settings.block_time / 1000; // to seconds
-        int numBlocks = getNumBlocks(start, end, block_size);
-
-        System.out.println("block size: " + block_size);
-
-        String[] labels = new String[numBlocks + 1];
-
-        final Date date = stringToDate(start);
-        
-        final java.util.Calendar cal = GregorianCalendar.getInstance();
-        cal.setTime(date);
-
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        
-        for (int i = 0; i <= numBlocks; i++) {
-            labels[i] = df.format(cal.getTime());
-            cal.add(GregorianCalendar.SECOND, block_size);
-        }
-        return labels;
+  private Date stringToDate(String date_string)
+  {
+    SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    Date date = null;
+    try
+    {
+      date = df.parse(date_string);
     }
-
-    private Date stringToDate(String date_string) {
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Date date = null;
-        try {
-            date = df.parse(date_string);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        } // conversion from String
-        return date;
-    }
+    catch( ParseException e )
+    {
+      e.printStackTrace();
+    } // conversion from String
+    return date;
+  }
 }

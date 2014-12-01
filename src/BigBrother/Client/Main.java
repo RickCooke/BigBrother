@@ -21,75 +21,87 @@ import BigBrother.GUI.AdminGUI;
 import BigBrother.GUI.LoginGUI;
 
 
-public class Main {
+public class Main
+{
 
-    public static Settings settings;
+  public static Settings settings;
 
-    public static int loggedInUserID;
+  public static int loggedInUserID;
 
-    public static JFrame win;
+  public static JFrame win;
 
-    public static void main(String[] args) {
+  public static void main(String[] args)
+  {
 
-        settings = new Settings();
+    settings = new Settings();
 
-        // connect to the SQL server
-        MySQL.establishConnection();
-        SQLite.establishConnection();
+    // connect to the SQL server
+    MySQL.establishConnection();
+    SQLite.establishConnection();
 
-        // download the Main.settings from the server
-        settings.downloadSettings();
+    // download the Main.settings from the server
+    settings.downloadSettings();
 
-        if (settings.debug)
-            System.out.println(settings.toString());
+    if( settings.debug )
+      System.out.println(settings.toString());
 
-        // start the tray icon
-        setupTrayIcon();
+    // start the tray icon
+    setupTrayIcon();
 
-        // load up the login GUI
-        startLoginGUI();
+    // load up the login GUI
+    startLoginGUI();
 
+  }
+
+  public static void setupTrayIcon()
+  {
+
+    PopupMenu popMenu = new PopupMenu();
+    MenuItem exitMenuItem = new MenuItem("Exit");
+    popMenu.add(exitMenuItem);
+
+    exitMenuItem.addActionListener(new ActionListener()
+    {
+      @Override
+      public void actionPerformed(ActionEvent e)
+      {
+        System.exit(0);
+      }
+    });
+
+    if( SystemTray.isSupported() )
+    {
+      Image img = Toolkit.getDefaultToolkit().getImage(
+          Main.class.getResource("/BigBrother/Client/assets/spy16.png"));
+      TrayIcon trayIcon = new TrayIcon(img, "Big Brother", popMenu);
+      try
+      {
+        SystemTray.getSystemTray().add(trayIcon);
+      }
+      catch( AWTException e )
+      {
+        e.printStackTrace();
+      }
     }
+  }
 
-    public static void setupTrayIcon() {
+  private static void startLoginGUI()
+  {
+    win = new LoginGUI();
+    win.setMinimumSize(new Dimension(200, 100));
+    win.pack();
+    win.setVisible(true);
+    win.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+    RefineryUtilities.centerFrameOnScreen(win);
+  }
 
-        PopupMenu popMenu = new PopupMenu();
-        MenuItem exitMenuItem = new MenuItem("Exit");
-        popMenu.add(exitMenuItem);
-
-        exitMenuItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.exit(0);
-            }
-        });
-
-        if (SystemTray.isSupported()) {
-            Image img = Toolkit.getDefaultToolkit().getImage(Main.class.getResource("/BigBrother/Client/assets/spy16.png"));
-            TrayIcon trayIcon = new TrayIcon(img, "Big Brother", popMenu);
-            try {
-                SystemTray.getSystemTray().add(trayIcon);
-            } catch (AWTException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private static void startLoginGUI() {
-        win = new LoginGUI();
-        win.setMinimumSize(new Dimension(200, 100));
-        win.pack();
-        win.setVisible(true);
-        win.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        RefineryUtilities.centerFrameOnScreen(win);
-    }
-
-    public static void startAdminGUI() {
-        win = new AdminGUI();
-        win.setMinimumSize(new Dimension(200, 100));
-        win.pack();
-        win.setVisible(true);
-        win.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        RefineryUtilities.centerFrameOnScreen(win);
-    }
+  public static void startAdminGUI()
+  {
+    win = new AdminGUI();
+    win.setMinimumSize(new Dimension(200, 100));
+    win.pack();
+    win.setVisible(true);
+    win.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+    RefineryUtilities.centerFrameOnScreen(win);
+  }
 }
