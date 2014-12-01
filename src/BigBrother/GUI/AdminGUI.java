@@ -34,14 +34,18 @@ import org.jfree.ui.RefineryUtilities;
 public class AdminGUI extends JFrame
 {
 
-  private final static DefaultListModel<UserLite> usersDLM = new DefaultListModel<UserLite>();
-  private final static DefaultListModel<AppLite> trackedAppsDLM = new DefaultListModel<AppLite>();
-  private final static DefaultListModel<AppLite> nonTrackedAppsDLM = new DefaultListModel<AppLite>();
-  private final static JList<UserLite> usersList = new JList<UserLite>(usersDLM);
-  private final static JList<AppLite> trackedAppsList = new JList<AppLite>(
-      trackedAppsDLM);
-  private final static JList<AppLite> nonTrackedAppsList = new JList<AppLite>(
-      nonTrackedAppsDLM);
+  private final static DefaultListModel<UserLite> usersDLM 
+    = new DefaultListModel<UserLite>();
+  private final static DefaultListModel<AppLite> trackedAppsDLM 
+    = new DefaultListModel<AppLite>();
+  private final static DefaultListModel<AppLite> nonTrackedAppsDLM 
+    = new DefaultListModel<AppLite>();
+  private final static JList<UserLite> usersList 
+    = new JList<UserLite>(usersDLM);
+  private final static JList<AppLite> trackedAppsList 
+    = new JList<AppLite>(trackedAppsDLM);
+  private final static JList<AppLite> nonTrackedAppsList 
+    = new JList<AppLite>(nonTrackedAppsDLM);
 
   public AdminGUI()
   {
@@ -367,7 +371,8 @@ public class AdminGUI extends JFrame
     int dialogResult = JOptionPane
         .showConfirmDialog(
             null,
-            "This will mark the application as inactive and untrack it from all users\nAre you sure you want to delete?",
+            "This will mark the application as inactive and untrack it from "
+            + "all users\nAre you sure you want to delete?",
             "Warning", JOptionPane.YES_NO_OPTION);
     if( dialogResult == JOptionPane.YES_OPTION )
     {
@@ -431,7 +436,8 @@ public class AdminGUI extends JFrame
     int dialogResult = JOptionPane
         .showConfirmDialog(
             null,
-            "Clearing statistics will erase all usage statistics permanently\nDo you want to continue?",
+            "Clearing statistics will erase all usage statistics "
+            + "permanently\nDo you want to continue?",
             "Warning", JOptionPane.YES_NO_OPTION);
     if( dialogResult == JOptionPane.YES_OPTION )
     {

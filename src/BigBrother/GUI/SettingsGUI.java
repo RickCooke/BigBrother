@@ -42,26 +42,26 @@ public class SettingsGUI extends JFrame
   private final NumberFormat numFormat = NumberFormat.getNumberInstance(Locale
       .getDefault());
 
-  private final JFormattedTextField polling_interval_TF = new JFormattedTextField(
-      numFormat);
-  private final JComboBox<String> polling_interval_unit = new JComboBox<String>(
-      timeUnits);
-  private final JFormattedTextField memory_flush_interval_TF = new JFormattedTextField(
-      numFormat);
-  private final JComboBox<String> memory_flush_interval_unit = new JComboBox<String>(
-      timeUnits);
-  private final JFormattedTextField local_flush_interval_TF = new JFormattedTextField(
-      numFormat);
-  private final JComboBox<String> local_flush_interval_unit = new JComboBox<String>(
-      timeUnits);
-  private final JFormattedTextField max_idle_time_TF = new JFormattedTextField(
-      numFormat);
-  private final JComboBox<String> max_idle_time_unit = new JComboBox<String>(
-      timeUnits);
-  private final JFormattedTextField block_time_TF = new JFormattedTextField(
-      numFormat);
-  private final JComboBox<String> block_time_unit = new JComboBox<String>(
-      timeUnits);
+  private final JFormattedTextField polling_interval_TF 
+    = new JFormattedTextField(numFormat);
+  private final JComboBox<String> polling_interval_unit 
+    = new JComboBox<String>(timeUnits);
+  private final JFormattedTextField memory_flush_interval_TF 
+    = new JFormattedTextField(numFormat);
+  private final JComboBox<String> memory_flush_interval_unit 
+    = new JComboBox<String>(timeUnits);
+  private final JFormattedTextField local_flush_interval_TF 
+    = new JFormattedTextField(numFormat);
+  private final JComboBox<String> local_flush_interval_unit 
+    = new JComboBox<String>(timeUnits);
+  private final JFormattedTextField max_idle_time_TF 
+    = new JFormattedTextField(numFormat);
+  private final JComboBox<String> max_idle_time_unit  
+    = new JComboBox<String>(timeUnits);
+  private final JFormattedTextField block_time_TF 
+    = new JFormattedTextField(numFormat);
+  private final JComboBox<String> block_time_unit 
+    = new JComboBox<String>(timeUnits);
 
   private final JButton actionButton = new JButton("Update");
   private final JButton cancelButton = new JButton("Cancel");
@@ -305,26 +305,36 @@ public class SettingsGUI extends JFrame
                 .intValue();
 
 
-            newSettings.polling_interval *= getMultiplier(polling_interval_unit);
-            newSettings.memory_flush_interval *= getMultiplier(memory_flush_interval_unit);
-            newSettings.local_flush_interval *= getMultiplier(local_flush_interval_unit);
-            newSettings.max_idle_time *= getMultiplier(max_idle_time_unit);
-            newSettings.block_time *= getMultiplier(block_time_unit);
+            newSettings.polling_interval 
+              *= getMultiplier(polling_interval_unit);
+            newSettings.memory_flush_interval 
+              *= getMultiplier(memory_flush_interval_unit);
+            newSettings.local_flush_interval 
+              *= getMultiplier(local_flush_interval_unit);
+            newSettings.max_idle_time 
+              *= getMultiplier(max_idle_time_unit);
+            newSettings.block_time 
+              *= getMultiplier(block_time_unit);
 
-            if( newSettings.memory_flush_interval < newSettings.polling_interval )
+            if( newSettings.memory_flush_interval 
+                < newSettings.polling_interval )
             {
               throw new FormException(
                   "Memory flush must be greater or equal to Polling interval");
             }
-            else if( newSettings.local_flush_interval < newSettings.memory_flush_interval )
+            else if( newSettings.local_flush_interval 
+                     < newSettings.memory_flush_interval )
             {
               throw new FormException(
-                  "Local flush must be greater or equal to Memory flush interval");
+                  "Local flush must be greater or equal "
+                  + "to Memory flush interval");
             }
-            else if( newSettings.block_time < newSettings.memory_flush_interval )
+            else if( newSettings.block_time 
+                     < newSettings.memory_flush_interval )
             {
               throw new FormException(
-                  "Block time must be greater or equal to Memory flush interval");
+                  "Block time must be greater or equal "
+                  + "to Memory flush interval");
             }
             else if( newSettings.max_idle_time < newSettings.polling_interval )
             {
@@ -343,7 +353,8 @@ public class SettingsGUI extends JFrame
               throw new FormException(
                   "Local flush must be a multiple of Polling interval");
             }
-            else if( newSettings.max_idle_time % newSettings.polling_interval != 0 )
+            else if( newSettings.max_idle_time 
+                     % newSettings.polling_interval != 0 )
             {
               throw new FormException(
                   "max idle time must be a multiple of Polling interval");
@@ -382,7 +393,8 @@ public class SettingsGUI extends JFrame
       JOptionPane
           .showMessageDialog(
               null,
-              "Previous statistics were found in the database\nYou must clear all statistics before you can update settings",
+              "Previous statistics were found in the database\nYou must clear "
+              + "all statistics before you can update settings",
               "Warning", JOptionPane.WARNING_MESSAGE);
     }
   }

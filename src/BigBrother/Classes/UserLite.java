@@ -1,7 +1,8 @@
 package BigBrother.Classes;
 
-// A "lite" version of a user so unneeded data did not need to be stored in memory.
-// This helps when the user database is very large, which it could potentially be.
+// A "lite" version of a user so unneeded data did not need to be 
+// stored in memory. This helps when the user database is very large, 
+// which it could potentially be.
 public class UserLite implements Comparable<UserLite>
 {
   private int userID;

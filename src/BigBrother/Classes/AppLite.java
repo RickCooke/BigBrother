@@ -1,6 +1,7 @@
 package BigBrother.Classes;
 
-//A stripped down view of apps, so we don't have to store unneeded data for a potentially huge set of applications
+// A stripped down view of apps, so we don't have to store 
+// unneeded data for a potentially huge set of applications
 public class AppLite implements Comparable<AppLite>
 {
   private int appID;

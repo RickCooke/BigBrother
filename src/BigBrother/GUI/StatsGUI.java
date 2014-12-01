@@ -27,7 +27,8 @@ import BigBrother.Client.MySQL;
 public class StatsGUI extends JFrame
 {
   // west panel vars
-  private DefaultListModel<UserLite> usersDLM = new DefaultListModel<UserLite>();
+  private DefaultListModel<UserLite> usersDLM 
+    = new DefaultListModel<UserLite>();
   private JLabel usersLabel;
   private JList<UserLite> userList;
   private JScrollPane userScrollPane;
@@ -262,7 +263,8 @@ public class StatsGUI extends JFrame
       throws ParseException
   {
     String dateTime;
-    SimpleDateFormat fmt = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    SimpleDateFormat fmt 
+      = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("yyyy-MM-dd");
     String formattedDate = dateFormat.format(date.getDate());

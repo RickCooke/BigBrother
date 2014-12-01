@@ -250,7 +250,8 @@ public class SQLite
 
     int numBlocks = (unixTime - Main.settings.start_time)
         / block_time_in_seconds;
-    int blockid = (Main.settings.start_time + (numBlocks * block_time_in_seconds));
+    int blockid = (Main.settings.start_time
+        + (numBlocks * block_time_in_seconds));
 
     if( Main.settings.debug )
     {

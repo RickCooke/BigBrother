@@ -215,8 +215,8 @@ public class Client
     // If we need to, flush from memory to local SQLite DB
     try
     {
-      if( pollNum
-          % (Main.settings.memory_flush_interval / Main.settings.polling_interval) == 0 )
+      if( pollNum % (Main.settings.memory_flush_interval 
+                     / Main.settings.polling_interval) == 0 )
         memFlush();
     }
     catch( CountMismatchException e )
@@ -225,8 +225,8 @@ public class Client
     }
 
     // if we need to, flush from SQLite DB to server
-    if( pollNum
-        % (Main.settings.local_flush_interval / Main.settings.polling_interval) == 0 )
+    if( pollNum % (Main.settings.local_flush_interval 
+                   / Main.settings.polling_interval) == 0 )
       localFlush();
   }
 

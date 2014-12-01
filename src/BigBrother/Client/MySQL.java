@@ -119,9 +119,10 @@ public class MySQL
       establishConnection();
     }
 
-    String SQL = "SELECT polling_interval, memory_flush_interval, "
-        + "local_flush_interval, max_idle_time, start_time, UNIX_TIMESTAMP(start_time)"
-        + " as start_time_timestamp, block_time FROM settings";
+    String SQL = "SELECT polling_interval, memory_flush_interval,"
+        + " local_flush_interval, max_idle_time, start_time,"
+        + " UNIX_TIMESTAMP(start_time) as start_time_timestamp,"
+        + " block_time FROM settings";
 
     PreparedStatement ps = null;
     ResultSet rs = null;
@@ -245,7 +246,9 @@ public class MySQL
       establishConnection();
     }
 
-    String SQL = "SELECT * FROM apps a WHERE a.active = 1 AND a.appid IN (SELECT DISTINCT s.appid FROM stats s WHERE s.blockid >= ? AND s.blockid <= ? AND userid = ?)";
+    String SQL = "SELECT * FROM apps a WHERE a.active = 1 AND a.appid "
+        + "IN (SELECT DISTINCT s.appid FROM stats s WHERE s.blockid >= ? "
+        + "AND s.blockid <= ? AND userid = ?)";
 
     PreparedStatement ps = null;
     ResultSet rs = null;
@@ -347,7 +350,8 @@ public class MySQL
 
     String SQL = "SELECT appid, alias FROM apps WHERE active=1 AND appid NOT IN"
         + " (SELECT a.appid FROM users_apps u, apps a WHERE u.userid = ?"
-        + " AND u.appid = a.appid AND a.active = 1) AND appid != 0 AND appid != 1";
+        + " AND u.appid = a.appid AND a.active = 1) AND appid != 0"
+        + " AND appid != 1";
 
     try
     {
@@ -525,8 +529,8 @@ public class MySQL
     // prepare the query
     PreparedStatement ps = null;
     ResultSet rs = null;
-    String SQL = "SELECT u.userid, u.username, u.firstname, u.lastname, u.group FROM users u "
-        + " WHERE u.userid = ?";
+    String SQL = "SELECT u.userid, u.username, u.firstname, u.lastname, "
+        + "u.group FROM users u WHERE u.userid = ?";
 
     ps = conn.prepareStatement(SQL);
     ps.setInt(1, userID);
@@ -560,7 +564,8 @@ public class MySQL
     // prepare the query
     PreparedStatement ps = null;
     ResultSet rs = null;
-    String SQL = "SELECT a.appid, a.alias, a.window, a.window_regex, a.process, a.process_regex FROM apps a "
+    String SQL = "SELECT a.appid, a.alias, a.window, a.window_regex,"
+        + " a.process, a.process_regex FROM apps a"
         + " WHERE a.appid = ? AND a.active = 1";
 
     ps = conn.prepareStatement(SQL);
@@ -614,11 +619,15 @@ public class MySQL
 
     if( newApp.getAppID() == -1 )
     {
-      SQL = "INSERT INTO apps (`appid`, `alias`, `window`, `window_regex`, `process`, `process_regex`, `active`) VALUES (?, ?, ?, ?, ?, ?, 1);";
+      SQL = "INSERT INTO apps (`appid`, `alias`, `window`, `window_regex`, "
+          + "`process`, `process_regex`, `active`) "
+          + "VALUES (?, ?, ?, ?, ?, ?, 1);";
     }
     else
     {
-      SQL = "REPLACE INTO apps (`appid`, `alias`, `window`, `window_regex`, `process`, `process_regex`, `active`) VALUES (?, ?, ?, ?, ?, ?, 1);";
+      SQL = "REPLACE INTO apps (`appid`, `alias`, `window`, `window_regex`, "
+          + "`process`, `process_regex`, `active`) "
+          + "VALUES (?, ?, ?, ?, ?, ?, 1);";
     }
 
     PreparedStatement ps = null;
@@ -696,11 +705,13 @@ public class MySQL
 
     if( user.userID == -1 )
     {
-      SQL = "INSERT INTO users (`userid`, `username`, `password`, `firstname`, `lastname`, `group`) VALUES (?, ?, MD5(?), ?, ?, ?);";
+      SQL = "INSERT INTO users (`userid`, `username`, `password`, `firstname`,"
+          + " `lastname`, `group`) VALUES (?, ?, MD5(?), ?, ?, ?);";
     }
     else
     {
-      SQL = "REPLACE INTO users (`userid`, `username`, `password`, `firstname`, `lastname`, `group`) VALUES (?, ?, MD5(?), ?, ?, ?);";
+      SQL = "REPLACE INTO users (`userid`, `username`, `password`, `firstname`,"
+          + " `lastname`, `group`) VALUES (?, ?, MD5(?), ?, ?, ?);";
     }
 
     PreparedStatement ps = null;
@@ -918,7 +929,9 @@ public class MySQL
       establishConnection();
     }
 
-    String SQL = "REPLACE INTO settings (`id`, `polling_interval`, `memory_flush_interval`, `local_flush_interval`, `max_idle_time`, `start_time`, `block_time`) VALUES (1, ?, ?, ?, ?, ?, ?)";
+    String SQL = "REPLACE INTO settings (`id`, `polling_interval`, "
+        + "`memory_flush_interval`, `local_flush_interval`, `max_idle_time`, "
+        + "`start_time`, `block_time`) VALUES (1, ?, ?, ?, ?, ?, ?)";
 
 
     PreparedStatement ps = null;
@@ -1090,7 +1103,8 @@ public class MySQL
       establishConnection();
     }
 
-    String SQL = "SELECT DISTINCT appid FROM stats WHERE blockid >= ? AND blockid <= ? AND userid = ?";
+    String SQL = "SELECT DISTINCT appid FROM stats "
+        + "WHERE blockid >= ? AND blockid <= ? AND userid = ?";
     Integer[] trackedApps = null;
 
     PreparedStatement ps = null;
@@ -1151,7 +1165,8 @@ public class MySQL
     }
 
 
-    String SQL = "SELECT appid, blockid, count FROM stats WHERE blockid >= ? AND blockid <= ? AND userid = ? AND appid = ?";
+    String SQL = "SELECT appid, blockid, count FROM stats WHERE blockid >= ? "
+        + "AND blockid <= ? AND userid = ? AND appid = ?";
 
     PreparedStatement ps = null;
     ResultSet rs = null;
@@ -1180,10 +1195,6 @@ public class MySQL
       while( rs.next() )
       {
         String date = rs.getString(2);
-        // TODO: fix this. SQL adds a .0 to datetime and
-        // it caused the label to not equal the date.
-        // this is just a cheap fix for now.
-
         date = date.substring(0, date.length() - 2);
         for( int i = 0; i < labels.length; i++ )
         {
@@ -1236,7 +1247,8 @@ public class MySQL
     }
 
 
-    String SQL = "SELECT appid, blockid, count FROM stats WHERE blockid >= ? AND blockid <= ? AND userid = ? AND appid = ?";
+    String SQL = "SELECT appid, blockid, count FROM stats WHERE blockid >= ? "
+        + "AND blockid <= ? AND userid = ? AND appid = ?";
 
     PreparedStatement ps = null;
     ResultSet rs = null;
@@ -1265,9 +1277,6 @@ public class MySQL
       while( rs.next() )
       {
         String date = rs.getString(2);
-        // TODO: fix this. SQL adds a .0 to datetime and
-        // it caused the label to not equal the date.
-        // this is just a cheap fix for now.
 
         date = date.substring(0, date.length() - 2);
         for( int i = 0; i < labels.length; i++ )

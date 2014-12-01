@@ -74,7 +74,8 @@ public class AppGUI extends JFrame
     label_1.setHorizontalAlignment(SwingConstants.CENTER);
     getContentPane().add(label_1);
     windowTF
-        .setToolTipText("Enter the window name that will match this application. (OPTIONAL)");
+        .setToolTipText("Enter the window name that will match "
+            + "this application. (OPTIONAL)");
     getContentPane().add(windowTF);
     FlowLayout fl_windowRegexGroup = new FlowLayout();
     fl_windowRegexGroup.setHgap(2);
@@ -89,7 +90,8 @@ public class AppGUI extends JFrame
     label_2.setHorizontalAlignment(SwingConstants.CENTER);
     getContentPane().add(label_2);
     processTF
-        .setToolTipText("Enter the process name that will match this application. (OPTIONAL)");
+        .setToolTipText("Enter the process name that will match "
+            + "this application. (OPTIONAL)");
     getContentPane().add(processTF);
     FlowLayout fl_processRegexGroup = new FlowLayout();
     fl_processRegexGroup.setVgap(2);
