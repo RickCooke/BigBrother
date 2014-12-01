@@ -243,7 +243,6 @@ public class StatsGUI extends JFrame {
 
             Integer[] appData = MySQL.getAppData(user_id, app, start, end, xAxisLabels);
             for (int i = 0; i < appData.length; i++) {
-                System.out.println(appData[i]);
                 stats.addValue(appData[i], name, xAxisLabels[i]);
             }
 

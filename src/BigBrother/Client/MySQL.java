@@ -854,7 +854,7 @@ public class MySQL {
         ResultSet rs = null;
 
         Integer[] data = null;
-        
+
         try {
             ps = conn.prepareStatement(SQL);
 
@@ -873,15 +873,14 @@ public class MySQL {
             }
 
             SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            
+
             while (rs.next()) {
                 String date = rs.getString(2);
                 // TODO: fix this. SQL adds a .0 to datetime and
                 // it caused the label to not equal the date.
                 // this is just a cheap fix for now.
 
-                //date = date.substring(0, date.length() - 2);
-                date = df.parse(date).toString();
+                date = date.substring(0, date.length() - 2);
                 for (int i = 0; i < labels.length; i++) {
                     // if label exists, add it to the data array
                     if (labels[i].equals(date)) {
@@ -896,9 +895,6 @@ public class MySQL {
             System.out.println("SQLException: " + ex.getMessage());
             System.out.println("SQLState: " + ex.getSQLState());
             System.out.println("VendorError: " + ex.getErrorCode());
-        } catch (ParseException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
         } finally {
             try {
                 if (rs != null) {
@@ -915,4 +911,81 @@ public class MySQL {
         }
         return data;
     }
+
+    
+    public static void clearStats() {
+        if (conn == null) {
+            establishConnection();
+        }
+
+        String SQL = "TRUNCATE stats";
+
+
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            ps = conn.prepareStatement(SQL);
+            ps.executeUpdate();
+        } catch (SQLException ex) {
+            System.out.println("SQLException: " + ex.getMessage());
+            System.out.println("SQLState: " + ex.getSQLState());
+            System.out.println("VendorError: " + ex.getErrorCode());
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                    rs = null;
+                }
+
+                if (ps != null) {
+                    ps.close();
+                    ps = null;
+                }
+            } catch (SQLException ex) {
+                System.out.println("SQLException: " + ex.getMessage());
+            }
+        }
+    }
+    
+    public static int getStatCount() {
+        if (conn == null) {
+            establishConnection();
+        }
+
+        String SQL = "SELECT COUNT(*) FROM stats";
+
+
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        int rowCount = 0;
+
+        try {
+            ps = conn.prepareStatement(SQL);
+
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                rowCount = rs.getInt(1);
+            }
+        } catch (SQLException ex) {
+            System.out.println("SQLException: " + ex.getMessage());
+            System.out.println("SQLState: " + ex.getSQLState());
+            System.out.println("VendorError: " + ex.getErrorCode());
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                    rs = null;
+                }
+
+                if (ps != null) {
+                    ps.close();
+                    ps = null;
+                }
+            } catch (SQLException ex) {
+                System.out.println("SQLException: " + ex.getMessage());
+            }
+        }
+        return rowCount;
+    }
+
 }

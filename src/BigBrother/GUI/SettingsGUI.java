@@ -53,7 +53,7 @@ public class SettingsGUI extends JFrame {
     private final JFormattedTextField block_time_TF = new JFormattedTextField(numFormat);
     private final JComboBox<String> block_time_unit = new JComboBox<String>(timeUnits);
 
-    private final JButton OKButton = new JButton("Update");
+    private final JButton actionButton = new JButton("Update");
     private final JButton cancelButton = new JButton("Cancel");
 
     private final static JDateChooser dateChooser = new JDateChooser();
@@ -113,8 +113,6 @@ public class SettingsGUI extends JFrame {
 
 
         add(new JLabel("Start Date: "));
-        System.out.println(Main.settings.start_time_string);
-        
 
         
         try {
@@ -128,7 +126,7 @@ public class SettingsGUI extends JFrame {
         add(new JLabel("Time Block Duration: "));
         add(block_time_group);
 
-        add(OKButton);
+        add(actionButton);
         add(cancelButton);
 
 
@@ -203,10 +201,18 @@ public class SettingsGUI extends JFrame {
             }
         });
 
-        OKButton.addActionListener(new ActionListener() {
+        actionButton.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent arg0) {
+                if(actionButton.getText().equals("Clear Statistics")) {
+                    if(AdminGUI.clearStats()){
+                        actionButton.setText("Update");
+                        enableInputs(); 
+                    }
+                    return;
+                }
+                
                 try {
                     if (polling_interval_TF.getText().equals("")) {
                         throw new FormException("Polling interval field cannot be empty");
@@ -249,8 +255,9 @@ public class SettingsGUI extends JFrame {
                             throw new FormException("max idle time must be a multiple of Polling interval");
                         }
                         newSettings.start_time_string = getStartTimeString();
-                        System.out.println(newSettings);
-
+                        if(Main.settings.debug) {
+                            System.out.println(newSettings);
+                        }
                         submitSettings(newSettings);
                     }
                 } catch (FormException | ParseException | MalformedSettingsException e) {
@@ -258,6 +265,14 @@ public class SettingsGUI extends JFrame {
                 }
             }
         });
+        
+        
+        
+        if(MySQL.getStatCount() > 0) {
+            actionButton.setText("Clear Statistics");
+            JOptionPane.showMessageDialog(null, "Previous statistics were found in the database\nYou must clear all statistics before you can update settings", "Warning", JOptionPane.WARNING_MESSAGE);
+            disableInputs();
+        }
     }
 
     public void submitSettings(Settings newSettings) throws MalformedSettingsException {
@@ -293,7 +308,31 @@ public class SettingsGUI extends JFrame {
             e.printStackTrace();
         }
     }
+    
+    private void toggleInputs(boolean enable) {
+        JFormattedTextField[] arrayTF = {polling_interval_TF, memory_flush_interval_TF, local_flush_interval_TF, max_idle_time_TF, block_time_TF};
+        JComboBox[] arrayCB = {polling_interval_unit, memory_flush_interval_unit, local_flush_interval_unit, max_idle_time_unit, block_time_unit};
+        
+        for(JComboBox combo : arrayCB) {
+            combo.setEnabled(enable);
+        }
+        for(JFormattedTextField textfield : arrayTF) {
+            textfield.setEnabled(enable);
+        }
+        
+        dateChooser.setEnabled(enable);
+        timeSpinner.setEnabled(enable);
+        
+    }
 
+    private void disableInputs() {
+        toggleInputs(false);
+    }
+    
+    private void enableInputs() {
+        toggleInputs(true);
+    }
+    
     private void closeWindow() {
         WindowEvent winClosingEvent = new WindowEvent(this, WindowEvent.WINDOW_CLOSING);
         Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(winClosingEvent);
