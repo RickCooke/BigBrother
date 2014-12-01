@@ -70,7 +70,7 @@ public class SettingsGUI extends JFrame {
         local_flush_interval_TF.setValue(Main.settings.local_flush_interval);
         max_idle_time_TF.setValue(Main.settings.max_idle_time);
         block_time_TF.setValue(Main.settings.block_time);
-        
+
 
 
         JPanel polling_interval_group = new JPanel(new FlowLayout());
@@ -113,7 +113,16 @@ public class SettingsGUI extends JFrame {
 
 
         add(new JLabel("Start Date: "));
-        add(buildDatePanel(roundToHr(new Date())));
+        System.out.println(Main.settings.start_time_string);
+        
+
+        
+        try {
+            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            add(buildDatePanel(df.parse(Main.settings.start_time_string)));
+        } catch (ParseException e2) {
+            e2.printStackTrace();
+        }
 
 
         add(new JLabel("Time Block Duration: "));
@@ -159,7 +168,6 @@ public class SettingsGUI extends JFrame {
                         } else if (combo == memory_flush_interval_unit) {
                             long old = numFormat.parse(memory_flush_interval_TF.getText()).intValue();
                             memory_flush_interval_TF.setValue(old / getMultiplier(comboString));
-                            System.out.println(old + "/" + getMultiplier(comboString));
                         } else if (combo == local_flush_interval_unit) {
                             long old = numFormat.parse(local_flush_interval_TF.getText()).intValue();
                             local_flush_interval_TF.setValue(old / getMultiplier(comboString));
@@ -185,15 +193,6 @@ public class SettingsGUI extends JFrame {
         block_time_unit.addItemListener(ComboIL);
 
 
-
-        // Set preferred units
-        polling_interval_unit.setSelectedIndex(0);
-        memory_flush_interval_unit.setSelectedIndex(1);
-        local_flush_interval_unit.setSelectedIndex(2);
-        max_idle_time_unit.setSelectedIndex(2);
-        block_time_unit.setSelectedIndex(3);
-
-        // If preferred units won't work, change to what does
         changeToLargestUnit();
 
 
@@ -260,8 +259,8 @@ public class SettingsGUI extends JFrame {
             }
         });
     }
-    
-    public void submitSettings(Settings newSettings) throws MalformedSettingsException{
+
+    public void submitSettings(Settings newSettings) throws MalformedSettingsException {
         MySQL.updateSettings(newSettings);
         Main.settings.downloadSettings();
         dispose();
@@ -270,20 +269,30 @@ public class SettingsGUI extends JFrame {
     private void changeToLargestUnit() {
         JFormattedTextField[] arrayTF = {polling_interval_TF, memory_flush_interval_TF, local_flush_interval_TF, max_idle_time_TF, block_time_TF};
         JComboBox[] arrayCB = {polling_interval_unit, memory_flush_interval_unit, local_flush_interval_unit, max_idle_time_unit, block_time_unit};
-        int[] originals = {(int) Main.settings.polling_interval, Main.settings.memory_flush_interval, Main.settings.local_flush_interval, Main.settings.max_idle_time, Main.settings.block_time};
+        long[] originals = {Main.settings.polling_interval, Main.settings.memory_flush_interval, Main.settings.local_flush_interval, Main.settings.max_idle_time, Main.settings.block_time};
+
+        try {
+            for (int i = 0; i < arrayTF.length; i++) {
+                int ii = 4;
+                while (true) {
+                    arrayCB[i].setSelectedIndex(0);
+                    arrayTF[i].setValue(originals[i]);
+                    arrayCB[i].setSelectedIndex(ii);
 
 
-        for (int i = 0; i < arrayTF.length; i++) {
-            int ii = 4;
-            while (arrayTF[i].getText().equals("0")) {
-                arrayCB[i].setSelectedIndex(0);
-                arrayTF[i].setValue(originals[i]);
-                arrayCB[i].setSelectedIndex(ii);
-                ii--;
+                    long old = numFormat.parse(arrayTF[i].getText()).intValue();
+                    if ((old * getMultiplier(arrayCB[i])) == originals[i]) {
+                        break;
+                    }
+                    
+                    ii--;
+                }
             }
+        } catch (ParseException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
     }
-
 
     private void closeWindow() {
         WindowEvent winClosingEvent = new WindowEvent(this, WindowEvent.WINDOW_CLOSING);
@@ -350,16 +359,4 @@ public class SettingsGUI extends JFrame {
         return datePanel;
     }
 
-    public Date roundToHr(Date d) {
-        Calendar date = new GregorianCalendar();
-        date.setTime(d);
-        int deltaHr = date.get(Calendar.MINUTE) / 30;
-
-        date.set(Calendar.SECOND, 0);
-        date.set(Calendar.MILLISECOND, 0);
-        date.set(Calendar.MINUTE, 0);
-        date.add(Calendar.HOUR, deltaHr);
-
-        return date.getTime();
-    }
 }

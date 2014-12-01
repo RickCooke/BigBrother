@@ -313,7 +313,6 @@ public class AdminGUI extends JFrame {
         }
     }
 
-
     public static void deleteApp(int appID) {
         int dialogResult = JOptionPane.showConfirmDialog(null, "This will mark the application as inactive and untrack it from all users\nAre you sure you want to delete?", "Warning", JOptionPane.YES_NO_OPTION);
         if (dialogResult == JOptionPane.YES_OPTION) {

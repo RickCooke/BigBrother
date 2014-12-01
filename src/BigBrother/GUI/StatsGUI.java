@@ -36,6 +36,7 @@ import java.beans.PropertyChangeListener;
 
 import BigBrother.Classes.Settings;
 import BigBrother.Classes.UserLite;
+import BigBrother.Client.Main;
 import BigBrother.Client.MySQL;
 import BigBrother.Exceptions.MultipleResultsFoundException;
 import BigBrother.Exceptions.NoResultsFoundException;
@@ -258,7 +259,7 @@ public class StatsGUI extends JFrame {
     }
 
     public String[] getXAxisLabels(String start, String end) throws ParseException {
-        int block_size = Settings.block_time / 1000; // to seconds
+        int block_size = Main.settings.block_time / 1000; // to seconds
         int numBlocks = getNumBlocks(start, end, block_size);
 
         System.out.println("block size: " + block_size);

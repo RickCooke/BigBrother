@@ -6,6 +6,8 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import javax.swing.DefaultListModel;
@@ -845,9 +847,6 @@ public class MySQL {
             establishConnection();
         }
 
-        System.out.println(start);
-        System.out.println(end);
-
 
         String SQL = "SELECT appid, blockid, count FROM stats WHERE blockid >= ? AND blockid <= ? AND userid = ? AND appid = ?";
 
@@ -873,13 +872,16 @@ public class MySQL {
                 data[i] = 0; // initialize all to zero
             }
 
+            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            
             while (rs.next()) {
                 String date = rs.getString(2);
                 // TODO: fix this. SQL adds a .0 to datetime and
                 // it caused the label to not equal the date.
                 // this is just a cheap fix for now.
-                date = date.substring(0, date.length() - 2);
 
+                //date = date.substring(0, date.length() - 2);
+                date = df.parse(date).toString();
                 for (int i = 0; i < labels.length; i++) {
                     // if label exists, add it to the data array
                     if (labels[i].equals(date)) {
@@ -894,6 +896,9 @@ public class MySQL {
             System.out.println("SQLException: " + ex.getMessage());
             System.out.println("SQLState: " + ex.getSQLState());
             System.out.println("VendorError: " + ex.getErrorCode());
+        } catch (ParseException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         } finally {
             try {
                 if (rs != null) {
