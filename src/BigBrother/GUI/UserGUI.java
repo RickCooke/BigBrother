@@ -1,21 +1,17 @@
 package BigBrother.GUI;
 
-import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.sql.SQLException;
 
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
@@ -44,62 +40,34 @@ public class UserGUI extends JFrame {
     // opens a New User GUI
     public UserGUI() {
         super("New User");
-
-        setResizable(false);
-        setSize(new Dimension(385, 225));
+        
         setMinimumSize(new Dimension(385, 225));
         pack();
         setVisible(true);
-        
-        
-        setLayout(new BorderLayout());
 
-        JPanel panelLeft = new JPanel();
-        panelLeft.setLayout(new BoxLayout(panelLeft, BoxLayout.Y_AXIS));
-        JPanel panelRight = new JPanel();
-        panelRight.setLayout(new BoxLayout(panelRight, BoxLayout.Y_AXIS));
+        setLayout(new GridLayout(7, 2));
+
         JLabel usernameLabel = new JLabel("Username: ");
         JLabel passwordLabel = new JLabel("Password: ");
         JLabel confirmPasswordLabel = new JLabel("Confirm Password: ");
         JLabel firstNameLabel = new JLabel("First Name: ");
         JLabel lastNameLabel = new JLabel("Last Name: ");
         JLabel groupNumberLabel = new JLabel("Group Number: ");
-
-        panelLeft.add(usernameLabel);
-        panelLeft.add(Box.createRigidArea(new Dimension(0, 5)));
-        panelRight.add(usernameTF);
-
-        panelLeft.add(passwordLabel);
-        panelLeft.add(Box.createRigidArea(new Dimension(0, 5)));
-        panelRight.add(passwordTF);
-
-        panelLeft.add(confirmPasswordLabel);
-        panelLeft.add(Box.createRigidArea(new Dimension(0, 5)));
-        panelRight.add(confirmPasswordTF);
-
-        panelLeft.add(firstNameLabel);
-        panelLeft.add(Box.createRigidArea(new Dimension(0, 5)));
-        panelRight.add(firstNameTF);
-
-        panelLeft.add(lastNameLabel);
-        panelLeft.add(Box.createRigidArea(new Dimension(0, 5)));
-        panelRight.add(lastNameTF);
-
-        panelLeft.add(groupNumberLabel);
-        panelLeft.add(Box.createRigidArea(new Dimension(0, 5)));
-        panelRight.add(groupNumberTF);
-
-        panelLeft.add(Box.createRigidArea(new Dimension(0, 10)));
-        panelRight.add(Box.createRigidArea(new Dimension(0, 15)));
-        panelLeft.add(OKButton);
-        panelRight.add(cancelButton);
-        cancelButton.setAlignmentX(CENTER_ALIGNMENT);
-
-        panelLeft.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        panelRight.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-
-        add(panelLeft, BorderLayout.LINE_START);
-        add(panelRight, BorderLayout.LINE_END);
+        
+        add(usernameLabel);
+        add(usernameTF);
+        add(passwordLabel);
+        add(passwordTF);
+        add(confirmPasswordLabel);
+        add(confirmPasswordTF);
+        add(firstNameLabel);
+        add(firstNameTF);
+        add(lastNameLabel);
+        add(lastNameTF);
+        add(groupNumberLabel);
+        add(groupNumberTF);
+        add(OKButton);
+        add(cancelButton);
 
         cancelButton.addActionListener(new ActionListener() {
             @Override
