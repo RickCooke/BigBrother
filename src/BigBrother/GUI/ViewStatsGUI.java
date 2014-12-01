@@ -56,7 +56,7 @@ public class ViewStatsGUI extends JFrame
     int i = 0;
     for( App app : apps )
     {
-      float[] appData = MySQL.getAppData2(user_id, app.appID, start, end,
+      float[] appData = MySQL.getAppData(user_id, app.appID, start, end,
           xAxisLabels);
       dataset.addSeries(appData, i, app.alias);
       i++;
