@@ -21,6 +21,7 @@ public class App {
 
     public App() {}
 
+    //standard initialization constructor, sets all the class variables
     public App(int _appID, String _alias, String _window, boolean _windowIsRegex, String _process, boolean _processIsRegex, boolean _isActive) {
         appID = _appID;
         alias = _alias;
@@ -31,26 +32,31 @@ public class App {
         isActive = _isActive;
     }
 
+    //return a string representation of the app in the format of "*alias* (appID: *appID*)"
     public String toString() {
         return alias + " (appID: " + appID + ")";
     }
     
+    //print a detailed description of the app to the console (should be only used when Main.settings.debug == true)
     public void print() {
         System.out.println(appID + " " + alias + " " + window + " " + window_regex + " " + process + " " + process_regex + " " + getPriorityScore());
 
     }
 
+    //print a detailed description of the app to the console (should be only used when Main.settings.debug == true)
     public void print2() {
         System.out.printf("% 10d : ", count);
         System.out.println(alias + " (" + appID + ")");
     }
 
+    //clears the count representing the number of ticks this app has been in focus
     public void clear() {
         count = 0;
     }
 
+    //priority score so we match more specific requests before less specific ones
+    // Based on http://i.imgur.com/SREBZj2.png
     public int getPriorityScore() {
-        // Based on http://i.imgur.com/SREBZj2.png
         int score = 0;
 
         if (alias == "Other")
@@ -71,10 +77,12 @@ public class App {
     }
 
 
+    //Compare one app to another
     public class AppComparator implements Comparator<App> {
         @Override
         public int compare(App a1, App a2) {
 
+        	//if priority score is the same, return the comparison of the appIDs
             if (a1.getPriorityScore() == a2.getPriorityScore()) {
                 return Integer.compare(a1.getAppID(), a2.getAppID());
             }
@@ -84,16 +92,15 @@ public class App {
         }
     }
 
+    //Check whether or not this app is a match for a specific windowTitle and processName
     public boolean isMatch(String windowTitle, String processName) {
         boolean windowMatch = false;
         boolean processMatch = false;
 
+        //ignore appID 0 and 1, they are reserved for Other and Idle
         if (appID == 0 || appID == 1) {
             return false;
         }
-
-        // TODO: catch cases where both window name and process name are empty,
-        // right now one instance of that would match everything
 
         // If window was not specified, then it automatically matches
         if (window == null || window.isEmpty()) {
@@ -120,25 +127,29 @@ public class App {
             }
         }
 
-
+        //return the result
         if (windowMatch && processMatch)
             return true;
         else
             return false;
     }
 
+    //increment the count
     public void addCount(long addCount) {
         count += addCount;
     }
 
+    //returns the count variable
     public int getCount() {
         return count;
     }
 
+    //returns the alias variable
     public String getAlias() {
         return alias;
     }
 
+    //returns the appID variable
     public int getAppID() {
         return appID;
     }

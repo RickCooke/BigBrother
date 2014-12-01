@@ -5,6 +5,7 @@ import javax.swing.DefaultListModel;
 
 public class DLMSorter {
 
+	//Generic DLM sorter function
 	public static <T> void sort(DefaultListModel <T> dlm) {
 		
 		//init our array
