@@ -63,6 +63,11 @@ public class SettingsGUI extends JFrame {
     public SettingsGUI() {
         super("Edit Settings");
 
+        setSize(new Dimension(421, 278));
+        setMinimumSize(new Dimension(421, 278));
+        pack();
+        setVisible(true);
+        
         setLayout(new GridLayout(7, 2));
 
         polling_interval_TF.setValue(Main.settings.polling_interval);
@@ -270,8 +275,8 @@ public class SettingsGUI extends JFrame {
         
         if(MySQL.getStatCount() > 0) {
             actionButton.setText("Clear Statistics");
-            JOptionPane.showMessageDialog(null, "Previous statistics were found in the database\nYou must clear all statistics before you can update settings", "Warning", JOptionPane.WARNING_MESSAGE);
             disableInputs();
+            JOptionPane.showMessageDialog(null, "Previous statistics were found in the database\nYou must clear all statistics before you can update settings", "Warning", JOptionPane.WARNING_MESSAGE);
         }
     }
 

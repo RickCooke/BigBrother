@@ -34,9 +34,15 @@ public class SingleSelectGUI extends JFrame {
     // selectTypeNames array
     // 0 - User
     // 1 - App
+    
     public SingleSelectGUI(final int _selectType) throws UnknownSelectTypeException {
         super();
 
+        setSize(new Dimension(400, 400));
+        setMinimumSize(new Dimension(400, 400));
+        pack();
+        setVisible(true);
+        
         selectType = _selectType;
 
         // set the title of the frame

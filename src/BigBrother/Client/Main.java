@@ -14,6 +14,8 @@ import java.awt.event.ActionListener;
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 
+import org.jfree.ui.RefineryUtilities;
+
 import BigBrother.Classes.Settings;
 import BigBrother.GUI.AdminGUI;
 import BigBrother.GUI.LoginGUI;
@@ -79,14 +81,15 @@ public class Main {
         win.pack();
         win.setVisible(true);
         win.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-
+        RefineryUtilities.centerFrameOnScreen(win);
     }
 
-    private static void startAdminGUI() {
+    public static void startAdminGUI() {
         win = new AdminGUI();
         win.setMinimumSize(new Dimension(200, 100));
         win.pack();
         win.setVisible(true);
         win.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        RefineryUtilities.centerFrameOnScreen(win);
     }
 }

@@ -3,6 +3,7 @@ package BigBrother.GUI;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -13,6 +14,8 @@ import javax.swing.JPanel;
 import javax.swing.BoxLayout;
 import javax.swing.WindowConstants;
 import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
+
+import org.jfree.ui.RefineryUtilities;
 
 import BigBrother.Client.Client;
 import BigBrother.Client.Main;
@@ -36,8 +39,6 @@ public class LoginGUI extends JFrame {
      */
     public LoginGUI() {
         super("BigBrother Login");
-        
-        setLocationRelativeTo(null);
         
         getContentPane().setLayout(new FlowLayout());
 
@@ -84,7 +85,7 @@ public class LoginGUI extends JFrame {
 
         // TODO: remove this to prompt for username/pw
         // attemptLogin("defaultUser", "password");
-        // attemptLogin("bigbrother", "plzletmein");
+         attemptLogin("bigbrother", "plzletmein");
         // Can't get the LoginGUI to dispose
         // Note from Mike: commenting this out and logging in normally hangs the program for me,
         // can't right click taskbar icon :(
@@ -97,11 +98,8 @@ public class LoginGUI extends JFrame {
         if (username.equals(Main.settings.MySQL_username) && password.equals(Main.settings.MySQL_password)) {
             dispose();
 
-            AdminGUI AdminWin = new AdminGUI();
-            AdminWin.pack();
-            AdminWin.setVisible(true);
-            AdminWin.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-
+            Main.startAdminGUI();
+            
             return;
         }
 

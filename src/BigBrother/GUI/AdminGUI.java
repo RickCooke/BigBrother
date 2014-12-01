@@ -36,6 +36,8 @@ import java.awt.Color;
 
 import javax.swing.border.EtchedBorder;
 
+import org.jfree.ui.RefineryUtilities;
+
 @SuppressWarnings("serial")
 public class AdminGUI extends JFrame {
 
@@ -68,8 +70,8 @@ public class AdminGUI extends JFrame {
                 clearStats();
             }
         });
-        
-        
+
+
         JMenuItem exitMenu = new JMenuItem("Exit");
         exitMenu.addActionListener(new ActionListener() {
             @Override
@@ -92,7 +94,7 @@ public class AdminGUI extends JFrame {
         settingsMenu.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                openSettingsGUI();
+                showSettingsGUI();
             }
         });
 
@@ -108,14 +110,7 @@ public class AdminGUI extends JFrame {
         editUserMenu.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                try {
-                    SingleSelectGUI win = new SingleSelectGUI(0);
-                    win.pack();
-                    win.setVisible(true);
-                } catch (UnknownSelectTypeException e) {
-                    // This should never occur
-                    e.printStackTrace();
-                }
+                showSingleSelectGUI(0);
             }
         });
 
@@ -131,14 +126,7 @@ public class AdminGUI extends JFrame {
         editAppMenu.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                try {
-                    SingleSelectGUI win = new SingleSelectGUI(1);
-                    win.pack();
-                    win.setVisible(true);
-                } catch (UnknownSelectTypeException e) {
-                    // This should never occur
-                    e.printStackTrace();
-                }
+                showSingleSelectGUI(1);
             }
         });
 
@@ -148,26 +136,26 @@ public class AdminGUI extends JFrame {
         editMenu.add(addAppMenu);
         editMenu.add(editAppMenu);
 
-        
+
         // add view menu items
         JMenuItem statsMenu = new JMenuItem("Usage Statistics");
         statsMenu.addActionListener(new ActionListener() {
-          @Override
-          public void actionPerformed(ActionEvent arg0) {
-            StatsGUI win = new StatsGUI();
-            win.pack();
-            win.setVisible(true);
-          }
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                StatsGUI win = new StatsGUI();
+                win.pack();
+                win.setVisible(true);
+            }
         });
 
         viewMenu.add(statsMenu);
-                
+
         // add menubar
         JMenuBar menuBar = new JMenuBar();
         menuBar.add(fileMenu);
         menuBar.add(editMenu);
         menuBar.add(viewMenu);
-        
+
         setJMenuBar(menuBar);
 
         // Users section
@@ -175,7 +163,7 @@ public class AdminGUI extends JFrame {
         usersLabel.setAlignmentX(CENTER_ALIGNMENT);
 
         usersList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        
+
         JScrollPane usersScrollPane = new JScrollPane(usersList);
         usersScrollPane.setPreferredSize(new Dimension(200, 300));
         JButton createUserButton = new JButton("New User");
@@ -191,10 +179,10 @@ public class AdminGUI extends JFrame {
 
 
         // Monitored apps section
-        
+
         trackedAppsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        
-        
+
+
         JLabel appsLabel = new JLabel("Monitored Applications");
         appsLabel.setAlignmentX(CENTER_ALIGNMENT);
         JScrollPane appsScrollPane = new JScrollPane(trackedAppsList);
@@ -207,22 +195,21 @@ public class AdminGUI extends JFrame {
         trackedAppsPanel.add(appsScrollPane);
 
 
-        
-        
+
         // Add buttons
         JPanel appButtonsPanel = new JPanel();
-        appButtonsPanel.setLayout(new GridLayout(2,1));
+        appButtonsPanel.setLayout(new GridLayout(2, 1));
         JButton trackButton = new JButton("<");
         JButton untrackButton = new JButton(">");
         appButtonsPanel.add(trackButton);
         appButtonsPanel.add(untrackButton);
         appButtonsPanel.setBorder(new EmptyBorder(15, 20, 25, 20));
-        
+
 
         // Non-Monitored apps section
-        
+
         nonTrackedAppsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        
+
         JLabel nonTrackedAppsLabel = new JLabel("Non-Monitored Applications");
         nonTrackedAppsLabel.setAlignmentX(CENTER_ALIGNMENT);
         JScrollPane nonTrackedAppsScrollPane = new JScrollPane(nonTrackedAppsList);
@@ -249,8 +236,8 @@ public class AdminGUI extends JFrame {
 
         // update the users list
         updateUsers();
-        
-        //set button listeners
+
+        // set button listeners
         trackButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
@@ -263,8 +250,8 @@ public class AdminGUI extends JFrame {
                 setAppTracked(false);
             }
         });
-        
-        
+
+
         createRightClickMenus();
     }
 
@@ -283,8 +270,25 @@ public class AdminGUI extends JFrame {
         }
     };
 
+    private void showSingleSelectGUI(int type) {
+        SingleSelectGUI win = null;
+        try {
+            win = new SingleSelectGUI(type);
+        } catch (UnknownSelectTypeException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        RefineryUtilities.centerFrameOnScreen(win);
+    }
+    
+    private void showSettingsGUI() {
+        SettingsGUI win = new SettingsGUI();
+        RefineryUtilities.centerFrameOnScreen(win);
+    }
+    
     private void showUserGUI() {
         UserGUI win = new UserGUI();
+        RefineryUtilities.centerFrameOnScreen(win);
     }
 
     private void showUserGUI(int userID) {
@@ -295,21 +299,25 @@ public class AdminGUI extends JFrame {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+        RefineryUtilities.centerFrameOnScreen(win);
     }
 
     private void showAppGUI() {
         AppGUI win = new AppGUI();
+        RefineryUtilities.centerFrameOnScreen(win);
     }
-  
+
     private void showAppGUI(int appID) {
+        AppGUI win = null;
         try {
-            AppGUI win = new AppGUI(appID);
+            win = new AppGUI(appID);
         } catch (MultipleResultsFoundException | NoResultsFoundException | SQLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+        RefineryUtilities.centerFrameOnScreen(win);
     }
-    
+
     static void deleteUser(int userID) {
         int dialogResult = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete?", "Warning", JOptionPane.YES_NO_OPTION);
         if (dialogResult == JOptionPane.YES_OPTION) {
@@ -319,7 +327,9 @@ public class AdminGUI extends JFrame {
     }
 
     public static void deleteApp(int appID) {
-        int dialogResult = JOptionPane.showConfirmDialog(null, "This will mark the application as inactive and untrack it from all users\nAre you sure you want to delete?", "Warning", JOptionPane.YES_NO_OPTION);
+        int dialogResult =
+                    JOptionPane.showConfirmDialog(null, "This will mark the application as inactive and untrack it from all users\nAre you sure you want to delete?", "Warning",
+                                JOptionPane.YES_NO_OPTION);
         if (dialogResult == JOptionPane.YES_OPTION) {
             MySQL.setAppInactive(appID);
             MySQL.deleteAppTrackFromAll(appID);
@@ -341,11 +351,11 @@ public class AdminGUI extends JFrame {
     }
 
     public static void updateApps() {
-    	if(usersList.getSelectedValue() != null) {
-    		updateApps(usersList.getSelectedValue().getID());
-    	}
+        if (usersList.getSelectedValue() != null) {
+            updateApps(usersList.getSelectedValue().getID());
+        }
     }
-    
+
     public static void updateApps(int userID) {
         // debug output
         if (Main.settings.debug)
@@ -357,17 +367,13 @@ public class AdminGUI extends JFrame {
         MySQL.updateNonTrackedAppDLM(userID, nonTrackedAppsDLM);
     }
 
-    private void openSettingsGUI() {
-        SettingsGUI win = new SettingsGUI();
-        win.pack();
-        win.setVisible(true);
-    }
+
 
     private void closeWindow() {
         WindowEvent winClosingEvent = new WindowEvent(this, WindowEvent.WINDOW_CLOSING);
         Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(winClosingEvent);
     }
-    
+
     static boolean clearStats() {
         int dialogResult = JOptionPane.showConfirmDialog(null, "Clearing statistics will erase all usage statistics permanently\nDo you want to continue?", "Warning", JOptionPane.YES_NO_OPTION);
         if (dialogResult == JOptionPane.YES_OPTION) {
@@ -377,25 +383,25 @@ public class AdminGUI extends JFrame {
         }
         return false;
     }
-    
+
     private void setAppTracked(boolean tracked) {
-    	if(usersList.getSelectedValue() == null)
-    		return;
-    	
-    	int userID = usersList.getSelectedValue().getID();
-    	int appID = -1;
-	    	if(nonTrackedAppsList.getSelectedValue() != null && tracked)
-	    		appID = nonTrackedAppsList.getSelectedValue().getID();
-	    	else if(trackedAppsList.getSelectedValue() != null && !tracked)
-	    		appID = trackedAppsList.getSelectedValue().getID();
-    	
-	    if(appID == -1)
-	    	return;
-	    
-    	MySQL.setAppTracked(userID, appID, tracked);
-    	
-    	//update the apps list since it just changed
-    	updateApps(userID);
+        if (usersList.getSelectedValue() == null)
+            return;
+
+        int userID = usersList.getSelectedValue().getID();
+        int appID = -1;
+        if (nonTrackedAppsList.getSelectedValue() != null && tracked)
+            appID = nonTrackedAppsList.getSelectedValue().getID();
+        else if (trackedAppsList.getSelectedValue() != null && !tracked)
+            appID = trackedAppsList.getSelectedValue().getID();
+
+        if (appID == -1)
+            return;
+
+        MySQL.setAppTracked(userID, appID, tracked);
+
+        // update the apps list since it just changed
+        updateApps(userID);
     }
 
     public static JPanel buildDatePanel(Date in_date) {
@@ -412,7 +418,7 @@ public class AdminGUI extends JFrame {
         SpinnerDateModel model = new SpinnerDateModel();
         model.setCalendarField(Calendar.MINUTE);
         JSpinner timeSpinner = new JSpinner(model);
-        timeSpinner.setValue(in_date); 
+        timeSpinner.setValue(in_date);
         JComponent editor = new JSpinner.DateEditor(timeSpinner, "hh:mm:ss a");
         timeSpinner.setEditor(editor);
 
@@ -420,7 +426,7 @@ public class AdminGUI extends JFrame {
 
         return datePanel;
     }
-    
+
     private void createRightClickMenus() {
 
 
@@ -448,7 +454,7 @@ public class AdminGUI extends JFrame {
                 deleteUser(id);
             }
         });
-        
+
         usersList.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 if (SwingUtilities.isRightMouseButton(e)) {
@@ -460,7 +466,7 @@ public class AdminGUI extends JFrame {
             }
         });
 
-        
+
         final JPopupMenu trackedAppsPopupMenu = new JPopupMenu();
         JMenuItem trackedAppsMenuEdit = new JMenuItem("Edit");
         JMenuItem trackedAppsMenuDelete = new JMenuItem("Delete");
@@ -497,9 +503,9 @@ public class AdminGUI extends JFrame {
                 }
             }
         });
-        
-        
-        
+
+
+
         final JPopupMenu nonTrackedAppsPopupMenu = new JPopupMenu();
         JMenuItem nonTrackedAppsMenuEdit = new JMenuItem("Edit");
         JMenuItem nonTrackedAppsMenuDelete = new JMenuItem("Delete");
