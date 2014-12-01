@@ -1,12 +1,3 @@
-/**
- * general stuff that needs to be done: - add a "num blocks" label that shows how many blocks would
- * be selected with the specified time range and the MYSQL.settings for block size. - JDateChooser
- * is fucked up - getSelectedValue() isn't working right. either switch to only one user or figure
- * it out. - still need to work on adding functionality for SQL data pulling - still need to add
- * jfreechart stuff into viewStatsGUI.java
- */
-
-
 package BigBrother.GUI;
 
 import java.awt.*;
@@ -48,7 +39,6 @@ public class StatsGUI extends JFrame {
     private SpinnerDateModel modelStart;
     private SpinnerDateModel modelEnd;
     private JButton viewLinePlot;
-    private JButton viewPieChart;
     private JDateChooser dateChooserEnd;
     private JPanel eastPanel_1;
 
@@ -81,10 +71,8 @@ public class StatsGUI extends JFrame {
 
                 if (selectedValue != null) {
                     viewLinePlot.setEnabled(true);
-                    viewPieChart.setEnabled(true);
                 } else {
                     viewLinePlot.setEnabled(false);
-                    viewPieChart.setEnabled(false);
                 }
             }
         });
@@ -167,48 +155,18 @@ public class StatsGUI extends JFrame {
                     e1.printStackTrace();
                 }
 
-                
-                /*
-                // TODO: allow selecting multiple users?
-                UserLite selectedUser = userList.getSelectedValue();
-                int user_id = selectedUser.getID();
-                DefaultCategoryDataset data = getDatasetLineChart(start, end, user_id);
-
-                // plot data
-                ViewStatsGUI win = new ViewStatsGUI(data);
-                win.pack();
-                win.setVisible(true);
-                
-                */
-
                 UserLite selectedUser = userList.getSelectedValue();
                 int user_id = selectedUser.getID();
                 
                 final String title = "Time Series Management";
-                final Time demo = new Time(title, user_id, start, end);
-                demo.pack();
-                RefineryUtilities.positionFrameRandomly(demo);
-                demo.setVisible(true);
-            }
-        });
-        viewPieChart = new JButton("View Usage Totals");
-        viewPieChart.setEnabled(false);
-        viewPieChart.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // get hour range
-
-                // for each selected user:
-                // - find all applications used for entire timeframe
-
-                // plot data
-                // - if multiple users,
-                // display multiple pie charts side by side.
+                final ViewStatsGUI win = new ViewStatsGUI(title, user_id, start, end);
+                win.pack();
+                RefineryUtilities.positionFrameRandomly(win);
+                win.setVisible(true);
             }
         });
 
         eastPanelBot.add(viewLinePlot);
-        eastPanelBot.add(viewPieChart);
 
         // add panels to main
         eastPanel.add(eastPanelTop);
