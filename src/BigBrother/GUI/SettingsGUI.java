@@ -53,6 +53,7 @@ public class SettingsGUI extends JFrame {
 
     private final JButton actionButton = new JButton("Update");
     private final JButton cancelButton = new JButton("Cancel");
+    private final JButton clearDataButton = new JButton("Clear Data");
 
     private final static JDateChooser dateChooser = new JDateChooser();
     private static JSpinner timeSpinner = new JSpinner();
@@ -65,7 +66,7 @@ public class SettingsGUI extends JFrame {
         setMinimumSize(new Dimension(421, 278));
         pack();
         
-        setLayout(new GridLayout(7, 2));
+        setLayout(new GridLayout(8, 2));
 
         polling_interval_TF.setValue(Main.settings.polling_interval);
         memory_flush_interval_TF.setValue(Main.settings.memory_flush_interval);
@@ -130,6 +131,7 @@ public class SettingsGUI extends JFrame {
 
         add(actionButton);
         add(cancelButton);
+        add(clearDataButton);
 
 
         ItemListener ComboIL = new ItemListener() {
@@ -207,13 +209,6 @@ public class SettingsGUI extends JFrame {
 
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                if(actionButton.getText().equals("Clear Statistics")) {
-                    if(AdminGUI.clearStats()){
-                        actionButton.setText("Update");
-                        enableInputs(); 
-                    }
-                    return;
-                }
                 
                 try {
                     if (polling_interval_TF.getText().equals("")) {
@@ -268,15 +263,25 @@ public class SettingsGUI extends JFrame {
             }
         });
         
-        
+        clearDataButton.addActionListener(new ActionListener()
+        {
+          
+          @Override
+          public void actionPerformed(ActionEvent e)
+          {
+            AdminGUI.clearStats();
+            enableInputs();
+            clearDataButton.setEnabled(false);
+          }
+        });
         
         if(MySQL.getStatCount() > 0) {
-            actionButton.setText("Clear Statistics");
             disableInputs();
             JOptionPane.showMessageDialog(null, "Previous statistics were found in the database\nYou must clear all statistics before you can update settings", "Warning", JOptionPane.WARNING_MESSAGE);
         }
     }
-
+    
+    
     public void submitSettings(Settings newSettings) throws MalformedSettingsException {
         MySQL.updateSettings(newSettings);
         Main.settings.downloadSettings();
@@ -311,8 +316,8 @@ public class SettingsGUI extends JFrame {
     }
     
     private void toggleInputs(boolean enable) {
-        JFormattedTextField[] arrayTF = {polling_interval_TF, memory_flush_interval_TF, local_flush_interval_TF, max_idle_time_TF, block_time_TF};
-        JComboBox[] arrayCB = {polling_interval_unit, memory_flush_interval_unit, local_flush_interval_unit, max_idle_time_unit, block_time_unit};
+        JFormattedTextField[] arrayTF = {block_time_TF};
+        JComboBox[] arrayCB = {block_time_unit};
         
         for(JComboBox combo : arrayCB) {
             combo.setEnabled(enable);
