@@ -26,11 +26,14 @@ import BigBrother.Client.MySQL;
 import BigBrother.Exceptions.MultipleResultsFoundException;
 import BigBrother.Exceptions.NoResultsFoundException;
 import BigBrother.Exceptions.UnknownSelectTypeException;
+
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.SoftBevelBorder;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.MatteBorder;
+
 import java.awt.Color;
+
 import javax.swing.border.EtchedBorder;
 
 @SuppressWarnings("serial")
@@ -58,13 +61,15 @@ public class AdminGUI extends JFrame {
         JMenu viewMenu = new JMenu("View");
 
         // Add File Item Menus
-        JMenuItem logoutMenu = new JMenuItem("Logout");
-        logoutMenu.addActionListener(new ActionListener() {
+        JMenuItem clearStatsMenu = new JMenuItem("Clear Statistics");
+        clearStatsMenu.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                Main.logout();
+                clearStats();
             }
         });
+        
+        
         JMenuItem exitMenu = new JMenuItem("Exit");
         exitMenu.addActionListener(new ActionListener() {
             @Override
@@ -79,7 +84,7 @@ public class AdminGUI extends JFrame {
             }
         });
 
-        fileMenu.add(logoutMenu);
+        fileMenu.add(clearStatsMenu);
         fileMenu.add(exitMenu);
 
         // Add Edit Item Menus
@@ -361,6 +366,16 @@ public class AdminGUI extends JFrame {
     private void closeWindow() {
         WindowEvent winClosingEvent = new WindowEvent(this, WindowEvent.WINDOW_CLOSING);
         Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(winClosingEvent);
+    }
+    
+    static boolean clearStats() {
+        int dialogResult = JOptionPane.showConfirmDialog(null, "Clearing statistics will erase all usage statistics permanently\nDo you want to continue?", "Warning", JOptionPane.YES_NO_OPTION);
+        if (dialogResult == JOptionPane.YES_OPTION) {
+            MySQL.clearStats();
+            JOptionPane.showMessageDialog(null, "Statistics were successfully cleared", "Success", JOptionPane.INFORMATION_MESSAGE);
+            return true;
+        }
+        return false;
     }
     
     private void setAppTracked(boolean tracked) {
