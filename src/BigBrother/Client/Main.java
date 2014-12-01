@@ -73,20 +73,6 @@ public class Main {
         }
     }
 
-    public static void logout() {
-        // reset everything
-        settings = new Settings();
-
-        // download the Main.settings from the server
-        settings.downloadSettings();
-
-        if (settings.debug)
-            System.out.println(settings.toString());
-
-        // load up the login GUI
-        startLoginGUI();
-    }
-
     private static void startLoginGUI() {
         win = new LoginGUI();
         win.setMinimumSize(new Dimension(200, 100));
