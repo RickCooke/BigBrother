@@ -30,12 +30,12 @@ public class Time extends ApplicationFrame {
 
 
         // Lazy to do it
-       // start = "2014-11-24 17:00:00";
-       // end = "2014-11-24 18:00:00";
+        //start = "2014-11-24 17:00:00";
+        //end = "2014-11-25 18:00:00";
 
         String[] xAxisLabels = getXAxisLabels(start, end);
 
-        ArrayList<App> apps = MySQL.getTrackedAppsArrayList(user_id);
+        ArrayList<App> apps = MySQL.getTrackedAppsArrayListThroughDate(user_id, start, end);
         apps.add(new App(0, "Other", null, false, null, false, true));
         apps.add(new App(1, "Idle", null, false, null, false, true));
 
