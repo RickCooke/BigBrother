@@ -36,7 +36,8 @@ public class Time extends ApplicationFrame {
         }
         
         ArrayList<App> apps = MySQL.getTrackedAppsArrayList(user_id);
-
+        apps.add(new App(0, "Other", null, false, null, false, true));
+        apps.add(new App(1, "Idle", null, false, null, false, true));
 
         int block_size = Main.settings.block_time/1000;
         int numBlocks = getNumBlocks(start, end, block_size);
