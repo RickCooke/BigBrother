@@ -8,6 +8,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.sql.SQLException;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -119,10 +121,18 @@ public class AppGUI extends JFrame {
                     } else if (windowTF.getText().equals("") && processTF.getText().equals("")) {
                         throw new FormException("You must fill out either Window name or Process name");
                     } else {
+                    if(windowIsRegex.isSelected())
+                      Pattern.compile(windowTF.getText());
+                    if(processIsRegex.isSelected())
+                      Pattern.compile(processTF.getText());
+
                         submitApp();
                     }
                 } catch (FormException e) {
                     JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                }
+                catch(PatternSyntaxException e){
+                  JOptionPane.showMessageDialog(new JFrame(), "Invalid Regular Expression", "Regex Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });

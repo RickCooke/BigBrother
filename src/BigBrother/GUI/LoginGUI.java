@@ -106,16 +106,16 @@ public class LoginGUI extends JFrame {
         }
 
         String passwordHash = MD5(password);
-        boolean client = false;
+        boolean clientFound = true;
         try {
             Main.loggedInUserID = MySQL.checkPassword(username, passwordHash);
             dispose();
             new Client();
         } catch (UserDoesNotExist e) {
             JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-            client = true;
+            clientFound = false;
         }
-        if(!client)
+        if(clientFound)
             JOptionPane.showMessageDialog(this, "Welcome " + username, "Big Brother Client", JOptionPane.INFORMATION_MESSAGE);
 
     }

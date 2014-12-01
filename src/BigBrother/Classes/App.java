@@ -1,6 +1,11 @@
 package BigBrother.Classes;
 
 import java.util.Comparator;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
+
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 /* comment to later be removed */
 
@@ -98,9 +103,10 @@ public class App {
             // otherwise normal
             if (window_regex && windowTitle.matches(window)) {
                 windowMatch = true;
+
             } else if (windowTitle.toLowerCase().equals(window.toLowerCase())) {
                 windowMatch = true;
-            }
+            } 
         }
 
         // If process was not specified, then it automatically matches
