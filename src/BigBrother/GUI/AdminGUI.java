@@ -20,6 +20,7 @@ import javax.swing.*;
 import com.toedter.calendar.JDateChooser;
 
 import BigBrother.Classes.AppLite;
+import BigBrother.Classes.DLMSorter;
 import BigBrother.Classes.UserLite;
 import BigBrother.Client.Main;
 import BigBrother.Client.MySQL;
@@ -349,6 +350,8 @@ public class AdminGUI extends JFrame {
         // update the user list
         MySQL.getUserList(usersDLM);
         SingleSelectGUI.updateList();
+        
+        DLMSorter.sort(usersDLM);
     }
 
     public static void updateApps() {
@@ -366,6 +369,9 @@ public class AdminGUI extends JFrame {
         // update the tracked app list
         MySQL.updateTrackedAppDLM(userID, trackedAppsDLM);
         MySQL.updateNonTrackedAppDLM(userID, nonTrackedAppsDLM);
+
+        DLMSorter.sort(trackedAppsDLM);
+        DLMSorter.sort(nonTrackedAppsDLM);
     }
 
 

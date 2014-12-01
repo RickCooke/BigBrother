@@ -1,6 +1,6 @@
 package BigBrother.Classes;
 
-public class UserLite {
+public class UserLite implements Comparable <UserLite> {
     private int userID;
     private String username;
     private String firstName;
@@ -20,4 +20,10 @@ public class UserLite {
     public int getID() {
         return userID;
     }
+
+	@Override
+	public int compareTo(UserLite arg0) {
+		return toString().toLowerCase().compareTo(arg0.toString().toLowerCase());
+	}
+	
 }

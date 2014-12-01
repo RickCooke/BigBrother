@@ -1,6 +1,6 @@
 package BigBrother.Classes;
 
-public class AppLite {
+public class AppLite implements Comparable <AppLite> {
     private int appID;
     private String alias;
 
@@ -20,4 +20,9 @@ public class AppLite {
     public String getAlias() {
         return alias;
     }
+
+	@Override
+	public int compareTo(AppLite arg0) {
+		return toString().toLowerCase().compareTo(arg0.toString().toLowerCase());
+	}
 }
