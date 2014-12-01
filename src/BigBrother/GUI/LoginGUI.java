@@ -12,10 +12,7 @@ import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.BoxLayout;
-import javax.swing.WindowConstants;
 import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
-
-import org.jfree.ui.RefineryUtilities;
 
 import BigBrother.Client.Client;
 import BigBrother.Client.Main;
@@ -83,13 +80,10 @@ public class LoginGUI extends JFrame {
             }
         });
 
-        // TODO: remove this to prompt for username/pw
-        // attemptLogin("defaultUser", "password");
-         attemptLogin("bigbrother", "plzletmein");
-        // Can't get the LoginGUI to dispose
-        // Note from Mike: commenting this out and logging in normally hangs the program for me,
-        // can't right click taskbar icon :(
-         //attemptLogin("brian", "708050");
+        // Debug to auto-login to admin GUI
+        // attemptLogin("bigbrother", "plzletmein");
+        // Debug to auto-login to client account
+        // attemptLogin("test", "asdf");
     }
 
     private void attemptLogin(String username, String password) {

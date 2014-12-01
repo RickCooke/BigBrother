@@ -22,7 +22,6 @@ import javax.swing.JOptionPane;
 import BigBrother.Classes.App;
 import BigBrother.Exceptions.CountMismatchException;
 import BigBrother.Exceptions.KeyboardHookFailed;
-import BigBrother.Exceptions.RequiredAppsNotFoundException;
 import WindowsAPI.Keyboard;
 
 import com.sun.jna.Native;
@@ -60,8 +59,6 @@ public class Client {
         PointerInfo pointerInfo = MouseInfo.getPointerInfo();
         lastKnownMouseLocation = pointerInfo.getLocation();
 
-        // TODO: Set up the mouseClick listener
-
         // Set up the timers
         try {
             // Set up the poll timer
@@ -77,9 +74,6 @@ public class Client {
         } catch (Exception e) {
             System.out.println(e.getMessage());
             e.printStackTrace();
-
-            // TODO: handle exception by using default timers? or prompt the user
-            // for valid times/notify user Main.settings are malformed?
         }
     }
 
@@ -168,10 +162,6 @@ public class Client {
             processName = Native.toString(buffer);
 
             // Check for app match
-            // TODO: make this more efficient, it's poorly optimized right now (Rather than looping
-            // through all apps).
-            // maybe a map of pointers? I'm not sure, that may take up a large
-            // amount of space, as youd need 2 maps, one for window and one for process
             boolean foundMatch = false;
             for (App a : userApps) {
 
@@ -203,7 +193,6 @@ public class Client {
             if (pollNum % (Main.settings.memory_flush_interval / Main.settings.polling_interval) == 0)
                 memFlush();
         } catch (CountMismatchException e) {
-            // TODO: handle this better
             e.printStackTrace();
         }
 
@@ -301,10 +290,9 @@ public class Client {
             if (Main.settings.debug)
                 System.out.println("Something weird happened " + "where other count isn't what it should be");
 
-            // TODO: reenable this, it was freaking out
-            // throw new
-            // CountMismatchException("'Other App' poll count does not
-            // match the remainder of time not spent on other apps.");
+             throw new
+             CountMismatchException("'Other App' poll count does not" +
+             "match the remainder of time not spent on other apps.");
         }
 
         // =======================================================

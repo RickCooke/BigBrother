@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -29,14 +28,6 @@ import BigBrother.Exceptions.NoResultsFoundException;
 import BigBrother.Exceptions.UnknownSelectTypeException;
 
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.SoftBevelBorder;
-import javax.swing.border.BevelBorder;
-import javax.swing.border.MatteBorder;
-
-import java.awt.Color;
-
-import javax.swing.border.EtchedBorder;
-
 import org.jfree.ui.RefineryUtilities;
 
 @SuppressWarnings("serial")
@@ -77,13 +68,9 @@ public class AdminGUI extends JFrame {
         exitMenu.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                // TODO: Should we exit the admin GUI only or the client too?
 
                 // close the window
                 closeWindow();
-
-                // enable if we're killing the whole program
-                // Client.destroy();
             }
         });
 
@@ -276,7 +263,6 @@ public class AdminGUI extends JFrame {
         try {
             win = new SingleSelectGUI(type);
         } catch (UnknownSelectTypeException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         RefineryUtilities.centerFrameOnScreen(win);
@@ -298,7 +284,6 @@ public class AdminGUI extends JFrame {
         try {
             win = new UserGUI(userID);
         } catch (MultipleResultsFoundException | NoResultsFoundException | SQLException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         RefineryUtilities.centerFrameOnScreen(win);
@@ -314,7 +299,6 @@ public class AdminGUI extends JFrame {
         try {
             win = new AppGUI(appID);
         } catch (MultipleResultsFoundException | NoResultsFoundException | SQLException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         RefineryUtilities.centerFrameOnScreen(win);
