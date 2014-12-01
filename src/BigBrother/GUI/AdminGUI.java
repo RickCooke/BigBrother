@@ -284,6 +284,7 @@ public class AdminGUI extends JFrame {
     private void showSettingsGUI() {
         SettingsGUI win = new SettingsGUI();
         RefineryUtilities.centerFrameOnScreen(win);
+        win.setVisible(true);
     }
     
     private void showUserGUI() {

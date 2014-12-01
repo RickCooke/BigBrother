@@ -66,7 +66,6 @@ public class SettingsGUI extends JFrame {
         setSize(new Dimension(421, 278));
         setMinimumSize(new Dimension(421, 278));
         pack();
-        setVisible(true);
         
         setLayout(new GridLayout(7, 2));
 
